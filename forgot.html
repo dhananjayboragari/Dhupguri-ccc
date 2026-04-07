@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  background:#eef2f7;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  width:90%;
+  max-width:360px;
+  border-radius:16px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.1);
+  text-align:center;
+}
+
+.icon-box{
+  width:70px;height:70px;
+  background:#ff9800;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:auto;
+}
+.icon-box i{color:#fff;font-size:28px;}
+
+.company{
+  margin-top:10px;
+  color:#ff9800;
+  font-weight:600;
+  letter-spacing:1px;
+}
+
+.input-box{position:relative;margin:15px 0;}
+
+.left{
+  position:absolute;
+  left:10px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#888;
+}
+
+input{
+  width:100%;
+  padding:12px 40px;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#ff9800;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+button.loading{
+  opacity:0.7;
+  pointer-events:none;
+}
+
+.msg{
+  font-size:14px;
+  margin-top:12px;
+}
+
+.success{color:green;}
+.error{color:red;}
+
+.link{
+  margin-top:12px;
+  display:block;
+  color:#007bff;
+  cursor:pointer;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="icon-box">
+<i class="fas fa-key"></i>
+</div>
+
+<div class="company">
+M/S Chakraborty Electricals
+</div>
+
+<h2>Reset Password</h2>
+
+<p style="font-size:14px;color:#666;">
+Enter your email to receive password reset link
+</p>
+
+<div class="input-box">
+<i class="fas fa-envelope left"></i>
+<input id="email" placeholder="Enter Email">
+</div>
+
+<button id="btn" onclick="reset()">Send Reset Link</button>
+
+<div id="msg" class="msg"></div>
+
+<br><span class="link" onclick="location.href='index.html'">Back to Login</span>
+
+</div>
+
+<!-- ✅ ONLY FIREBASE CHANGED -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain:"dhupguri-ccc.firebaseapp.com",
+  projectId:"dhupguri-ccc",
+  storageBucket:"dhupguri-ccc.firebasestorage.app",
+  messagingSenderId:"278611213070",
+  appId:"1:278611213070:web:f9652c7965f472164c355f"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth();
+
+// 🔥 RESET FUNCTION (same)
+window.reset=function(){
+
+let email=document.getElementById("email").value.trim();
+let msg=document.getElementById("msg");
+let btn=document.getElementById("btn");
+
+if(email===""){
+  msg.innerHTML="❌ Please enter email";
+  msg.className="msg error";
+  return;
+}
+
+btn.classList.add("loading");
+msg.innerHTML="⏳ Sending reset link...";
+
+sendPasswordResetEmail(auth,email)
+.then(()=>{
+  msg.innerHTML="✅ Reset link sent! Check your inbox or Spam folder for the Created new password";
+  msg.className="msg success";
+})
+.catch(e=>{
+  console.log(e);
+  msg.innerHTML="❌ "+e.message;
+  msg.className="msg error";
+})
+.finally(()=>{
+  btn.classList.remove("loading");
+});
+
+}
+</script>
+
+</body>
+</html>
