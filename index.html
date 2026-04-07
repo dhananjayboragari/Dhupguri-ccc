@@ -1,1 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Login</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Segoe UI', sans-serif;
+  background:linear-gradient(135deg,#e0eafc,#cfdef3);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  padding:30px 25px;
+  width:90%;
+  max-width:360px;
+  border-radius:20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align:center;
+}
+.icon-box{
+  width:80px;height:80px;
+  background:#007bff;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 15px;
+}
+.icon-box i{color:#fff;font-size:32px;}
+.company{
+  color:#007bff;
+  font-weight:600;
+  margin-bottom:15px;
+  font-size:18px;
+}
+.input-box{
+  position:relative;
+  width:100%;
+  margin:10px 0;
+}
+.left,.right{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  color:#888;
+}
+.left{ left:12px; }
+.right{ right:12px; cursor:pointer; }
+input{
+  width:100%;
+  padding:14px 45px;
+  border:1px solid #ccc;
+  border-radius:12px;
+  outline:none;
+  font-size:15px;
+}
+input:focus{
+  border-color:#007bff;
+  box-shadow:0 0 5px rgba(0,123,255,0.2);
+}
+button{
+  width:100%;
+  padding:14px;
+  background:#007bff;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  margin-top:12px;
+}
+button:hover{ background:#0056b3; }
+.msg{
+  margin-top:12px;
+  font-size:14px;
+  min-height:18px;
+}
+.success{color:green;}
+.error{color:red;}
+.remember{
+  display:flex;
+  align-items:center;
+  font-size:14px;
+  margin-top:12px;
+}
+.remember input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  margin:0 8px 0 0;
+}
+.link{
+  display:block;
+  margin-top:12px;
+  color:#007bff;
+  cursor:pointer;
+  font-size:14px;
+  text-decoration:underline;
+}
+#resend{
+  display:none;
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:12px;
+  background:#ffc107;
+  color:#fff;
+  cursor:pointer;
+}
+#resend:hover{background:#e0a800;}
+
+h2{
+  margin:5px 0 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="icon-box">
+<i class="fas fa-user"></i>
+</div>
+
+<div class="company">M/S Chakraborty Electricals</div>
+
+<h2>Login</h2>
+
+<div class="input-box">
+<i class="fas fa-envelope left"></i>
+<input id="email" placeholder="Email">
+</div>
+
+<div class="input-box">
+<i class="fas fa-lock left"></i>
+<input id="password" type="password" placeholder="Password">
+<i class="fas fa-eye right" onclick="togglePassword()"></i>
+</div>
+
+<div class="remember">
+<input type="checkbox" id="remember"> Remember Me
+</div>
+
+<button onclick="login()">Login</button>
+<button id="resend" onclick="resendEmail()">Resend Verification Email</button>
+
+<div id="msg" class="msg"></div>
+
+<span class="link" onclick="location.href='signup.html'">Create Account</span>
+<span class="link" onclick="location.href='forgot.html'">Forgot Password?</span>
+
+</div>
+
+<script>
+function togglePassword(){
+  let p=document.getElementById("password");
+  let icon=document.querySelector(".right");
+  if(p.type==="password"){
+    p.type="text";
+    icon.classList.replace("fa-eye","fa-eye-slash");
+  }else{
+    p.type="password";
+    icon.classList.replace("fa-eye-slash","fa-eye");
+  }
+}
+
+window.onload = function(){
+  let email = localStorage.getItem("user");
+  if(email){
+    document.getElementById("email").value = email;
+    document.getElementById("remember").checked = true;
+  }
+
+  const resendBtn = document.getElementById("resend");
+  let lastTime = localStorage.getItem("resendTime");
+
+  if(lastTime){
+    let diff = Math.floor((Date.now() - lastTime)/1000);
+    if(diff < 60){
+      resendBtn.style.display="block";
+      startCooldown(resendBtn,60-diff);
+    }
+  }
+}
+
+document.addEventListener("keydown", function(e){
+  if(e.key==="Enter"){ login(); }
+});
+</script>
+
+<!-- ✅ Firebase (ONLY CHANGED PART) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+});
+
+const auth = getAuth();
+
+let currentUser=null;
+let timerInterval=null;
+
+window.login = async function(){
+  let email = document.getElementById("email").value;
+  let password = document.getElementById("password").value;
+  let msg = document.getElementById("msg");
+  const resendBtn = document.getElementById("resend");
+
+  msg.innerHTML="⏳ Logging in...";
+  msg.style.color="#000";
+  resendBtn.style.display="none";
+
+  try{
+    const userCredential = await signInWithEmailAndPassword(auth,email,password);
+    currentUser = userCredential.user;
+
+    if(!currentUser.emailVerified){
+      msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
+      msg.style.color="red";
+      resendBtn.style.display="block";
+      return;
+    }
+
+    if(document.getElementById("remember").checked){
+      localStorage.setItem("user",email);
+    }else{
+      localStorage.removeItem("user");
+    }
+
+    msg.innerHTML="✅ Login Success";
+    msg.style.color="green";
+    setTimeout(()=>location.href="home.html",1000);
+
+  }catch(e){
+    let customMsg = "Login failed. Please try again.";
+
+    switch(e.code){
+      case "auth/invalid-email":
+        customMsg="Invalid email address.";
+        break;
+      case "auth/user-not-found":
+        customMsg="User not found. Please check your email or sign up.";
+        break;
+      case "auth/wrong-password":
+        customMsg="Password is incorrect. Please try again.";
+        break;
+      case "auth/too-many-requests":
+        customMsg="Too many attempts. Please wait a while and try again.";
+        break;
+      case "auth/network-request-failed":
+        customMsg="Network error. Check your internet connection.";
+        break;
+      case "auth/invalid-credential":
+        customMsg="Email or password is incorrect.";
+        break;
+    }
+
+    msg.innerHTML="❌ " + customMsg;
+    msg.style.color="red";
+  }
+}
+
+function startCooldown(btn,timeLeft=60){
+  btn.disabled=true;
+
+  timerInterval=setInterval(()=>{
+    btn.innerText=`Resend in ${timeLeft}s`;
+    timeLeft--;
+
+    if(timeLeft<0){
+      clearInterval(timerInterval);
+      btn.disabled=false;
+      btn.innerText="Resend Verification Email";
+      localStorage.removeItem("resendTime");
+    }
+  },1000);
+}
+
+window.resendEmail = async function(){
+  const resendBtn = document.getElementById("resend");
+
+  if(currentUser){
+    await sendEmailVerification(currentUser);
+    alert("Verification email resent! Check inbox or spam folder.");
+
+    localStorage.setItem("resendTime",Date.now());
+    startCooldown(resendBtn,60);
+  }
+}
+</script>
+
+</body>
+</html>
