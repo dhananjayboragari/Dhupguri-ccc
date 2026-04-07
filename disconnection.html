@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dhupguri CCC Disconnection Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+.cardBox{
+background:#1e293b;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+box-shadow:0 0 15px rgba(0,0,0,0.4);
+}
+
+.table{
+background:white;
+color:black;
+font-size:13px;
+}
+
+.filter{
+width:100%;
+font-size:12px;
+margin-top:3px;
+}
+
+.downloadBtn{
+margin-top:15px;
+text-align:center;
+}
+
+#totalCount{
+margin-top:10px;
+font-weight:bold;
+color:#facc15;
+text-align:center;
+}
+
+.searchBox{
+position:relative;
+}
+
+.searchBox input{
+padding-left:40px;
+height:45px;
+border-radius:10px;
+border:none;
+background:#0f172a;
+color:#e2e8f0;
+box-shadow:inset 0 0 8px rgba(0,0,0,0.6);
+transition:0.3s;
+}
+
+.searchBox input::placeholder{
+color:#94a3b8;
+}
+
+.searchBox input:focus{
+outline:none;
+box-shadow:0 0 10px #38bdf8;
+background:#020617;
+}
+
+.searchIcon{
+position:absolute;
+left:12px;
+top:10px;
+font-size:18px;
+color:#94a3b8;
+}
+
+.searchLabel{
+font-weight:bold;
+margin-bottom:5px;
+display:block;
+color:#e2e8f0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2 class="text-center mb-4">Dhupguri CCC Disconnection Dashboard</h2>
+
+<div class="cardBox">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+
+<label class="searchLabel">Agency Name</label>
+
+<div class="searchBox">
+<span class="searchIcon">🏢</span>
+<input type="text" id="agencySearch" class="form-control" placeholder="Search Agency">
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<label class="searchLabel">Disconnection Issue Date</label>
+
+<div class="searchBox">
+<span class="searchIcon">📅</span>
+<input type="date" id="issueDateSearch" class="form-control">
+</div>
+
+</div>
+
+</div>
+
+<div id="totalCount">Total Records: 0</div>
+
+<div class="downloadBtn">
+
+<button class="btn btn-primary px-4 me-3" onclick="viewPDF()">
+👁 View PDF
+</button>
+
+<br><br>
+
+<button class="btn btn-danger px-4" onclick="downloadPDF()">
+⬇ Download PDF
+</button>
+
+</div>
+
+</div>
+
+<table class="table table-bordered" id="dataTable">
+
+<thead class="table-dark">
+
+<tr>
+
+<th>MRU <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Consumer ID <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Name <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Address <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Class <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Meter Number <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Date To Net O/S Due <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Date Net To O/S <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Last Pay Amount <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Last Pay Date <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Mobile Number <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Lat <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Long <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Report <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Reading <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Agency Name <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+<th>Disconnection Issue Date <select class="filter" onchange="excelFilter()"><option value="">All</option></select></th>
+
+</tr>
+
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+const sheetID="1FT48q70XMxfz6c3RFBjMqd_FVOXkWJOhhuCHbPWQzQ8";
+const sheetName="Sheet1";
+
+const url=`https://opensheet.elk.sh/${sheetID}/${sheetName}`;
+
+fetch(url)
+.then(res=>res.json())
+.then(data=>{
+
+let html="";
+
+data.forEach(row=>{
+
+html+=`
+
+<tr>
+
+<td>${row.MRU||""}</td>
+<td>${row["Consumer ID"]||""}</td>
+<td>${row.Name||""}</td>
+<td>${row.Address||""}</td>
+<td>${row.Class||""}</td>
+<td>${row["Meter Number"]||""}</td>
+<td>${row["Date to Net O/S Due"]||""}</td>
+<td>${row["Date Net to O/S"]||""}</td>
+<td>${row["Last Pay Amount"]||""}</td>
+<td>${row["Last Pay Date"]||""}</td>
+<td>${row["Mobile Number"]||""}</td>
+<td>${row.Lat||""}</td>
+<td>${row.Long||""}</td>
+<td>${row.Report||""}</td>
+<td>${row.Reading||""}</td>
+<td>${row["Agency Name"]||""}</td>
+<td>${row["Disconnection Issue Date"]||""}</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("tableBody").innerHTML=html;
+
+setFilters();
+updateTotalCount();
+
+});
+
+function setFilters(){
+
+let filters=document.querySelectorAll(".filter");
+
+filters.forEach((filter,index)=>{
+
+let values=new Set();
+
+document.querySelectorAll("#dataTable tbody tr").forEach(row=>{
+values.add(row.cells[index].innerText);
+});
+
+values.forEach(val=>{
+let opt=document.createElement("option");
+opt.value=val;
+opt.text=val;
+filter.appendChild(opt);
+});
+
+});
+
+}
+
+function excelFilter(){
+
+let filters=document.querySelectorAll(".filter");
+let rows=document.querySelectorAll("#dataTable tbody tr");
+
+rows.forEach(row=>{
+
+let show=true;
+
+filters.forEach((filter,index)=>{
+
+let val=filter.value;
+let cell=row.cells[index].innerText;
+
+if(val && val!==cell) show=false;
+
+});
+
+row.style.display=show?"":"none";
+
+});
+
+updateTotalCount();
+
+}
+
+document.getElementById("agencySearch").addEventListener("keyup",topFilter);
+document.getElementById("issueDateSearch").addEventListener("change",topFilter);
+
+function formatDate(dateStr){
+
+if(!dateStr) return "";
+
+dateStr = dateStr.replace(/\//g,"-").replace(/\./g,"-");
+
+let parts = dateStr.split("-");
+
+if(parts.length===3){
+
+if(parts[0].length===4){
+return parts[0]+"-"+parts[1].padStart(2,"0")+"-"+parts[2].padStart(2,"0");
+}
+
+return parts[2]+"-"+parts[1].padStart(2,"0")+"-"+parts[0].padStart(2,"0");
+
+}
+
+return "";
+}
+
+function topFilter(){
+
+let agency=document.getElementById("agencySearch").value.toLowerCase();
+let date=document.getElementById("issueDateSearch").value;
+
+let rows=document.querySelectorAll("#dataTable tbody tr");
+
+rows.forEach(row=>{
+
+let agencyCell=row.cells[15].innerText.toLowerCase();
+let dateCell=row.cells[16].innerText;
+
+let show=true;
+
+if(agency && !agencyCell.includes(agency)) show=false;
+
+if(date){
+
+let sheetDate=formatDate(dateCell);
+
+if(sheetDate!==date) show=false;
+
+}
+
+row.style.display=show ? "" : "none";
+
+});
+
+updateTotalCount();
+
+}
+
+function updateTotalCount(){
+
+let rows=document.querySelectorAll("#dataTable tbody tr");
+let count=0;
+
+rows.forEach(row=>{
+if(row.style.display!=="none") count++;
+});
+
+document.getElementById("totalCount").innerText="Total Records: "+count;
+
+}
+
+function generatePDF(){
+
+const { jsPDF } = window.jspdf;
+
+let doc = new jsPDF("landscape");
+
+doc.setFontSize(16);
+doc.text("Dhupguri CCC Disconnection List",14,15);
+
+let rows=document.querySelectorAll("#dataTable tbody tr");
+
+let body=[];
+
+rows.forEach(row=>{
+
+if(row.style.display!=="none"){
+
+let rowData=[];
+row.querySelectorAll("td").forEach(cell=>{
+rowData.push(cell.innerText);
+});
+
+body.push(rowData);
+
+}
+
+});
+
+doc.autoTable({
+
+head:[["MRU","Consumer ID","Name","Address","Class","Meter Number","Date To Net O/S Due","Date Net To O/S","Last Pay Amount","Last Pay Date","Mobile Number","Lat","Long","Report","Reading","Agency Name","Disconnection Issue Date"]],
+
+body:body,
+startY:25,
+theme:"grid",
+styles:{fontSize:8}
+
+});
+
+return doc;
+
+}
+
+function viewPDF(){
+
+let doc = generatePDF();
+let url = doc.output("bloburl");
+window.open(url);
+
+}
+
+function downloadPDF(){
+
+let doc = generatePDF();
+doc.save("Dhupguri_Disconnection_List.pdf");
+
+}
+
+</script>
+
+</body>
+</html>
