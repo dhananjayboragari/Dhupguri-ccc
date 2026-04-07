@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submission Page</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg, #f0f0f0, #dcdcdc);
+  color:#333;
+}
+
+.container{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  max-width:360px;
+  width:100%;
+}
+
+.card-box{
+  position:relative;
+}
+
+.card-border{
+  padding:1.5px;
+  border-radius:20px;
+  background: linear-gradient(90deg, #FF7F50, #FF6347);
+  transition: transform 0.3s ease;
+}
+
+.card-border:hover{
+  transform: scale(1.05);
+}
+
+.card-btn{
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-btn:active{
+  transform: scale(0.95);
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+
+.card-btn img{
+  width:55px;
+  margin-bottom:10px;
+}
+
+.card-btn h3{
+  margin:0;
+  font-size:15px;
+}
+
+.loader{
+  width:0%;
+  height:5px;
+  border-radius:5px;
+  margin-top:10px;
+  background:linear-gradient(90deg,#00ffcc,#ff00ff,#00ffcc);
+  animation:loaderFlash 1.2s linear infinite;
+  transition: width 0.1s linear;
+}
+
+@keyframes loaderFlash{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+a{text-decoration:none; color:black; display:block;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- 1 -->
+<div class="card-box">
+<a href="https://example.com/1" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/W4S2V1tT/NSC-SURVEY.jpg">
+<h3>NSC SURVEY</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 2 -->
+<div class="card-box">
+<a href="https://example.com/2" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/xKQjzJT9/CUTTING-TULS.jpg">
+<h3>EVERY DAY DISCONNECTION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 3 -->
+<div class="card-box">
+<a href="https://example.com/3" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/G4RWLPzN/34111.png">
+<h3>METER REPLACEMENT</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 4 -->
+<div class="card-box">
+<a href="https://example.com/4" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://cdn-icons-png.flaticon.com/512/2913/2913465.png">
+<h3>NEW CONNECTION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 5 -->
+<div class="card-box">
+<a href="https://example.com/5" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png">
+<h3>BILL COLLECTION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 6 -->
+<div class="card-box">
+<a href="https://example.com/6" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://cdn-icons-png.flaticon.com/512/2920/2920244.png">
+<h3>COMPLAINT</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 7 -->
+<div class="card-box">
+<a href="https://example.com/7" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://cdn-icons-png.flaticon.com/512/2910/2910791.png">
+<h3>LINE MAINTENANCE</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- 8 -->
+<div class="card-box">
+<a href="https://example.com/8" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+<h3>REPORT SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+</div>
+
+<script>
+function startLoad(e, el){
+  e.preventDefault();
+  let loader = el.querySelector(".loader");
+  let width = 0;
+
+  let iframe = document.createElement("iframe");
+  iframe.src = el.href;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  let run = setInterval(()=>{
+    if(width < 60) width += 0.8;
+    else if(width < 85) width += 0.3;
+    else if(width < 90) width += 0.15;
+    else if(width < 95) width += 0.05;
+
+    loader.style.width = width + "%";
+  },120);
+
+  iframe.onload = function(){
+    clearInterval(run);
+    loader.style.width = "100%";
+    window.location.href = el.href;
+    iframe.remove();
+  }
+}
+</script>
+
+</body>
+</html>
