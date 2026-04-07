@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#e0eafc,#cfdef3);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.card{
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  padding:30px 25px;
+  width:90%;
+  max-width:360px;
+  border-radius:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+  text-align:center;
+}
+.icon-box{
+  width:80px;height:80px;
+  background:#28a745;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 15px;
+}
+.icon-box i{color:#fff;font-size:32px;}
+.company{color:#28a745;font-weight:600;margin-bottom:15px;font-size:18px;}
+.input-box{position:relative;margin:12px 0;}
+.left,.right{position:absolute;top:50%;transform:translateY(-50%);color:#888;}
+.left{left:12px;}
+.right{right:12px;cursor:pointer;}
+input{width:100%;padding:14px 45px;border:1px solid #ccc;border-radius:12px;font-size:15px;outline:none;}
+input:focus{border-color:#28a745;box-shadow:0 0 5px rgba(40,167,69,0.2);}
+button{width:100%;padding:14px;background:#28a745;color:#fff;border:none;border-radius:12px;font-size:16px;margin-top:12px;cursor:pointer;}
+button:hover{background:#218838;}
+.msg{margin-top:12px;font-size:14px;min-height:18px;}
+.link{display:block;margin-top:12px;color:#007bff;cursor:pointer;text-decoration:underline;}
+
+#toast{
+  position:relative;
+  margin-bottom:10px;
+  background:#fff3cd;
+  color:#333;
+  padding:25px 18px 18px;
+  border-radius:15px;
+  font-size:14px;
+  width:100%;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  display:none;
+  text-align:left;
+}
+#toast.show{display:block;}
+#toast .close-btn{
+  position:absolute;
+  top:8px;
+  right:10px;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="icon-box"><i class="fas fa-user-plus"></i></div>
+  <div class="company">M/S Chakraborty Electricals</div>
+  <h2>Create Account</h2>
+
+  <div class="input-box">
+    <i class="fas fa-envelope left"></i>
+    <input id="email" placeholder="Email">
+  </div>
+
+  <div class="input-box">
+    <i class="fas fa-lock left"></i>
+    <input id="password" type="password" placeholder="Password">
+    <i class="fas fa-eye right" onclick="toggle('password',this)"></i>
+  </div>
+
+  <div class="input-box">
+    <i class="fas fa-lock left"></i>
+    <input id="confirm" type="password" placeholder="Confirm Password">
+    <i class="fas fa-eye right" onclick="toggle('confirm',this)"></i>
+  </div>
+
+  <div id="toast">
+    <span class="close-btn" onclick="closeToast()">&times;</span>
+    <div id="toastContent"></div>
+  </div>
+
+  <button onclick="signup()">Sign Up</button>
+
+  <div id="msg" class="msg"></div>
+  <span class="link" onclick="location.href='index.html'">Back to Login</span>
+</div>
+
+<script>
+function toggle(id,icon){
+  let p=document.getElementById(id);
+  if(p.type==="password"){
+    p.type="text";
+    icon.classList.replace("fa-eye","fa-eye-slash");
+  }else{
+    p.type="password";
+    icon.classList.replace("fa-eye-slash","fa-eye");
+  }
+}
+
+function showToast(message){
+  const toast = document.getElementById("toast");
+  const content = document.getElementById("toastContent");
+
+  content.innerHTML = message;
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  },30000);
+}
+
+function closeToast(){
+  document.getElementById("toast").classList.remove("show");
+}
+</script>
+
+<!-- ✅ ONLY FIREBASE CHANGED -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+});
+
+const auth = getAuth(app);
+let currentUser=null;
+
+window.signup = async function(){
+  const email=document.getElementById("email").value.trim();
+  const pass=document.getElementById("password").value;
+  const conf=document.getElementById("confirm").value;
+  const msg=document.getElementById("msg");
+
+  msg.innerHTML="";
+
+  if(!email || !pass || !conf){
+    msg.innerHTML="❌ All fields required";
+    return;
+  }
+
+  if(pass!==conf){
+    msg.innerHTML="❌ Password not match";
+    return;
+  }
+
+  if(pass.length<6){
+    msg.innerHTML="❌ Password must be 6+ characters";
+    return;
+  }
+
+  try{
+    const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
+    currentUser = userCredential.user;
+
+    await sendEmailVerification(currentUser);
+
+    showToast(
+      "✅ <b style='color:#28a745'>Account Created!</b><br>\
+      <i class='fas fa-envelope-open-text' style='color:#ff9800'></i> \
+      <span style='color:#555'>Check your inbox or spam folder for the verification email.</span><br><br>\
+      <i class='fas fa-exclamation-circle' style='color:#dc3545'></i> \
+      <span style='color:#000'>Didn’t find the email?</span><br>\
+      👉 <span style='color:#007bff'>Spam open করো</span> → \
+      <b style='color:#dc3545'>\"Not Spam\"</b> click করো → \
+      <b style='color:#28a745'>Inbox</b>-এ আসবে"
+    );
+
+  }catch(e){
+    if(e.code==="auth/email-already-in-use"){
+      msg.innerHTML="❌ Email already registered";
+    }
+    else if(e.code==="auth/invalid-email"){
+      msg.innerHTML="❌ Invalid email format";
+    }
+    else{
+      msg.innerHTML="❌ Something went wrong";
+    }
+  }
+}
+</script>
+
+</body>
+</html>
