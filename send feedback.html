@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Feedback Form</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  color: white;
+}
+
+.container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  box-shadow: 0 0 8px #fff;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #764ba2;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background: #ddd;
+}
+
+button.loading {
+  background: #ccc;
+  pointer-events: none;
+}
+
+.success-message {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Feedback Form</h2>
+
+  <form id="myForm">
+    
+    <div class="input-group">
+      <label>Name</label>
+      <input type="text" name="name" placeholder="Enter your name" required>
+    </div>
+
+    <div class="input-group">
+      <label>Subject</label>
+      <input type="text" name="email" placeholder="Enter subject" required>
+    </div>
+
+    <div class="input-group">
+      <label>Message</label>
+      <textarea name="message" placeholder="Write your message..." required></textarea>
+    </div>
+
+    <button type="submit" id="submitBtn">Submit</button>
+
+    <div class="success-message" id="successMsg">
+      ✅ Feedback Submitted Successfully!
+    </div>
+
+  </form>
+</div>
+
+<script>
+document.getElementById("myForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById("submitBtn");
+  const successMsg = document.getElementById("successMsg");
+
+  btn.innerText = "Submitting...";
+  btn.classList.add("loading");
+
+  fetch("https://script.google.com/macros/s/AKfycbzJZc30qP6qDsAzT1HSJMcfkb77xiPg9OyimpqEUlwy32Ck4rtbo0MG5mDwC9UByLGz/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: this.name.value,
+      email: this.email.value,
+      message: this.message.value
+    })
+  })
+  .then(res => {
+    btn.innerText = "Submit";
+    btn.classList.remove("loading");
+    successMsg.style.display = "block";
+    this.reset();
+  })
+  .catch(() => {
+    btn.innerText = "Submit";
+    btn.classList.remove("loading");
+    alert("Something went wrong!");
+  });
+});
+</script>
+
+</body>
+</html>
