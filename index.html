@@ -123,8 +123,47 @@ button:hover{ background:#0056b3; }
 }
 #resend:hover{background:#e0a800;}
 
-h2{
-  margin:5px 0 10px;
+h2{ margin:5px 0 10px; }
+
+/* 🔥 POPUP */
+.popup{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%) translateY(-100px);
+  background:#333;
+  color:#fff;
+  padding:15px 22px;
+  border-radius:12px;
+  font-size:14px;
+  opacity:0;
+  transition:all 0.4s ease;
+  z-index:9999;
+}
+.popup.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+.popup.success{ background:#28a745; }
+.popup.error{ background:#dc3545; }
+
+/* 🔵 WAITING */
+.popup.waiting{
+  background:#007bff;
+}
+.popup.waiting::after{
+  content:"";
+  display:inline-block;
+  width:14px;
+  height:14px;
+  margin-left:8px;
+  border:2px solid #fff;
+  border-top:2px solid transparent;
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+@keyframes spin{
+  to{ transform:rotate(360deg); }
 }
 </style>
 </head>
@@ -166,6 +205,8 @@ h2{
 
 </div>
 
+<div id="popup" class="popup"></div>
+
 <script>
 function togglePassword(){
   let p=document.getElementById("password");
@@ -179,37 +220,46 @@ function togglePassword(){
   }
 }
 
-window.onload = function(){
-  let email = localStorage.getItem("user");
+function showPopup(message,type="success"){
+  let popup=document.getElementById("popup");
+  popup.innerText=message;
+  popup.className="popup show "+type;
+
+  if(type!=="waiting"){
+    setTimeout(()=>{ popup.classList.remove("show"); },3000);
+  }
+}
+
+window.onload=function(){
+  let email=localStorage.getItem("user");
   if(email){
-    document.getElementById("email").value = email;
-    document.getElementById("remember").checked = true;
+    document.getElementById("email").value=email;
+    document.getElementById("remember").checked=true;
   }
 
-  const resendBtn = document.getElementById("resend");
-  let lastTime = localStorage.getItem("resendTime");
+  const resendBtn=document.getElementById("resend");
+  let lastTime=localStorage.getItem("resendTime");
 
   if(lastTime){
-    let diff = Math.floor((Date.now() - lastTime)/1000);
-    if(diff < 60){
+    let diff=Math.floor((Date.now()-lastTime)/1000);
+    if(diff<60){
       resendBtn.style.display="block";
       startCooldown(resendBtn,60-diff);
     }
   }
 }
 
-document.addEventListener("keydown", function(e){
+document.addEventListener("keydown",function(e){
   if(e.key==="Enter"){ login(); }
 });
 </script>
 
-<!-- ✅ Firebase (ONLY CHANGED PART) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const app = initializeApp({
-  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  apiKey: "YOUR_API_KEY_HERE",
   authDomain: "dhupguri-ccc.firebaseapp.com",
   projectId: "dhupguri-ccc",
   storageBucket: "dhupguri-ccc.firebasestorage.app",
@@ -217,29 +267,24 @@ const app = initializeApp({
   appId: "1:278611213070:web:f9652c7965f472164c355f"
 });
 
-const auth = getAuth();
+const auth=getAuth();
 
 let currentUser=null;
 let timerInterval=null;
 
-window.login = async function(){
-  let email = document.getElementById("email").value;
-  let password = document.getElementById("password").value;
-  let msg = document.getElementById("msg");
-  const resendBtn = document.getElementById("resend");
+window.login=async function(){
+  let email=document.getElementById("email").value;
+  let password=document.getElementById("password").value;
 
-  msg.innerHTML="⏳ Logging in...";
-  msg.style.color="#000";
-  resendBtn.style.display="none";
+  showPopup("Logging in...","waiting");
 
   try{
-    const userCredential = await signInWithEmailAndPassword(auth,email,password);
-    currentUser = userCredential.user;
+    const userCredential=await signInWithEmailAndPassword(auth,email,password);
+    currentUser=userCredential.user;
 
     if(!currentUser.emailVerified){
-      msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
-      msg.style.color="red";
-      resendBtn.style.display="block";
+      showPopup("❌ Please verify your email first! Didn't receive? Click Resend.","error");
+      document.getElementById("resend").style.display="block";
       return;
     }
 
@@ -249,8 +294,7 @@ window.login = async function(){
       localStorage.removeItem("user");
     }
 
-    msg.innerHTML="✅ Login Success";
-    msg.style.color="green";
+    showPopup("✅ Login Success","success");
     setTimeout(()=>location.href="home.html",1000);
 
   }catch(e){
@@ -277,18 +321,15 @@ window.login = async function(){
         break;
     }
 
-    msg.innerHTML="❌ " + customMsg;
-    msg.style.color="red";
+    showPopup("❌ " + customMsg,"error");
   }
 }
 
 function startCooldown(btn,timeLeft=60){
   btn.disabled=true;
-
   timerInterval=setInterval(()=>{
     btn.innerText=`Resend in ${timeLeft}s`;
     timeLeft--;
-
     if(timeLeft<0){
       clearInterval(timerInterval);
       btn.disabled=false;
@@ -298,15 +339,38 @@ function startCooldown(btn,timeLeft=60){
   },1000);
 }
 
-window.resendEmail = async function(){
-  const resendBtn = document.getElementById("resend");
+window.resendEmail=async function(){
+  const resendBtn=document.getElementById("resend");
 
-  if(currentUser){
+  if(!currentUser){
+    showPopup("❌ Login again first","error");
+    return;
+  }
+
+  try{
+    showPopup("Sending email...","waiting");
+
     await sendEmailVerification(currentUser);
-    alert("Verification email resent! Check inbox or spam folder.");
+
+    showPopup("✅ Verification email resent! Check inbox or spam folder.","success");
 
     localStorage.setItem("resendTime",Date.now());
     startCooldown(resendBtn,60);
+
+  }catch(error){
+
+    let msg = "Failed to resend email.";
+
+    switch(error.code){
+      case "auth/too-many-requests":
+        msg = "Too many requests! Try again later.";
+        break;
+      case "auth/network-request-failed":
+        msg = "No internet connection.";
+        break;
+    }
+
+    showPopup("❌ " + msg,"error");
   }
 }
 </script>
