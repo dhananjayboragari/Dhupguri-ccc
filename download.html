@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  margin:0; font-family:Arial; padding:20px; background:#050510; overflow:hidden;
+}
+#network{ position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+.container{ max-width:400px; margin:auto; }
+.card{ display:flex; justify-content:space-between; align-items:center; padding:25px 15px; margin-bottom:20px; background: rgba(30,30,50,0.85); border-radius:15px; color:white; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition:0.3s; }
+.card:hover{ background: rgba(50,50,70,0.95); }
+.icon{ font-size:24px; animation:float 2s infinite; }
+@keyframes float{ 0%{transform:translateY(0)} 50%{transform:translateY(-5px)} 100%{transform:translateY(0)} }
+.btn{ background: linear-gradient(45deg,#ff4b2b,#ff6a00); border:none; padding:12px 20px; color:white; border-radius:6px; cursor:pointer; font-size:16px; transition:0.3s; }
+.btn:hover{ transform:scale(1.05); }
+.progress{ height:5px; background:#222; border-radius:5px; overflow:hidden; display:none; margin-bottom:10px; }
+.bar{ height:100%; width:0%; background:linear-gradient(90deg,#00ffcc,#ff00ff); transition: width 0.1s linear; }
+</style>
+</head>
+
+<body>
+<canvas id="network"></canvas>
+
+<div class="container">
+<div class="card"><div class="icon">Web Page<br><span style="font-size:13px;">User::Dhupguriccc<br>Password::1234</span></div><button class="btn" onclick="download(this,'https://drive.google.com/uc?export=download&id=1nTcqREUIOe_fUpThLMMliNOKt3YGQUN8')">Download</button></div>
+<div class="progress"><div class="bar"></div></div>
+
+<div class="card"><div class="icon">Mobile app</div><button class="btn" onclick="download(this,'https://www.appcreator24.com/app3033449-j6ufbe')">Download</button></div>
+<div class="progress"><div class="bar"></div></div>
+
+<div class="card"><div class="icon">NSC Survey Paper</div><button class="btn" onclick="download(this,'https://drive.google.com/uc?export=download&id=1nQOmlMkLkGJ9mdMpxyAmh8RQpIsUc1O5')">Download</button></div>
+<div class="progress"><div class="bar"></div></div>
+
+<div class="card"><div class="icon">New Pole Requision</div><button class="btn" onclick="download(this,'https://drive.google.com/uc?export=download&id=1oyAd0-b7Ekx3bFJVWYK8R2fmuuxVKNwK')">Download</button></div>
+<div class="progress"><div class="bar"></div></div>
+
+<div class="card"><div class="icon">NSC Declaration Form</div><button class="btn" onclick="download(this,'https://drive.google.com/uc?export=download&id=1djTGmZzLjRCG9biAlVjwPx5Fwaaw2lAw')">Download</button></div>
+<div class="progress"><div class="bar"></div></div>
+</div>
+
+<script>
+function download(btn, link){
+  let progress = btn.parentElement.nextElementSibling;
+  let bar = progress.querySelector('.bar');
+  progress.style.display="block"; 
+  bar.style.width="0%";
+
+  // Slower & smooth fake progress animation
+  let width=0;
+  let interval = setInterval(()=>{
+    width += Math.random()*2 + 1; // slow increment 1~3% for smooth feel
+    if(width>95) width=95;
+    bar.style.width = width + "%";
+  }, 120); // slower update interval
+
+  // Start actual download
+  let a = document.createElement("a");
+  a.href = link;
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Complete progress after 4 sec
+  setTimeout(()=>{
+    clearInterval(interval);
+    bar.style.width = "100%";
+    setTimeout(()=>{
+      progress.style.display="none";
+      bar.style.width="0%";
+    },500);
+  },4000); // slower fake progress
+}
+
+/* Rainbow Network Background */
+function initNetwork(){
+  const canvas = document.getElementById("network");
+  const ctx = canvas.getContext("2d");
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+  let hue=0;
+  let particles=[];
+  function createParticles(){
+    particles=[];
+    const count = Math.min(80, width/10);
+    for(let i=0;i<count;i++){
+      particles.push({x:Math.random()*width, y:Math.random()*height, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5, r:2});
+    }
+  }
+  createParticles();
+  window.addEventListener("resize",()=>{
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    createParticles();
+  });
+  function draw(){
+    ctx.clearRect(0,0,width,height);
+    particles.forEach((p,i)=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle="hsl("+hue+",100%,60%)";
+      ctx.fill();
+      for(let j=i+1;j<particles.length;j++){
+        let p2 = particles[j];
+        let dx=p.x-p2.x, dy=p.y-p2.y;
+        let dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<120){
+          ctx.beginPath();
+          ctx.moveTo(p.x,p.y);
+          ctx.lineTo(p2.x,p2.y);
+          ctx.strokeStyle="hsla("+hue+",100%,60%,"+(1-dist/120)+")";
+          ctx.lineWidth=0.7;
+          ctx.stroke();
+        }
+      }
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0||p.x>width) p.dx*=-1;
+      if(p.y<0||p.y>height) p.dy*=-1;
+    });
+    hue+=0.5;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+initNetwork();
+window.addEventListener("pageshow", function(e){ if(e.persisted) initNetwork(); });
+</script>
+</body>
+</html>
