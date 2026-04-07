@@ -84,6 +84,7 @@ button{
   margin-top:12px;
 }
 button:hover{ background:#0056b3; }
+
 .msg{
   margin-top:12px;
   font-size:14px;
@@ -91,17 +92,19 @@ button:hover{ background:#0056b3; }
 }
 .success{color:green;}
 .error{color:red;}
+
 .remember{
   display:flex;
   align-items:center;
   font-size:14px;
   margin-top:12px;
 }
-.remember input[type="checkbox"]{
+.remember input{
   width:16px;
   height:16px;
-  margin:0 8px 0 0;
+  margin-right:8px;
 }
+
 .link{
   display:block;
   margin-top:12px;
@@ -110,6 +113,7 @@ button:hover{ background:#0056b3; }
   font-size:14px;
   text-decoration:underline;
 }
+
 #resend{
   display:none;
   width:100%;
@@ -146,11 +150,8 @@ h2{ margin:5px 0 10px; }
 }
 .popup.success{ background:#28a745; }
 .popup.error{ background:#dc3545; }
+.popup.waiting{ background:#007bff; }
 
-/* 🔵 WAITING */
-.popup.waiting{
-  background:#007bff;
-}
 .popup.waiting::after{
   content:"";
   display:inline-block;
@@ -171,40 +172,40 @@ h2{ margin:5px 0 10px; }
 <body>
 
 <div class="card">
+  <div class="icon-box">
+    <i class="fas fa-user"></i>
+  </div>
 
-<div class="icon-box">
-<i class="fas fa-user"></i>
+  <div class="company">DHUPGURI C.C.C</div>
+
+  <h2>Login</h2>
+
+  <div class="input-box">
+    <i class="fas fa-envelope left"></i>
+    <input id="email" placeholder="Email">
+  </div>
+
+  <div class="input-box">
+    <i class="fas fa-lock left"></i>
+    <input id="password" type="password" placeholder="Password">
+    <i class="fas fa-eye right" onclick="togglePassword()"></i>
+  </div>
+
+  <div class="remember">
+    <input type="checkbox" id="remember"> Remember Me
+  </div>
+
+  <button onclick="login()">Login</button>
+
+  <button id="resend" onclick="resendEmail()">Resend Verification Email</button>
+
+  <div id="msg" class="msg"></div>
+
+  <span class="link" onclick="location.href='signup.html'">Create Account</span>
+  <span class="link" onclick="location.href='forgot.html'">Forgot Password?</span>
 </div>
 
-<div class="company">DHUPGURI C.C.C</div>
-
-<h2>Login</h2>
-
-<div class="input-box">
-<i class="fas fa-envelope left"></i>
-<input id="email" placeholder="Email">
-</div>
-
-<div class="input-box">
-<i class="fas fa-lock left"></i>
-<input id="password" type="password" placeholder="Password">
-<i class="fas fa-eye right" onclick="togglePassword()"></i>
-</div>
-
-<div class="remember">
-<input type="checkbox" id="remember"> Remember Me
-</div>
-
-<button onclick="login()">Login</button>
-<button id="resend" onclick="resendEmail()">Resend Verification Email</button>
-
-<div id="msg" class="msg"></div>
-
-<span class="link" onclick="location.href='signup.html'">Create Account</span>
-<span class="link" onclick="location.href='forgot.html'">Forgot Password?</span>
-
-</div>
-
+<!-- 🔥 POPUP HTML -->
 <div id="popup" class="popup"></div>
 
 <script>
@@ -220,36 +221,26 @@ function togglePassword(){
   }
 }
 
-function showPopup(message,type="success"){
-  let popup=document.getElementById("popup");
-  popup.innerText=message;
-  popup.className="popup show "+type;
-
-  if(type!=="waiting"){
-    setTimeout(()=>{ popup.classList.remove("show"); },3000);
-  }
-}
-
-window.onload=function(){
-  let email=localStorage.getItem("user");
+window.onload = function(){
+  let email = localStorage.getItem("user");
   if(email){
-    document.getElementById("email").value=email;
-    document.getElementById("remember").checked=true;
+    document.getElementById("email").value = email;
+    document.getElementById("remember").checked = true;
   }
 
-  const resendBtn=document.getElementById("resend");
-  let lastTime=localStorage.getItem("resendTime");
+  const resendBtn = document.getElementById("resend");
+  let lastTime = localStorage.getItem("resendTime");
 
   if(lastTime){
-    let diff=Math.floor((Date.now()-lastTime)/1000);
-    if(diff<60){
+    let diff = Math.floor((Date.now() - lastTime)/1000);
+    if(diff < 60){
       resendBtn.style.display="block";
       startCooldown(resendBtn,60-diff);
     }
   }
 }
 
-document.addEventListener("keydown",function(e){
+document.addEventListener("keydown", function(e){
   if(e.key==="Enter"){ login(); }
 });
 </script>
@@ -259,7 +250,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const app = initializeApp({
-  apiKey: "YOUR_API_KEY_HERE",
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
   authDomain: "dhupguri-ccc.firebaseapp.com",
   projectId: "dhupguri-ccc",
   storageBucket: "dhupguri-ccc.firebasestorage.app",
@@ -267,24 +258,41 @@ const app = initializeApp({
   appId: "1:278611213070:web:f9652c7965f472164c355f"
 });
 
-const auth=getAuth();
+const auth = getAuth();
 
 let currentUser=null;
 let timerInterval=null;
 
-window.login=async function(){
-  let email=document.getElementById("email").value;
-  let password=document.getElementById("password").value;
+/* 🔥 POPUP FUNCTION */
+function showPopup(message,type="success"){
+  let popup=document.getElementById("popup");
 
-  showPopup("Logging in...","waiting");
+  popup.innerText=message;
+  popup.className="popup show "+type;
+
+  if(type!=="waiting"){
+    setTimeout(()=>popup.classList.remove("show"),3000);
+  }
+}
+
+window.login = async function(){
+  let email = document.getElementById("email").value;
+  let password = document.getElementById("password").value;
+  let msg = document.getElementById("msg");
+  const resendBtn = document.getElementById("resend");
+
+  msg.innerHTML="⏳ Logging in...";
+  msg.style.color="#000";
+  resendBtn.style.display="none";
 
   try{
-    const userCredential=await signInWithEmailAndPassword(auth,email,password);
-    currentUser=userCredential.user;
+    const userCredential = await signInWithEmailAndPassword(auth,email,password);
+    currentUser = userCredential.user;
 
     if(!currentUser.emailVerified){
-      showPopup("❌ Please verify your email first! Didn't receive? Click Resend.","error");
-      document.getElementById("resend").style.display="block";
+      msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
+      msg.style.color="red";
+      resendBtn.style.display="block";
       return;
     }
 
@@ -294,7 +302,8 @@ window.login=async function(){
       localStorage.removeItem("user");
     }
 
-    showPopup("✅ Login Success","success");
+    msg.innerHTML="✅ Login Success";
+    msg.style.color="green";
     setTimeout(()=>location.href="home.html",1000);
 
   }catch(e){
@@ -321,15 +330,18 @@ window.login=async function(){
         break;
     }
 
-    showPopup("❌ " + customMsg,"error");
+    msg.innerHTML="❌ " + customMsg;
+    msg.style.color="red";
   }
 }
 
 function startCooldown(btn,timeLeft=60){
   btn.disabled=true;
+
   timerInterval=setInterval(()=>{
     btn.innerText=`Resend in ${timeLeft}s`;
     timeLeft--;
+
     if(timeLeft<0){
       clearInterval(timerInterval);
       btn.disabled=false;
@@ -339,38 +351,32 @@ function startCooldown(btn,timeLeft=60){
   },1000);
 }
 
-window.resendEmail=async function(){
-  const resendBtn=document.getElementById("resend");
+window.resendEmail = async function(){
+  const resendBtn = document.getElementById("resend");
 
-  if(!currentUser){
-    showPopup("❌ Login again first","error");
-    return;
-  }
+  if(currentUser){
+    try{
+      showPopup("Sending email...","waiting");
 
-  try{
-    showPopup("Sending email...","waiting");
+      await sendEmailVerification(currentUser);
 
-    await sendEmailVerification(currentUser);
+      showPopup("Verification email resent! Check inbox or spam folder.","success");
 
-    showPopup("✅ Verification email resent! Check inbox or spam folder.","success");
+      localStorage.setItem("resendTime",Date.now());
+      startCooldown(resendBtn,60);
 
-    localStorage.setItem("resendTime",Date.now());
-    startCooldown(resendBtn,60);
+    }catch(e){
+      let msg="Failed to resend email";
 
-  }catch(error){
+      if(e.code==="auth/too-many-requests"){
+        msg="Too many requests. Try later.";
+      }
+      else if(e.code==="auth/network-request-failed"){
+        msg="No internet connection.";
+      }
 
-    let msg = "Failed to resend email.";
-
-    switch(error.code){
-      case "auth/too-many-requests":
-        msg = "Too many requests! Try again later.";
-        break;
-      case "auth/network-request-failed":
-        msg = "No internet connection.";
-        break;
+      showPopup(msg,"error");
     }
-
-    showPopup("❌ " + msg,"error");
   }
 }
 </script>
