@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submission Page</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  min-height:100vh;
+  overflow-y:auto;
+  background:#0f2027;
+  color:white;
+  transition: background 0.5s, color 0.5s;
+}
+
+body.light-mode{
+  background:#f0f0f0;
+  color:#000;
+}
+
+#network{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+
+/* HEADER */
+.header{
+  width:100%;
+  padding:10px 0;
+  font-weight:bold;
+  background:rgba(0,0,0,0.7);
+  letter-spacing:1px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding-left:20px;
+}
+
+.header-text{
+  font-size:18px;
+  transition: all 0.5s;
+}
+
+body.dark-mode .header-text{
+  color:white;
+}
+
+body.light-mode .header-text{
+  background:linear-gradient(270deg,red,orange,yellow,green,cyan,blue,violet);
+  background-size:400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation:borderMove 12s linear infinite;
+}
+
+.dark-btn{
+  position:absolute;
+  top:50%;
+  right:20px;
+  transform:translateY(-50%);
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:white;
+  font-size:16px;
+  padding:4px 8px;
+  border-radius:6px;
+  cursor:pointer;
+  backdrop-filter:blur(5px);
+  z-index:25;
+}
+
+body.light-mode .dark-btn{
+  background:rgba(0,0,0,0.2);
+  color:black;
+}
+
+.top-img{
+  width:100%;
+  padding:3px;
+  background:linear-gradient(45deg,red,orange,yellow,green,cyan,blue,violet);
+  box-sizing:border-box;
+  margin-top:50px;
+  border-radius:16px;
+}
+
+.top-img img{
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  display:block;
+  border-radius:14px;
+}
+
+.container{
+  padding:20px;
+  max-width:340px;
+  margin:auto;
+}
+
+.card-box{
+  margin-bottom:22px;
+}
+
+.card-border{
+  padding:1.5px;
+  border-radius:20px;
+  background:linear-gradient(270deg,red,orange,yellow,green,cyan,blue,violet);
+  background-size:400% 400%;
+  animation:borderMove 12s linear infinite;
+}
+
+body.light-mode .card-border{
+  background:linear-gradient(270deg,#ff6a00,#ffb347,#00ffcc,#00bfff,#ff00ff,#ff0000);
+  background-size:400% 400%;
+}
+
+@keyframes borderMove{
+  0%{background-position:0%}
+  100%{background-position:400%}
+}
+
+.card-btn{
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-btn:active{
+  transform: scale(0.90);
+  box-shadow:0 2px 6px rgba(0,0,0,0.5);
+}
+
+.card-btn img{
+  width:55px;
+  margin-bottom:10px;
+}
+
+.card-btn h3{
+  margin:0;
+  font-size:15px;
+}
+
+.loader{
+  width:0%;
+  height:5px;
+  border-radius:5px;
+  margin-top:10px;
+  background:linear-gradient(90deg,#00ffcc,#ff00ff,#00ffcc);
+  background-size:200% 100%;
+  box-shadow:0 0 5px #00ffcc,0 0 10px #ff00ff;
+  animation:loaderFlash 1.2s linear infinite;
+  transition: width 0.1s linear, box-shadow 0.2s linear;
+  position:relative;
+  overflow:hidden;
+}
+
+.loader::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+  animation:smoke 1.5s linear infinite;
+}
+
+@keyframes loaderFlash{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+@keyframes smoke{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
+}
+
+a{text-decoration:none; color:black;}
+</style>
+</head>
+
+<body class="dark-mode">
+
+<canvas id="network"></canvas>
+
+<div class="header">
+  <div class="header-text"> METER REPLACEMENT</div>
+  <button class="dark-btn" onclick="toggleMode()">🌙</button>
+</div>
+
+<div class="top-img">
+<img id="mainImage"
+src="https://i.ibb.co/Hf9m31b1/Dhupguri.png"
+onerror="
+this.onerror=null;
+this.src='https://iili.io/qwEUc3g.png';
+this.onerror=function(){
+this.onerror=null;
+this.src='https://drive.google.com/uc?export=view&id=1XsVuqlZrX11ZwU5uoVThdwjj7a_gxT3Q';
+this.onerror=function(){
+this.onerror=null;
+let cached=localStorage.getItem('savedImage');
+if(cached){
+this.src=cached;
+}else{
+this.src='data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27300%27><rect width=%27100%25%27 height=%27100%25%27 fill=%27black%27></rect><text x=%2750%25%27 y=%2750%25%27 fill=%27white%27 font-size=%2720%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27>Servers not available, please refresh this page</text></svg>';
+}
+};
+};
+">
+</div>
+
+<div class="container">
+
+<div class="card-box">
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LFVQDjqmYPp3t3UnfAw_MWIDhTMXPA5MoslFTlDSof3oAA/viewform?usp=dialog" onclick="startLoad(event,this)">
+<div class="card-border"><div class="card-btn">
+
+<!-- ✅ ONLY IMAGE CHANGED -->
+<img src="https://i.ibb.co/F46ZQhBF/3d-electric-meter-icon-suitable-for-technology-electricity-power-and-innovation-concepts-energize-yo.png">
+
+<h3>METER REPLACEMENT SUBMISSION </h3>
+</div></div>
+<div class="loader"></div>
+</a>
+</div>
+
+</div>
+
+<script>
+const img=document.getElementById("mainImage");
+img.onload=function(){
+try{
+localStorage.setItem("savedImage",img.src);
+}catch(e){}
+};
+
+function toggleMode(){
+  const body=document.body;
+  const btn=document.querySelector('.dark-btn');
+  if(body.classList.contains('dark-mode')){
+    body.classList.replace('dark-mode','light-mode');
+    btn.innerHTML="☀️";
+  }else{
+    body.classList.replace('light-mode','dark-mode');
+    btn.innerHTML="🌙";
+  }
+}
+
+function startLoad(e, el){
+  e.preventDefault();
+  let loader = el.querySelector(".loader");
+  let width = 0;
+
+  let iframe = document.createElement("iframe");
+  iframe.src = el.href;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  let run = setInterval(()=>{
+    if(width < 60) width += 0.8;
+    else if(width < 85) width += 0.3;
+    else if(width < 90) width += 0.15;
+    else if(width < 95) width += 0.05;
+
+    loader.style.width = width + "%";
+  },120);
+
+  iframe.onload = function(){
+    clearInterval(run);
+    loader.style.width = "100%";
+    window.location.href = el.href;
+    iframe.remove();
+  }
+}
+
+const canvas=document.getElementById("network");
+const ctx=canvas.getContext("2d");
+
+function resizeCanvas(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+}
+
+let particles=[];
+
+function createParticles(){
+  particles=[];
+  for(let i=0;i<50;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      vx:(Math.random()-0.5)*0.5,
+      vy:(Math.random()-0.5)*0.5
+    });
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const isLight=document.body.classList.contains("light-mode");
+
+  for(let i=0;i<particles.length;i++){
+    let p=particles[i];
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,2,0,Math.PI*2);
+
+    if(isLight){
+      let g=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+      g.addColorStop(0,"red");
+      g.addColorStop(0.5,"cyan");
+      g.addColorStop(1,"magenta");
+      ctx.fillStyle=g;
+    }else{
+      ctx.fillStyle="#fff";
+    }
+
+    ctx.fill();
+
+    for(let j=i+1;j<particles.length;j++){
+      let p2=particles[j];
+      let d=Math.hypot(p.x-p2.x,p.y-p2.y);
+
+      if(d<120){
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(p2.x,p2.y);
+        ctx.strokeStyle=isLight?"rgba(0,0,0,0.2)":"rgba(255,255,255,0.15)";
+        ctx.stroke();
+      }
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+resizeCanvas();
+createParticles();
+draw();
+
+window.addEventListener("pageshow",function(){
+  resizeCanvas();
+  createParticles();
+});
+
+window.addEventListener("visibilitychange",function(){
+  if(!document.hidden){
+    resizeCanvas();
+    createParticles();
+  }
+});
+</script>
+
+</body>
+</html>
