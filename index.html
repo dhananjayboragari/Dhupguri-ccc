@@ -129,12 +129,19 @@ button:hover{ background:#0056b3; }
 
 h2{ margin:5px 0 10px; }
 
-/* 🔥 POPUP */
+/* CAPS WARNING */
+#caps{
+  font-size:12px;
+  color:#dc3545;
+  display:none;
+}
+
+/* POPUP */
 .popup{
   position:fixed;
   top:80px;
   left:50%;
-  transform:translateX(-50%) translateY(-100px);
+  transform:translateX(-50%) translateY(-20px);
   background:#333;
   color:#fff;
   padding:15px 22px;
@@ -187,9 +194,11 @@ h2{ margin:5px 0 10px; }
 
   <div class="input-box">
     <i class="fas fa-lock left"></i>
-    <input id="password" type="password" placeholder="Password">
+    <input id="password" type="password" placeholder="Password" onkeyup="checkCaps(event)">
     <i class="fas fa-eye right" onclick="togglePassword()"></i>
   </div>
+
+  <div id="caps">⚠ Caps Lock is ON</div>
 
   <div class="remember">
     <input type="checkbox" id="remember"> Remember Me
@@ -205,7 +214,6 @@ h2{ margin:5px 0 10px; }
   <span class="link" onclick="location.href='forgot.html'">Forgot Password?</span>
 </div>
 
-<!-- 🔥 POPUP HTML -->
 <div id="popup" class="popup"></div>
 
 <script>
@@ -221,28 +229,28 @@ function togglePassword(){
   }
 }
 
-window.onload = function(){
-  let email = localStorage.getItem("user");
-  if(email){
-    document.getElementById("email").value = email;
-    document.getElementById("remember").checked = true;
-  }
-
-  const resendBtn = document.getElementById("resend");
-  let lastTime = localStorage.getItem("resendTime");
-
-  if(lastTime){
-    let diff = Math.floor((Date.now() - lastTime)/1000);
-    if(diff < 60){
-      resendBtn.style.display="block";
-      startCooldown(resendBtn,60-diff);
-    }
+function checkCaps(e){
+  const caps = document.getElementById("caps");
+  if(e.getModifierState("CapsLock")){
+    caps.style.display="block";
+  }else{
+    caps.style.display="none";
   }
 }
 
-document.addEventListener("keydown", function(e){
-  if(e.key==="Enter"){ login(); }
-});
+window.onload = function(){
+  let savedEmail = localStorage.getItem("rememberEmail");
+
+  if(savedEmail){
+    document.getElementById("email").value = savedEmail;
+    document.getElementById("remember").checked = true;
+    document.getElementById("password").focus(); // 🔥 auto focus
+  }
+
+  document.addEventListener("keydown", function(e){
+    if(e.key==="Enter"){ login(); }
+  });
+}
 </script>
 
 <script type="module">
@@ -262,16 +270,27 @@ const auth = getAuth();
 
 let currentUser=null;
 let timerInterval=null;
+let popupTimeout;
 
-/* 🔥 POPUP FUNCTION */
 function showPopup(message,type="success"){
-  let popup=document.getElementById("popup");
+  const popup = document.getElementById("popup");
+  clearTimeout(popupTimeout);
 
-  popup.innerText=message;
-  popup.className="popup show "+type;
+  if(popup.classList.contains("show")){
+    popup.classList.remove("show");
+    setTimeout(()=>{
+      popup.innerText = message;
+      popup.className = "popup show " + type;
+    },200);
+  }else{
+    popup.innerText = message;
+    popup.className = "popup show " + type;
+  }
 
   if(type!=="waiting"){
-    setTimeout(()=>popup.classList.remove("show"),15000);
+    popupTimeout = setTimeout(()=>{
+      popup.classList.remove("show");
+    },5000);
   }
 }
 
@@ -296,14 +315,16 @@ window.login = async function(){
       return;
     }
 
+    // 🔥 remember email only
     if(document.getElementById("remember").checked){
-      localStorage.setItem("user",email);
+      localStorage.setItem("rememberEmail", email);
     }else{
-      localStorage.removeItem("user");
+      localStorage.removeItem("rememberEmail");
     }
 
     msg.innerHTML="✅ Login Success";
     msg.style.color="green";
+
     setTimeout(()=>location.href="home.html",1000);
 
   }catch(e){
@@ -311,26 +332,20 @@ window.login = async function(){
 
     switch(e.code){
       case "auth/invalid-email":
-        customMsg="Invalid email address.";
-        break;
+        customMsg="Invalid email address."; break;
       case "auth/user-not-found":
-        customMsg="User not found. Please check your email or sign up.";
-        break;
+        customMsg="User not found."; break;
       case "auth/wrong-password":
-        customMsg="Password is incorrect. Please try again.";
-        break;
+        customMsg="Wrong password."; break;
       case "auth/too-many-requests":
-        customMsg="Too many attempts. Please wait a while and try again.";
-        break;
+        customMsg="Too many attempts."; break;
       case "auth/network-request-failed":
-        customMsg="Network error. Check your internet connection.";
-        break;
+        customMsg="No internet."; break;
       case "auth/invalid-credential":
-        customMsg="Email or password is incorrect.";
-        break;
+        customMsg="Email or password incorrect."; break;
     }
 
-    msg.innerHTML="❌ " + customMsg;
+    msg.innerHTML="❌ "+customMsg;
     msg.style.color="red";
   }
 }
@@ -360,23 +375,16 @@ window.resendEmail = async function(){
 
       await sendEmailVerification(currentUser);
 
-      showPopup("Verification email resent! Check inbox or spam folder.","success");
+      showPopup("Verification email resent!","success");
 
       localStorage.setItem("resendTime",Date.now());
       startCooldown(resendBtn,60);
 
     }catch(e){
-      let msg="Failed to resend email";
-
-      if(e.code==="auth/too-many-requests"){
-        msg="Too many requests. Try later.";
-      }
-      else if(e.code==="auth/network-request-failed"){
-        msg="No internet connection.";
-      }
-
-      showPopup(msg,"error");
+      showPopup("Failed to resend email","error");
     }
+  }else{
+    showPopup("Login again first","error");
   }
 }
 </script>
