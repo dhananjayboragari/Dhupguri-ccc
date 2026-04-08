@@ -334,13 +334,13 @@ window.login = async function(){
       case "auth/invalid-email":
         customMsg="Invalid email address."; break;
       case "auth/user-not-found":
-        customMsg="User not found."; break;
+        customMsg="This email is not registered. Please create a new account to continue."; break;
       case "auth/wrong-password":
         customMsg="Wrong password."; break;
       case "auth/too-many-requests":
-        customMsg="Too many tries. Please wait 8 hours before trying again."; break;
+        customMsg="Too many tries. Please wait 2 hours before trying again."; break;
       case "auth/network-request-failed":
-        customMsg="No internet."; break;
+       customMsg="Unable to connect to the server. Please check your internet or try again later."; break;
       case "auth/invalid-credential":
         customMsg="Email or password incorrect."; break;
     }
