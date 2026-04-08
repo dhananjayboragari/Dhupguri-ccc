@@ -6,23 +6,43 @@
 <title>Submission Page</title>
 
 <style>
+*{box-sizing:border-box;}
+
 body{
   margin:0;
   font-family:Arial, sans-serif;
   min-height:100vh;
   display:flex;
   justify-content:center;
-  align-items:center;
-  background: linear-gradient(135deg, #f0f0f0, #dcdcdc);
-  color:#333;
+  align-items:flex-start; /* keeps buttons starting from top */
+  padding:20px;
+  color:#fff;
+
+  /* Background Image */
+  background: url("https://i.ibb.co/sdNSg0QZ/Amazing-Wallpapers-For-Phone.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+/* Minimal overlay for slight contrast */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.05);
+  z-index:-1;
 }
 
 .container{
   display:flex;
   flex-direction:column;
-  gap:20px;
-  max-width:360px;
+  gap:12px; 
+  max-width:400px; 
   width:100%;
+  margin:auto;
+  margin-top:60px; /* pushed buttons lower on the page */
 }
 
 .card-box{
@@ -40,13 +60,19 @@ body{
   transform: scale(1.05);
 }
 
+/* Button styling */
 .card-btn{
-  background:white;
+  background:#ffffff; /* pure white */
   border-radius:16px;
-  padding:18px;
-  text-align:center;
+  padding:0 8px;
+  width:100%;
+  height:120px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
   cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,0.2);
+  box-shadow:0 6px 18px rgba(0,0,0,0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -55,23 +81,30 @@ body{
   box-shadow:0 2px 6px rgba(0,0,0,0.3);
 }
 
+/* Icon fully inside button */
 .card-btn img{
-  width:55px;
-  margin-bottom:10px;
+  max-width:70%;
+  max-height:70%;
+  object-fit:contain;
+  margin-bottom:8px;
 }
 
 .card-btn h3{
   margin:0;
-  font-size:15px;
+  font-size:16px;
+  color:#222;
+  text-align:center;
+  word-break:break-word;
 }
 
 .loader{
   width:0%;
   height:5px;
   border-radius:5px;
-  margin-top:10px;
+  margin-top:6px;
   background:linear-gradient(90deg,#00ffcc,#ff00ff,#00ffcc);
   animation:loaderFlash 1.2s linear infinite;
+  background-size:200%;
   transition: width 0.1s linear;
 }
 
@@ -80,7 +113,42 @@ body{
   100%{background-position:200%}
 }
 
-a{text-decoration:none; color:black; display:block;}
+a{
+  text-decoration:none;
+  color:black;
+  display:block;
+}
+
+/* Responsive adjustments */
+@media (max-width:768px){
+  .card-btn{
+    height:110px;
+  }
+  .card-btn img{
+    max-width:60%;
+    max-height:60%;
+  }
+  .card-btn h3{
+    font-size:14px;
+  }
+}
+
+@media (max-width:480px){
+  .container{
+    max-width:260px;
+    gap:10px;
+  }
+  .card-btn{
+    height:100px;
+  }
+  .card-btn img{
+    max-width:65%;
+    max-height:65%;
+  }
+  .card-btn h3{
+    font-size:13px;
+  }
+}
 </style>
 </head>
 
@@ -88,38 +156,60 @@ a{text-decoration:none; color:black; display:block;}
 
 <div class="container">
 
-<!-- 1 -->
+<!-- Buttons 1 to 8 -->
 <div class="card-box">
-<a href="https://example.com/1" onclick="startLoad(event,this)">
+<a href="nsc related Submission.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
-<img src="https://i.ibb.co/W4S2V1tT/NSC-SURVEY.jpg">
-<h3>NSC SURVEY</h3>
+<img src="https://i.ibb.co/40XBqT3/home-logo-design-template-18f0f2043869d72f86eb721a8c49c2a0-screen.jpg" alt="NSC SURVEY">
+<h3>NSC RELATED SUBMISSION</h3>
 </div>
 </div>
 <div class="loader"></div>
 </a>
 </div>
 
-<!-- 2 -->
 <div class="card-box">
-<a href="https://example.com/2" onclick="startLoad(event,this)">
+<a href="maintenance related submission.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
-<img src="https://i.ibb.co/xKQjzJT9/CUTTING-TULS.jpg">
-<h3>EVERY DAY DISCONNECTION</h3>
+<img src="https://i.ibb.co/mCB24b0F/image-7bb722d0.png" alt="EVERY DAY DISCONNECTION">
+<h3>MAINTENANCE RELATED SUBMISSION</h3>
 </div>
 </div>
 <div class="loader"></div>
 </a>
 </div>
 
-<!-- 3 -->
 <div class="card-box">
-<a href="https://example.com/3" onclick="startLoad(event,this)">
+<a href="duare sarkar related.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
-<img src="https://i.ibb.co/G4RWLPzN/34111.png">
+<img src="https://i.ibb.co/kVZZ7bFs/1608928703-duare-sarkar.jpg" alt="METER REPLACEMENT">
+<h3>DUARE SARKAR RELATED</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="all estimate submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/Z69dW15f/pngtree-real-estimate-logo-vector-png-image-6667830.png" alt="NEW CONNECTION">
+<h3>ALL ESTIMATE SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="meter replacement.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/HfXJz8mC/creative-elegant-minimalistic-logo-design-vector-technology-software-company-1287271-45842.jpg" alt="BILL COLLECTION">
 <h3>METER REPLACEMENT</h3>
 </div>
 </div>
@@ -127,65 +217,36 @@ a{text-decoration:none; color:black; display:block;}
 </a>
 </div>
 
-<!-- 4 -->
 <div class="card-box">
-<a href="https://example.com/4" onclick="startLoad(event,this)">
+<a href="download.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/2913/2913465.png">
-<h3>NEW CONNECTION</h3>
+<img src="https://i.ibb.co/PvhX5Z3x/Screenshot-20260305-221032-Chat-GPT-removebg-preview-2.png" alt="COMPLAINT">
+<h3>DOWNLOAD</h3>
 </div>
 </div>
 <div class="loader"></div>
 </a>
 </div>
 
-<!-- 5 -->
 <div class="card-box">
-<a href="https://example.com/5" onclick="startLoad(event,this)">
+<a href="send feedback.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png">
-<h3>BILL COLLECTION</h3>
+<img src="https://i.ibb.co/DPRJvfRh/570.png" alt="LINE MAINTENANCE">
+<h3>SEND FEEDBACK</h3>
 </div>
 </div>
 <div class="loader"></div>
 </a>
 </div>
 
-<!-- 6 -->
 <div class="card-box">
-<a href="https://example.com/6" onclick="startLoad(event,this)">
+<a href="contact us.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/2920/2920244.png">
-<h3>COMPLAINT</h3>
-</div>
-</div>
-<div class="loader"></div>
-</a>
-</div>
-
-<!-- 7 -->
-<div class="card-box">
-<a href="https://example.com/7" onclick="startLoad(event,this)">
-<div class="card-border">
-<div class="card-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/2910/2910791.png">
-<h3>LINE MAINTENANCE</h3>
-</div>
-</div>
-<div class="loader"></div>
-</a>
-</div>
-
-<!-- 8 -->
-<div class="card-box">
-<a href="https://example.com/8" onclick="startLoad(event,this)">
-<div class="card-border">
-<div class="card-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-<h3>REPORT SUBMISSION</h3>
+<img src="https://i.ibb.co/q3Zt54rR/images.jpg" alt="REPORT SUBMISSION">
+<h3>CONTACT US</h3>
 </div>
 </div>
 <div class="loader"></div>
