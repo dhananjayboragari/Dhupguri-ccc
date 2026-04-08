@@ -150,10 +150,45 @@ a{
     font-size:13px;
   }
 }
+
+.page-header{
+  width:100%;
+  background:transparent; /* কোন background নেই */
+  padding:5px 0;
+  text-align:center;
+  color:#fff; /* text color চাইলে রাখতে পারো */
+  font-family:Arial, sans-serif;
+  font-size:20px;
+  font-weight:bold;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:10;
+  box-shadow:none; /* shadow সরানো হলো */
+}
+  /* Mobile responsive */
+@media (max-width:480px){
+  .page-header{
+    font-size:20px;
+    padding:10px 0;
+  }
+}
+
+/* Container top margin যাতে header overlap না করে */
+.container{
+  margin-top:80px; /* header height এর সমান */
+}
+
+  
 </style>
 </head>
 
 <body>
+
+  <!-- Header -->
+<header class="page-header">
+  <h1>Welcome to Dhupguri CCC</h1>
+</header>
 
 <div class="container">
 
