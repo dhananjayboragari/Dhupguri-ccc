@@ -151,32 +151,88 @@ a{
   }
 }
 
+/* ===== HEADER ===== */
 .page-header{
-  width:100%;
-  background:transparent; /* কোন background নেই */
-  padding:5px 0;
-  text-align:center;
-  color:#ff1493; /* text color চাইলে রাখতে পারো */
-  font-family:Arial, sans-serif;
-  font-size:20px;
-  font-weight:bold;
   position:fixed;
-  top:0;
-  left:0;
-  z-index:10;
-  box-shadow:none; /* shadow সরানো হলো */
+  top:15px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+
+  /* 🔥 LEFT RIGHT BIG */
+  width:95%;          /* full wide feel */
+  max-width:900px;    /* desktop limit */
+
+  padding:14px 26px;
+  border-radius:40px;
+
+  /* 🔥 ANIMATED GRADIENT */
+  background: linear-gradient(270deg,
+    #00c6ff,
+    #7b2ff7,
+    #ff4d88,
+    #ff7f50,
+    #00c6ff
+  );
+  background-size:400% 400%;
+  animation: gradientFlow 8s ease infinite;
+
+  /* GLOW */
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.3),
+    0 0 15px rgba(123,47,247,0.6),
+    0 0 25px rgba(255,77,136,0.5);
+
+  text-align:center;
+  transition:all 0.3s ease;
 }
-  /* Mobile responsive */
-@media (max-width:480px){
-  .page-header{
-    font-size:15px;
-    padding:0px 0;
+
+/* TEXT */
+.page-header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:1px;
+
+  animation:textGlow 2s ease-in-out infinite alternate;
+}
+
+/* GRADIENT FLOW */
+@keyframes gradientFlow{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* TEXT GLOW */
+@keyframes textGlow{
+  from{
+    text-shadow:0 0 8px rgba(255,255,255,0.6);
+  }
+  to{
+    text-shadow:
+      0 0 12px rgba(255,255,255,0.9),
+      0 0 25px rgba(0,198,255,0.7),
+      0 0 35px rgba(255,77,136,0.6);
   }
 }
 
-/* Container top margin যাতে header overlap না করে */
-.container{
-  margin-top:80px; /* header height এর সমান */
+/* HOVER */
+.page-header:hover{
+  transform:translateX(-50%) scale(1.03);
+}
+
+/* MOBILE */
+@media(max-width:480px){
+  .page-header{
+    width:96%;
+    padding:12px 18px;
+  }
+
+  .page-header h1{
+    font-size:16px;
+  }
 }
 
   
