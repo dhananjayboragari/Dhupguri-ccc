@@ -296,14 +296,25 @@ a{
   align-items:center;
   z-index:100000;
 }
-
+  
 #profileBox{
   width:320px;
-  padding:20px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.1);
+  padding:22px;
+  border-radius:22px;
+
+  background:rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px);
+
+  border:1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 0 25px rgba(0,255,204,0.3),
+    0 0 45px rgba(0,119,255,0.2);
+
   color:white;
   text-align:center;
+
+  animation: popupZoom 0.3s ease;
 }
 
 #profileBox input{
@@ -314,8 +325,46 @@ a{
   border:none;
 }
 
-.saveBtn{background:#00ffcc;}
-.closeBtn{background:red;color:white;}
+.saveBtn, .closeBtn{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+
+  border:none;
+  border-radius:25px;
+
+  font-size:14px;
+  font-weight:bold;
+
+  cursor:pointer;
+  transition:0.3s;
+}
+
+/* SAVE BUTTON */
+.saveBtn{
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+  color:white;
+
+  box-shadow:0 0 10px rgba(0,255,204,0.5);
+}
+
+.saveBtn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 18px rgba(0,255,204,0.9);
+}
+
+/* CLOSE BUTTON */
+.closeBtn{
+  background: linear-gradient(135deg,#ff4d4d,#ff0000);
+  color:white;
+
+  box-shadow:0 0 10px rgba(255,0,0,0.5);
+}
+
+.closeBtn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 18px rgba(255,0,0,0.9);
+}
 
 /* POPUP */
 #customPopup{
