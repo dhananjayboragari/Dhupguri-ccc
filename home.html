@@ -14,7 +14,7 @@ body{
   min-height:100vh;
   display:flex;
   justify-content:center;
-  align-items:flex-start; /* keeps buttons starting from top */
+  align-items:flex-start; /* keeps but6tons starting from top */
   padding:20px;
   color:#fff;
 
@@ -327,16 +327,64 @@ a{
   display:none;
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
   z-index:100001;
+  animation: fadeIn 0.3s ease;
 }
 
 .popupBox{
-  background:white;
-  color:black;
-  padding:20px;
-  border-radius:12px;
+  width:280px;
+  padding:22px;
+  border-radius:20px;
   text-align:center;
+
+  background:rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px);
+  border:1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 0 20px rgba(0,255,204,0.3),
+    0 0 40px rgba(0,119,255,0.2);
+
+  color:#fff;
+
+  transform: scale(0.8);
+  animation: popupZoom 0.3s ease forwards;
+}
+
+.popupBox p{
+  font-size:15px;
+  margin-bottom:15px;
+}
+
+.popupBox button{
+  padding:8px 18px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+  color:white;
+  font-weight:bold;
+
+  box-shadow:0 0 10px rgba(0,255,204,0.5);
+  transition:0.2s;
+}
+
+.popupBox button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px rgba(0,255,204,0.8);
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes popupZoom{
+  from{transform:scale(0.7); opacity:0;}
+  to{transform:scale(1); opacity:1;}
 }
   
   
@@ -382,8 +430,8 @@ a{
 </div>
 
 <!-- POPUP -->
-<div id="customPopup">
-  <div class="popupBox">
+<div id="customPopup" onclick="closePopup()">
+  <div class="popupBox" onclick="event.stopPropagation()">
     <p id="popupText"></p>
     <button onclick="closePopup()">OK</button>
   </div>
@@ -641,8 +689,18 @@ window.closeProfile = function(){
   document.body.style.overflow = "auto";
 };
 
-window.showPopup = function(msg){
+window.showPopup = function(msg,type="success"){
   popupText.innerText = msg;
+
+  const box = document.querySelector(".popupBox");
+
+  if(type==="error"){
+    box.style.boxShadow = "0 0 20px rgba(255,0,0,0.6)";
+  } else {
+    box.style.boxShadow =
+      "0 0 20px rgba(0,255,204,0.3), 0 0 40px rgba(0,119,255,0.2)";
+  }
+
   customPopup.style.display = "flex";
 };
 
