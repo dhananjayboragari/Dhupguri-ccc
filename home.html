@@ -614,15 +614,23 @@ window.openProfile = async function(force=false){
 };
 
 window.saveProfile = async function(){
+
+  const nameVal = document.getElementById("name").value;
+  const phoneVal = document.getElementById("phone").value;
+  const addressVal = document.getElementById("address").value;
+
+  console.log("Saving:", nameVal, phoneVal, addressVal); // debug
+
   await setDoc(doc(db,"users",user.uid),{
-    name: name.value,
-    phone: phone.value,
-    address: address.value,
+    name: nameVal,
+    phone: phoneVal,
+    address: addressVal,
     email: user.email,
     uid: user.uid
   },{merge:true});
 
-  profileName.innerText = name.value || "Profile";
+  document.getElementById("profileName").innerText =
+    nameVal || "Profile";
 
   showPopup("Profile Saved!");
   closeProfile();
