@@ -156,14 +156,13 @@ a{
   position:fixed;
   top:15px;
 
-  max-width: calc(100% - 90px); /* dynamic space */
+  left:50%;
+  transform:translateX(-50%);
 
-  left:10px;
-  transform:none;
+  width: calc(100% - 110px);
 
   z-index:100;
 
-  width:95%;
   padding:14px 26px;
   border-radius:40px;
 
@@ -467,8 +466,9 @@ a{
 @media(max-width:600px){
 
   .page-header{
-    max-width: calc(100% - 80px);
-    left:10px;
+    width: calc(100% - 110px); /* 🔥 main fix */
+    left:50%;
+    transform:translateX(-50%);
   }
 
 }
