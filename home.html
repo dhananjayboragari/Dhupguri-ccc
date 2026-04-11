@@ -155,9 +155,36 @@ a{
 .page-header{
   position:fixed;
   top:15px;
-  left:50%;
-  transform:translateX(-50%);
+
+  max-width: calc(100% - 90px); /* dynamic space */
+
+  left:10px;
+  transform:none;
+
   z-index:100;
+
+  width:95%;
+  padding:14px 26px;
+  border-radius:40px;
+
+  background: linear-gradient(270deg,
+    #00c6ff,
+    #7b2ff7,
+    #ff4d88,
+    #ff7f50,
+    #00c6ff
+  );
+  background-size:400% 400%;
+  animation: gradientFlow 8s ease infinite;
+
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.3),
+    0 0 15px rgba(123,47,247,0.6),
+    0 0 25px rgba(255,77,136,0.5);
+
+  text-align:center;
+  transition:all 0.3s ease;
+}
 
   /* 🔥 LEFT RIGHT BIG */
   width:95%;          /* full wide feel */
@@ -436,6 +463,18 @@ a{
   to{transform:scale(1); opacity:1;}
 }
   
+
+@media(max-width:600px){
+
+  .page-header{
+    max-width: calc(100% - 80px);
+    left:10px;
+  }
+
+}
+
+
+
   
 </style>
 </head>
