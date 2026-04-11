@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submission Page</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start; /* keeps buttons starting from top */
+  padding:20px;
+  color:#fff;
+
+  /* Background Image */
+  background: url("https://i.ibb.co/sdNSg0QZ/Amazing-Wallpapers-For-Phone.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+/* Minimal overlay for slight contrast */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.05);
+  z-index:-1;
+}
+
+.container{
+  display:flex;
+  flex-direction:column;
+  gap:12px; 
+  max-width:400px; 
+  width:100%;
+  margin:auto;
+  margin-top:60px; /* pushed buttons lower on the page */
+}
+
+.card-box{
+  position:relative;
+}
+
+.card-border{
+  padding:1.5px;
+  border-radius:20px;
+  background: linear-gradient(90deg, #FF7F50, #FF6347);
+  transition: transform 0.3s ease;
+}
+
+.card-border:hover{
+  transform: scale(1.05);
+}
+
+/* Button styling */
+.card-btn{
+  background:#ffffff; /* pure white */
+  border-radius:16px;
+  padding:0 8px;
+  width:100%;
+  height:120px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-btn:active{
+  transform: scale(0.95);
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Icon fully inside button */
+.card-btn img{
+  max-width:70%;
+  max-height:70%;
+  object-fit:contain;
+  margin-bottom:8px;
+}
+
+.card-btn h3{
+  margin:0;
+  font-size:16px;
+  color:#222;
+  text-align:center;
+  word-break:break-word;
+}
+
+.loader{
+  width:0%;
+  height:5px;
+  border-radius:5px;
+  margin-top:6px;
+  background:linear-gradient(90deg,#00ffcc,#ff00ff,#00ffcc);
+  animation:loaderFlash 1.2s linear infinite;
+  background-size:200%;
+  transition: width 0.1s linear;
+}
+
+@keyframes loaderFlash{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+a{
+  text-decoration:none;
+  color:black;
+  display:block;
+}
+
+/* Responsive adjustments */
+@media (max-width:768px){
+  .card-btn{
+    height:110px;
+  }
+  .card-btn img{
+    max-width:60%;
+    max-height:60%;
+  }
+  .card-btn h3{
+    font-size:14px;
+  }
+}
+
+@media (max-width:480px){
+  .container{
+    max-width:330px;
+    gap:10px;
+    
+  }
+  .card-btn{
+    height:110px;
+  }
+  .card-btn img{
+    max-width:65%;
+    max-height:65%;
+  }
+  .card-btn h3{
+    font-size:13px;
+  }
+}
+
+/* ===== HEADER ===== */
+.page-header{
+  position:fixed;
+  top:15px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+
+  /* 🔥 LEFT RIGHT BIG */
+  width:95%;          /* full wide feel */
+  max-width:900px;    /* desktop limit */
+
+  padding:14px 26px;
+  border-radius:40px;
+
+  /* 🔥 ANIMATED GRADIENT */
+  background: linear-gradient(270deg,
+    #00c6ff,
+    #7b2ff7,
+    #ff4d88,
+    #ff7f50,
+    #00c6ff
+  );
+  background-size:400% 400%;
+  animation: gradientFlow 8s ease infinite;
+
+  /* GLOW */
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.3),
+    0 0 15px rgba(123,47,247,0.6),
+    0 0 25px rgba(255,77,136,0.5);
+
+  text-align:center;
+  transition:all 0.3s ease;
+}
+
+/* TEXT */
+.page-header h1{
+  margin:0;
+  font-size:28px;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:1px;
+
+  animation:textGlow 2s ease-in-out infinite alternate;
+}
+
+/* GRADIENT FLOW */
+@keyframes gradientFlow{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* TEXT GLOW */
+@keyframes textGlow{
+  from{
+    text-shadow:0 0 8px rgba(255,255,255,0.6);
+  }
+  to{
+    text-shadow:
+      0 0 12px rgba(255,255,255,0.9),
+      0 0 25px rgba(0,198,255,0.7),
+      0 0 35px rgba(255,77,136,0.6);
+  }
+}
+
+/* HOVER */
+.page-header:hover{
+  transform:translateX(-50%) scale(1.03);
+}
+
+/* MOBILE */
+@media(max-width:480px){
+  .page-header{
+    width:96%;
+    padding:12px 18px;
+  }
+
+  .page-header h1{
+    font-size:16px;
+  }
+}
+
+
+
+
+
+
+
+/* ===== PROFILE BUTTON ===== */
+#profileBtn{
+  position:fixed;
+  top:10px;
+  right:10px;
+
+  padding:8px 10px;
+  border:none;
+  border-radius:16px;
+
+  cursor:pointer;
+  z-index:9999;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+
+  background:rgba(0, 255, 204, 0.15);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(0,255,204,0.4);
+  box-shadow:0 0 12px rgba(0,255,204,0.3);
+}
+
+#profileBtn .icon{
+  font-size:18px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+}
+
+#profileName{
+  font-size:10px;
+  color:white;
+}
+
+/* MODAL */
+#profileModal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  justify-content:center;
+  align-items:center;
+  z-index:100000;
+}
+
+#profileBox{
+  width:320px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.1);
+  color:white;
+  text-align:center;
+}
+
+#profileBox input{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
+  border:none;
+}
+
+.saveBtn{background:#00ffcc;}
+.closeBtn{background:red;color:white;}
+
+/* POPUP */
+#customPopup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.6);
+  z-index:100001;
+}
+
+.popupBox{
+  background:white;
+  color:black;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+}
+  
+  
+</style>
+</head>
+
+<body>
+
+  <!-- Header -->
+<header class="page-header">
+  <h1>Welcome to Dhupguri CCC</h1>
+</header>
+
+
+
+
+
+
+<!-- PROFILE BUTTON -->
+<button id="profileBtn">
+  <div class="icon">👨‍💼</div>
+  <div id="profileName">Profile</div>
+</button>
+
+
+  
+
+<!-- PROFILE MODAL -->
+<div id="profileModal" onclick="closeProfile()">
+  <div id="profileBox" onclick="event.stopPropagation()">
+    <h3>Profile</h3>
+
+    <input id="name" placeholder="Name">
+    <input id="phone" placeholder="Phone">
+    <input id="address" placeholder="Address">
+
+    <p id="email"></p>
+    <p id="uid"></p>
+
+    <button class="saveBtn" onclick="saveProfile()">Save</button>
+    <button class="closeBtn" onclick="closeProfile()">Close</button>
+  </div>
+</div>
+
+<!-- POPUP -->
+<div id="customPopup">
+  <div class="popupBox">
+    <p id="popupText"></p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+
+
+
+
+
+
+  
+<div class="container">
+
+<!-- Buttons 1 to 8 -->
+<div class="card-box">
+<a href="nsc related submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/40XBqT3/home-logo-design-template-18f0f2043869d72f86eb721a8c49c2a0-screen.jpg" alt="NSC SURVEY">
+<h3>NSC RELATED SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="maintenance related submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/cS5RxkYh/image-7bb722d0.png" alt="EVERY DAY DISCONNECTION">
+<h3>MAINTENANCE RELATED SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="duare sarkar related.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/kVZZ7bFs/1608928703-duare-sarkar.jpg" alt="METER REPLACEMENT">
+<h3>DUARE SARKAR RELATED</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="all estimate submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/Z69dW15f/pngtree-real-estimate-logo-vector-png-image-6667830.png" alt="NEW CONNECTION">
+<h3>ALL ESTIMATE SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="meter replacement.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/HfXJz8mC/creative-elegant-minimalistic-logo-design-vector-technology-software-company-1287271-45842.jpg" alt="BILL COLLECTION">
+<h3>METER REPLACEMENT</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="download.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/PvhX5Z3x/Screenshot-20260305-221032-Chat-GPT-removebg-preview-2.png" alt="COMPLAINT">
+<h3>DOWNLOAD</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="send feedback.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/DPRJvfRh/570.png" alt="LINE MAINTENANCE">
+<h3>SEND FEEDBACK</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="contact us.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/q3Zt54rR/images.jpg" alt="REPORT SUBMISSION">
+<h3>CONTACT US</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+</div>
+
+<script>
+function startLoad(e, el){
+  e.preventDefault();
+  let loader = el.querySelector(".loader");
+  let width = 0;
+
+  let iframe = document.createElement("iframe");
+  iframe.src = el.href;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  let run = setInterval(()=>{
+    if(width < 60) width += 0.8;
+    else if(width < 85) width += 0.3;
+    else if(width < 90) width += 0.15;
+    else if(width < 95) width += 0.05;
+
+    loader.style.width = width + "%";
+  },120);
+
+  iframe.onload = function(){
+    clearInterval(run);
+    loader.style.width = "100%";
+    window.location.href = el.href;
+    iframe.remove();
+  }
+}
+</script>
+
+
+
+
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let user = null;
+
+// DEBUG
+console.log("JS Loaded ✅");
+
+onAuthStateChanged(auth, async (u) => {
+  console.log("User:", u);
+
+  if (u) {
+    user = u;
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (snap.exists()) {
+      const data = snap.data();
+
+      document.getElementById("profileName").innerText =
+        data.name || "Profile";
+
+      if (!data.name || !data.phone || !data.address) {
+        setTimeout(()=>openProfile(true),500);
+      }
+
+    } else {
+      setTimeout(()=>openProfile(true),500);
+    }
+  }
+});
+
+// ✅ BUTTON CLICK FIX
+document.getElementById("profileBtn").addEventListener("click", () => {
+  if(!user){
+    alert("Login required ❌");
+    return;
+  }
+  openProfile();
+});
+
+window.openProfile = async function(force=false){
+  if (!user){
+    alert("User not logged in ❌");
+    return;
+  }
+
+  document.getElementById("profileModal").style.display = "flex";
+  document.body.style.overflow = "hidden";
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+
+  if (snap.exists()) {
+    const data = snap.data();
+    document.getElementById("name").value = data.name || "";
+    document.getElementById("phone").value = data.phone || "";
+    document.getElementById("address").value = data.address || "";
+  }
+
+  document.getElementById("email").innerText = "Email: " + user.email;
+  document.getElementById("uid").innerText = "UID: " + user.uid;
+
+  if(force){
+    showPopup("Please complete your profile!");
+  }
+};
+
+window.saveProfile = async function(){
+  await setDoc(doc(db,"users",user.uid),{
+    name: name.value,
+    phone: phone.value,
+    address: address.value,
+    email: user.email,
+    uid: user.uid
+  },{merge:true});
+
+  profileName.innerText = name.value || "Profile";
+
+  showPopup("Profile Saved!");
+  closeProfile();
+};
+
+window.closeProfile = function(){
+  document.getElementById("profileModal").style.display = "none";
+  document.body.style.overflow = "auto";
+};
+
+window.showPopup = function(msg){
+  popupText.innerText = msg;
+  customPopup.style.display = "flex";
+};
+
+window.closePopup = function(){
+  customPopup.style.display = "none";
+};
+</script>
+  
+
+</body>
+</html>
