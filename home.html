@@ -525,12 +525,22 @@ align-items:center;
 
 
 
-#profileBtn img,
+
+
+
+
+
+
+  #profileBtn{
+  width:60px !important;
+  height:60px !important;
+  padding:0 !important;
+  overflow:hidden;
+}
+
 #profileBtnImg{
-  width:40px !important;
-  height:40px !important;
-  max-width:40px !important;
-  max-height:40px !important;
+  width:100% !important;
+  height:100% !important;
   object-fit:cover;
   border-radius:50%;
 }
@@ -966,7 +976,31 @@ document.getElementById("profileImage").addEventListener("change", function(e){
   }
 });
 
-  
+
+
+
+
+
+
+
+  if (data.image && data.image !== "") {
+  document.getElementById("profileBtnImg").src = data.image;
+
+  const img = document.getElementById("profileBtnImg");
+  img.style.display = "block";
+
+  document.getElementById("profileIcon").style.display = "none";
+
+  // 🔥 ADD THIS
+  document.getElementById("profileName").style.display = "none";
+
+} else {
+  document.getElementById("profileBtnImg").style.display = "none";
+  document.getElementById("profileIcon").style.display = "flex";
+
+  // 🔥 ADD THIS
+  document.getElementById("profileName").style.display = "block";
+}
 
   
 </script>
