@@ -482,7 +482,21 @@ a{
 }
 
 
+.icon{
+  font-size:18px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
+.icon-img{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  object-fit:cover;
+}
   
 </style>
 </head>
@@ -501,7 +515,8 @@ a{
 
 <!-- PROFILE BUTTON -->
 <button id="profileBtn">
-  <div class="icon">👨‍💼</div>
+  <div class="icon" id="profileIcon">👨‍💼</div>
+  <img id="profileBtnImg" class="icon-img" style="display:none;">
   <div id="profileName">Profile</div>
 </button>
 
@@ -716,6 +731,18 @@ onAuthStateChanged(auth, async (u) => {
       document.getElementById("profileName").innerText =
         data.name || "Profile";
 
+if (data.image && data.image !== "") {
+  document.getElementById("profileBtnImg").src = data.image;
+  document.getElementById("profileBtnImg").style.display = "block";
+  document.getElementById("profileIcon").style.display = "none";
+} else {
+  document.getElementById("profileBtnImg").style.display = "none";
+  document.getElementById("profileIcon").style.display = "flex";
+}
+
+
+
+  
       if (!data.name || !data.phone || !data.address) {
         setTimeout(()=>openProfile(true),500);
       }
@@ -785,6 +812,15 @@ window.saveProfile = async function(){
     imageUrl = await uploadToImgBB(file);
   }
 
+if (imageUrl) {
+  document.getElementById("profileBtnImg").src = imageUrl;
+  document.getElementById("profileBtnImg").style.display = "block";
+  document.getElementById("profileIcon").style.display = "none";
+} else {
+  document.getElementById("profileBtnImg").style.display = "none";
+  document.getElementById("profileIcon").style.display = "flex";
+}
+  
   await setDoc(doc(db,"users",user.uid),{
     name: nameVal,
     phone: phoneVal,
