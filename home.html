@@ -327,6 +327,9 @@ a{
 }
   
 #profileBox{
+  display:flex;
+flex-direction:column;
+align-items:center;
   width:320px;
   padding:22px;
   border-radius:22px;
@@ -492,11 +495,27 @@ a{
 }
 
 .icon-img{
-  width:34px;
-  height:34px;
+  width:48px;
+  height:45px;
   border-radius:50%;
   object-fit:cover;
 }
+
+
+
+
+#previewImg{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+
+  display:none;
+
+  margin: 10px auto;   /* center করে */
+}
+  
+
   
 </style>
 </head>
@@ -526,11 +545,12 @@ a{
 <!-- PROFILE MODAL -->
 <div id="profileModal" onclick="closeProfile()">
   <div id="profileBox" onclick="event.stopPropagation()">
+
+    <img id="previewImg">
     <h3>Profile</h3>
     <input type="file" id="profileImage" accept="image/*">
 
-<img id="previewImg"
-style="width:80px;height:80px;border-radius:50%;margin-top:10px;display:none;">
+
 
     <input id="name" placeholder="Name">
     <input id="phone" placeholder="Phone">
