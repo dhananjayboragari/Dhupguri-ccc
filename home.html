@@ -467,15 +467,16 @@ a{
   
 
 @media(max-width:600px){
+@media(max-width:600px){
 
   .page-header{
     left:15px;
     transform:none;
+    width: calc(100% - 110px);
+  }
 
-    width: calc(100% - 110px); /* profile button er jonno space */
-
-    container{
-    margin-top:15px; /* 🔥 only mobile gap */
+  .container{
+    margin-top:15px; /* 🔥 এখন কাজ করবে */
   }
 
 }
