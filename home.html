@@ -759,7 +759,9 @@ onAuthStateChanged(auth, async (u) => {
 
 if (data.image && data.image !== "") {
   document.getElementById("profileBtnImg").src = data.image;
-  document.getElementById("profileBtnImg").style.display = "block";
+  const img = document.getElementById("profileBtnImg");
+img.src = data.image;
+img.style.display = "block";
   document.getElementById("profileIcon").style.display = "none";
 } else {
   document.getElementById("profileBtnImg").style.display = "none";
@@ -840,7 +842,9 @@ window.saveProfile = async function(){
 
 if (imageUrl) {
   document.getElementById("profileBtnImg").src = imageUrl;
-  document.getElementById("profileBtnImg").style.display = "block";
+  const img = document.getElementById("profileBtnImg");
+img.src = imageUrl;
+img.style.display = "block";
   document.getElementById("profileIcon").style.display = "none";
 } else {
   document.getElementById("profileBtnImg").style.display = "none";
