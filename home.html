@@ -512,6 +512,10 @@ a{
 <div id="profileModal" onclick="closeProfile()">
   <div id="profileBox" onclick="event.stopPropagation()">
     <h3>Profile</h3>
+    <input type="file" id="profileImage" accept="image/*">
+
+<img id="previewImg"
+style="width:80px;height:80px;border-radius:50%;margin-top:10px;display:none;">
 
     <input id="name" placeholder="Name">
     <input id="phone" placeholder="Phone">
@@ -763,12 +767,20 @@ window.saveProfile = async function(){
   const phoneVal = document.getElementById("phone").value;
   const addressVal = document.getElementById("address").value;
 
-  console.log("Saving:", nameVal, phoneVal, addressVal); // debug
+  let imageUrl = "";
+
+  const file = document.getElementById("profileImage").files[0];
+
+  if(file){
+    showPopup("Uploading Image...");
+    imageUrl = await uploadToImgBB(file);
+  }
 
   await setDoc(doc(db,"users",user.uid),{
     name: nameVal,
     phone: phoneVal,
     address: addressVal,
+    image: imageUrl,
     email: user.email,
     uid: user.uid
   },{merge:true});
@@ -803,6 +815,49 @@ window.showPopup = function(msg,type="success"){
 window.closePopup = function(){
   customPopup.style.display = "none";
 };
+
+
+
+
+
+const apiKey = "909ccb8e224ae5e1fdc8d059c811670d";
+
+async function uploadToImgBB(file){
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`,{
+    method:"POST",
+    body:formData
+  });
+
+  const data = await res.json();
+  return data.data.url;
+}
+
+
+
+
+
+document.getElementById("profileImage").addEventListener("change", function(e){
+  const file = e.target.files[0];
+
+  if(file){
+    const reader = new FileReader();
+
+    reader.onload = function(){
+      const img = document.getElementById("previewImg");
+      img.src = reader.result;
+      img.style.display = "block";
+    }
+
+    reader.readAsDataURL(file);
+  }
+});
+
+  
+
+  
 </script>
   
 
