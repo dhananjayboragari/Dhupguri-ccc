@@ -858,9 +858,13 @@ let imageUrl = oldImage; // 🔥 old image default
   const file = document.getElementById("profileImage").files[0];
 
   if(file){
-    showPopup("Uploading Image...");
-    imageUrl = await uploadToImgBB(file);
+  showPopup("Uploading Image...");
+  const newImage = await uploadToImgBB(file);
+
+  if(newImage){
+    imageUrl = newImage; // শুধু success হলে change হবে
   }
+}
 
 if (imageUrl) {
   document.getElementById("profileBtnImg").src = imageUrl;
@@ -917,7 +921,7 @@ window.closePopup = function(){
 
 
 
-const apiKey = "909ccb8e224ae5e1fdc8d059c811670d";
+const apiKey = "a5d421a5cbe17ebcfd2e0b90915c2501";
 
 async function uploadToImgBB(file){
   const formData = new FormData();
