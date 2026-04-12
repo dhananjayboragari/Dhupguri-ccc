@@ -924,30 +924,41 @@ window.closePopup = function(){
 const apiKey = "a5d421a5cbe17ebcfd2e0b90915c2501";
 
 async function uploadToImgBB(file){
-  const formData = new FormData();
-  formData.append("image", file);
+  return new Promise((resolve) => {
 
-  try {
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`,{
-      method:"POST",
-      body:formData
-    });
+    const reader = new FileReader();
 
-    const data = await res.json();
+    reader.onload = async function(){
+      const base64 = reader.result.split(',')[1];
 
-    console.log("ImgBB response:", data);
+      const formData = new FormData();
+      formData.append("image", base64);
 
-    if(!data.success){
-      throw new Error("Upload failed");
-    }
+      try {
+        const res = await fetch("https://api.imgbb.com/1/upload?key=" + apiKey, {
+          method: "POST",
+          body: formData
+        });
 
-    return data.data.url;
+        const data = await res.json();
+        console.log("ImgBB response:", data);
 
-  } catch (err) {
-    console.log(err);
-    showPopup("Image upload failed ❌","error");
-    return "";
-  }
+        if(data.success){
+          resolve(data.data.url);
+        } else {
+          showPopup("Upload failed ❌","error");
+          resolve("");
+        }
+
+      } catch (err) {
+        console.log(err);
+        showPopup("Network error ❌","error");
+        resolve("");
+      }
+    };
+
+    reader.readAsDataURL(file);
+  });
 }
 
 
