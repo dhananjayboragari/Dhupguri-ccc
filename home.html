@@ -829,12 +829,21 @@ window.openProfile = async function(force=false){
 };
 
 window.saveProfile = async function(){
+  
 
   const nameVal = document.getElementById("name").value;
   const phoneVal = document.getElementById("phone").value;
   const addressVal = document.getElementById("address").value;
 
-  let imageUrl = "";
+
+  // 🔥 OLD IMAGE LOAD
+const snap = await getDoc(doc(db, "users", user.uid));
+let oldImage = "";
+
+if (snap.exists()) {
+  oldImage = snap.data().image || "";
+}
+let imageUrl = oldImage; // 🔥 old image default
 
   const file = document.getElementById("profileImage").files[0];
 
