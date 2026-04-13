@@ -552,6 +552,70 @@ align-items:center;
 }
   
 
+
+
+/* ===== Upload Box UI ===== */
+.uploadBox{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+
+  border-radius:15px;
+  text-align:center;
+  cursor:pointer;
+
+  font-size:14px;
+  font-weight:bold;
+  color:white;
+
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+
+  box-shadow:0 0 12px rgba(0,255,204,0.5);
+
+  transition:0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Hover effect */
+.uploadBox:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(0,255,204,0.9);
+}
+
+/* Click effect */
+.uploadBox:active{
+  transform:scale(0.95);
+}
+
+/* Shine animation */
+.uploadBox::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+  transition:0.5s;
+}
+
+.uploadBox:hover::before{
+  left:100%;
+}
+
+
+
+  #previewImg{
+  box-shadow:
+    0 0 10px rgba(0,255,204,0.6),
+    0 0 20px rgba(0,119,255,0.5);
+}
   
   
 </style>
@@ -585,7 +649,10 @@ align-items:center;
 
     <img id="previewImg">
     <h3>Profile</h3>
-    <input type="file" id="profileImage" accept="image/*">
+    <label for="profileImage" class="uploadBox">
+  <span>📸 Upload Photo</span>
+  <input type="file" id="profileImage" accept="image/*" hidden>
+</label>
 
 
 
