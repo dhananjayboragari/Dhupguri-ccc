@@ -784,9 +784,9 @@ img.style.display = "block";
 
 
   
-      if (!data.name || !data.phone || !data.address) {
-        setTimeout(()=>openProfile(true),500);
-      }
+      if (!data.name || !data.phone || !data.address || !data.image) {
+  setTimeout(()=>openProfile(true),500);
+}
 
     } else {
       setTimeout(()=>openProfile(true),500);
