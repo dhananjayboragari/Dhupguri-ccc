@@ -892,9 +892,18 @@ img.style.display = "block";
 
 
   
-      if (!data.name || !data.phone || !data.address || !data.image) {
-  setTimeout(()=>openProfile(true),500);
+      let missingFields = [];
+
+if (!data.name) missingFields.push("Name");
+if (!data.phone) missingFields.push("Phone");
+if (!data.address) missingFields.push("Address");
+if (!data.image) missingFields.push("Profile Photo");
+
+if (missingFields.length > 0) {
+  setTimeout(()=>openProfile(true, missingFields),500);
 }
+
+  
 
     } else {
       setTimeout(()=>openProfile(true),500);
@@ -911,7 +920,7 @@ document.getElementById("profileBtn").addEventListener("click", () => {
   openProfile();
 });
 
-window.openProfile = async function(force=false){
+window.openProfile = async function(force=false, missingFields=[]){
 
   if (!user){
     alert("User not logged in ❌");
@@ -942,8 +951,14 @@ window.openProfile = async function(force=false){
   document.getElementById("uid").innerText = "UID: " + user.uid;
 
   if(force){
-    showPopup("Please complete your profile!");
-  }
+  let msg = "⚠️ Please complete your profile:\n\n";
+
+  missingFields.forEach(field => {
+    msg += "• " + field + "\n";
+  });
+
+  showPopup(msg);
+}
 };
 
 window.saveProfile = async function(){
