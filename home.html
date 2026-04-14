@@ -617,6 +617,26 @@ align-items:center;
     0 0 10px rgba(0,255,204,0.6),
     0 0 20px rgba(0,119,255,0.5);
 }
+
+
+#popupIcon{
+  font-size:30px;
+  margin-bottom:10px;
+}
+
+/* loading animation */
+.loadingAnim{
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform: rotate(0deg); }
+  100%{ transform: rotate(360deg); }
+}
+
+
+
+
   
   
 </style>
@@ -671,10 +691,12 @@ align-items:center;
 
 <!-- POPUP -->
 <div id="customPopup" onclick="closePopup()">
+  
   <div class="popupBox" onclick="event.stopPropagation()">
-    <p id="popupText"></p>
-    <button onclick="closePopup()">OK</button>
-  </div>
+  <div id="popupIcon">⏳</div>
+  <p id="popupText"></p>
+  <button onclick="closePopup()">OK</button>
+</div>
 </div>
 
 
@@ -983,6 +1005,8 @@ window.closeProfile = function(){
   document.getElementById("profileModal").style.display = "none";
   document.body.style.overflow = "auto";
 };
+
+
   
 
 window.showPopup = function(msg,type="success"){
@@ -990,12 +1014,23 @@ window.showPopup = function(msg,type="success"){
 
   const box = document.querySelector(".popupBox");
   const btn = box.querySelector("button");
+  const icon = document.getElementById("popupIcon");
 
-  // 🔥 loading হলে button hide
+  // reset
+  icon.classList.remove("loadingAnim");
+
   if(type==="loading"){
     btn.style.display = "none";
-  } else {
+    icon.innerText = "⏳";
+    icon.classList.add("loadingAnim");
+  } 
+  else if(type==="error"){
     btn.style.display = "inline-block";
+    icon.innerText = "❌";
+  } 
+  else {
+    btn.style.display = "inline-block";
+    icon.innerText = "✅";
   }
 
   if(type==="error"){
