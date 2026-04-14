@@ -983,11 +983,20 @@ window.closeProfile = function(){
   document.getElementById("profileModal").style.display = "none";
   document.body.style.overflow = "auto";
 };
+  
 
 window.showPopup = function(msg,type="success"){
   popupText.innerText = msg;
 
   const box = document.querySelector(".popupBox");
+  const btn = box.querySelector("button");
+
+  // 🔥 loading হলে button hide
+  if(type==="loading"){
+    btn.style.display = "none";
+  } else {
+    btn.style.display = "inline-block";
+  }
 
   if(type==="error"){
     box.style.boxShadow = "0 0 20px rgba(255,0,0,0.6)";
@@ -998,6 +1007,10 @@ window.showPopup = function(msg,type="success"){
 
   customPopup.style.display = "flex";
 };
+
+
+
+  
 
 window.closePopup = function(){
   customPopup.style.display = "none";
