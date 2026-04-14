@@ -944,7 +944,7 @@ let imageUrl = oldImage; // 🔥 old image default
   const file = document.getElementById("profileImage").files[0];
 
   if(file){
-  showPopup("Uploading Image...");
+  showPopup("⏳ Please wait...", "loading");
   const newImage = await uploadToImgBB(file);
 
   if(newImage){
