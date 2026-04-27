@@ -335,7 +335,9 @@ window.login = async function(){
   msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
   msg.style.color="red";
 
-  localStorage.setItem("resendTime", Date.now()); // 🔥 ADD
+if(!localStorage.getItem("resendTime")){
+  localStorage.setItem("resendTime", Date.now());
+}
   resendBtn.style.display="block";
   startCooldown(resendBtn,60); // 🔥 ADD
 
