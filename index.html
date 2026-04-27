@@ -256,6 +256,8 @@ if(savedTime){
   let diff = Math.floor((Date.now() - savedTime)/1000);
 
   if(diff < 60){
+
+    document.getElementById("resend").style.display="block";
     startCooldown(document.getElementById("resend"),60-diff);
   }
 }
