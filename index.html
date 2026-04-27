@@ -332,11 +332,15 @@ window.login = async function(){
     await currentUser.reload(); // 🔥 MUST ADD
 
     if(!currentUser.emailVerified){
-      msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
-      msg.style.color="red";
-      resendBtn.style.display="block";
-      return;
-    }
+  msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
+  msg.style.color="red";
+
+  localStorage.setItem("resendTime", Date.now()); // 🔥 ADD
+  resendBtn.style.display="block";
+  startCooldown(resendBtn,60); // 🔥 ADD
+
+  return;
+}
 
     // 🔥 remember email only
     if(document.getElementById("remember").checked){
