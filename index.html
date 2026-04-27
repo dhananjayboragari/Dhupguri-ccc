@@ -279,16 +279,9 @@ const app = initializeApp({
 });
 
 const auth = getAuth();
-  // 🔥 AUTO LOGIN CHECK
-onAuthStateChanged(auth, async (user) => {
-  if(user){
-    await user.reload();
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    if(user.emailVerified){
-      location.href = "home.html";
-    }
-  }
-});
+signOut(auth); // 🔥 page load হলেই logout
 
 let currentUser=null;
 let timerInterval=null;
