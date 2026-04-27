@@ -250,12 +250,22 @@ window.onload = function(){
   document.addEventListener("keydown", function(e){
     if(e.key==="Enter"){ login(); }
   });
+let savedTime = localStorage.getItem("resendTime");
+
+if(savedTime){
+  let diff = Math.floor((Date.now() - savedTime)/1000);
+
+  if(diff < 60){
+    startCooldown(document.getElementById("resend"),60-diff);
+  }
+}
+  
 }
 </script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
@@ -267,6 +277,16 @@ const app = initializeApp({
 });
 
 const auth = getAuth();
+  // 🔥 AUTO LOGIN CHECK
+onAuthStateChanged(auth, async (user) => {
+  if(user){
+    await user.reload();
+
+    if(user.emailVerified){
+      location.href = "home.html";
+    }
+  }
+});
 
 let currentUser=null;
 let timerInterval=null;
@@ -307,6 +327,7 @@ window.login = async function(){
   try{
     const userCredential = await signInWithEmailAndPassword(auth,email,password);
     currentUser = userCredential.user;
+    await currentUser.reload(); // 🔥 MUST ADD
 
     if(!currentUser.emailVerified){
       msg.innerHTML="❌ Please verify your email first! Didn't receive? Click Resend.";
