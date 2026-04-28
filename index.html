@@ -323,9 +323,15 @@ window.login = async function(){
     }
 
     msg.innerHTML="✅ Login Success";
-    msg.style.color="green";
+msg.style.color="green";
 
-    setTimeout(()=>location.href="home.html",1000);
+// 🔥 IMPORTANT
+localStorage.setItem("loginSuccess", "true");
+
+// redirect
+setTimeout(()=>{
+  window.location.href = "home.html";
+},1000);
 
   }catch(e){
     let customMsg = "Login failed. Please try again.";
