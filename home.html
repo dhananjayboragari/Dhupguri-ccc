@@ -876,23 +876,24 @@ align-items:center;
 </div>
 
 
-<div id="customPopup">
-  <div class="popup-box">
-    
-    <div class="icon">!</div>
 
-    <h2>Session expired!</h2>
-    <p>Login again to continue.</p>
-
-    <button onclick="goLogin()">OK</button>
-
-  </div>
-</div>
 
 
   
 
 <script>
+
+  let redirectAfterClose = false;
+
+function closePopup(){
+  const popup = document.getElementById("customPopup");
+  popup.style.display = "none";
+
+  if(redirectAfterClose){
+    window.location.href = "index.html";
+  }
+}
+  
 function startLoad(e, el){
   e.preventDefault();
   let loader = el.querySelector(".loader");
@@ -1239,9 +1240,10 @@ function resetTimer() {
   idleTimer = setTimeout(() => {
     signOut(auth).then(() => {
       localStorage.removeItem("loginSuccess");
-      showPopup();
+      redirectAfterClose = true;
+showPopup("Session expired! Login again", "error");
     });
-  }, 5 * 60 * 1000); // 5 min
+  }, 3 * 60 * 1000); // 3 min
 }
 
 // 👇 Activity detect
@@ -1256,13 +1258,6 @@ document.onscroll = resetTimer;
 
 
 
-function showPopup(){
-  document.getElementById("customPopup").style.display = "flex";
-}
-
-function goLogin(){
-  window.location.href = "index.html";
-}
 
 
   
