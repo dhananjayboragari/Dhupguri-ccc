@@ -869,53 +869,62 @@ onAuthStateChanged(auth, async (u) => {
 
   const isLoggedIn = localStorage.getItem("loginSuccess");
 
-  // 🔴 BLOCK
+  // 🔴 BLOCK (login ছাড়া ঢুকলে)
   if (!u || !isLoggedIn) {
     localStorage.removeItem("loginSuccess");
     window.location.href = "index.html";
     return;
   }
 
-  // ✅ ALLOW
+  // ✅ USER OK
   user = u;
 
-  // 🔥 IMPORTANT: এটা ভিতরে আনতে হবে
-  const snap = await getDoc(doc(db, "users", user.uid));
+  try {
 
-  if (snap.exists()) {
-    const data = snap.data();
+    const snap = await getDoc(doc(db, "users", user.uid));
 
-    document.getElementById("profileName").innerText =
-      data.name || "Profile";
+    if (snap.exists()) {
 
-    if (data.image && data.image !== "") {
-      const img = document.getElementById("profileBtnImg");
-      img.src = data.image;
-      img.style.display = "block";
-      document.getElementById("profileIcon").style.display = "none";
-    } else {
-      document.getElementById("profileBtnImg").style.display = "none";
-      document.getElementById("profileIcon").style.display = "flex";
-    }
+      const data = snap.data();
 
+      // ✅ NAME SHOW
+      document.getElementById("profileName").innerText =
+        data.name || "Profile";
+
+      // ✅ IMAGE SHOW
+      if (data.image && data.image !== "") {
+        const img = document.getElementById("profileBtnImg");
+        img.src = data.image;
+        img.style.display = "block";
+        document.getElementById("profileIcon").style.display = "none";
+      } else {
+        document.getElementById("profileBtnImg").style.display = "none";
+        document.getElementById("profileIcon").style.display = "flex";
+      }
+
+      // ✅ PROFILE CHECK
       let missingFields = [];
 
-if (!data.name) missingFields.push("Name");
-if (!data.phone) missingFields.push("Phone");
-if (!data.address) missingFields.push("Address");
-if (!data.image) missingFields.push("Profile Photo");
+      if (!data.name) missingFields.push("Name");
+      if (!data.phone) missingFields.push("Phone");
+      if (!data.address) missingFields.push("Address");
+      if (!data.image) missingFields.push("Profile Photo");
 
-if (missingFields.length > 0) {
-  setTimeout(()=>openProfile(true, missingFields),500);
-}
-
-  
+      if (missingFields.length > 0) {
+        setTimeout(() => openProfile(true, missingFields), 500);
+      }
 
     } else {
-      setTimeout(()=>openProfile(true),500);
+      // নতুন user হলে
+      setTimeout(() => openProfile(true), 500);
     }
+
+  } catch (err) {
+    console.log("Error:", err);
   }
+
 });
+  
 
 // ✅ BUTTON CLICK FIX
 document.getElementById("profileBtn").addEventListener("click", () => {
