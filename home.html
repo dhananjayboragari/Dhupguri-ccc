@@ -898,15 +898,6 @@ onAuthStateChanged(auth, async (u) => {
       document.getElementById("profileIcon").style.display = "flex";
     }
 
-  } else {
-    setTimeout(()=>openProfile(true),500);
-  }
-
-});
-
-
-
-  
       let missingFields = [];
 
 if (!data.name) missingFields.push("Name");
