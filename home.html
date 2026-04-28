@@ -763,7 +763,7 @@ align-items:center;
   <div class="popupBox" onclick="event.stopPropagation()">
   <div id="popupIcon">⏳</div>
   <p id="popupText"></p>
-<button onclick="closeSessionPopup()">OK</button>
+<button onclick="sessionOk()">OK</button>
 </div>
 </div>
 
@@ -882,6 +882,15 @@ align-items:center;
   
 
 <script>
+
+
+window.sessionOk = function(){
+  customPopup.style.display = "none";
+  window.location.href = "index.html";
+};
+
+
+  
 
   let redirectAfterClose = false;
 
@@ -1234,20 +1243,29 @@ document.getElementById("profileImage").addEventListener("change", function(e){
 
 let idleTimer;
 
+let idleTimer;
+
 function resetTimer() {
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
 
-    // 🔥 logout (silent)
-    signOut(auth).then(() => {
-      localStorage.removeItem("loginSuccess");
-    });
+    // ❌ logout এখনই করো না
+    showPopup(
+      "Session expired! Please login again",
+      "error",
+      function () {
 
-    // 🔥 popup show
-    showPopup("Session expired! Please login again", "error");
+        // 👉 OK চাপলে logout + redirect
+        signOut(auth).then(() => {
+          localStorage.removeItem("loginSuccess");
+          window.location.href = "index.html";
+        });
 
-  }, 3 * 60 * 1000); // 3 min idle
+      }
+    );
+
+  }, 3 * 60 * 1000);
 }
 
 // activity detect
