@@ -879,26 +879,30 @@ onAuthStateChanged(auth, async (u) => {
   // ✅ ALLOW
   user = u;
 
+  // 🔥 IMPORTANT: এটা ভিতরে আনতে হবে
+  const snap = await getDoc(doc(db, "users", user.uid));
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    document.getElementById("profileName").innerText =
+      data.name || "Profile";
+
+    if (data.image && data.image !== "") {
+      const img = document.getElementById("profileBtnImg");
+      img.src = data.image;
+      img.style.display = "block";
+      document.getElementById("profileIcon").style.display = "none";
+    } else {
+      document.getElementById("profileBtnImg").style.display = "none";
+      document.getElementById("profileIcon").style.display = "flex";
+    }
+
+  } else {
+    setTimeout(()=>openProfile(true),500);
+  }
+
 });
-
-    const snap = await getDoc(doc(db, "users", user.uid));
-
-    if (snap.exists()) {
-      const data = snap.data();
-
-      document.getElementById("profileName").innerText =
-        data.name || "Profile";
-
-if (data.image && data.image !== "") {
-  document.getElementById("profileBtnImg").src = data.image;
-  const img = document.getElementById("profileBtnImg");
-img.src = data.image;
-img.style.display = "block";
-  document.getElementById("profileIcon").style.display = "none";
-} else {
-  document.getElementById("profileBtnImg").style.display = "none";
-  document.getElementById("profileIcon").style.display = "flex";
-}
 
 
 
