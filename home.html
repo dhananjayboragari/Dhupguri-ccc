@@ -646,7 +646,7 @@ align-items:center;
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:9999;
+  z-index:200000;
 }
 
 .popup-box{
@@ -763,7 +763,7 @@ align-items:center;
   <div class="popupBox" onclick="event.stopPropagation()">
   <div id="popupIcon">⏳</div>
   <p id="popupText"></p>
-  <button onclick="closePopup()">OK</button>
+<button onclick="closeSessionPopup()">OK</button>
 </div>
 </div>
 
@@ -1161,9 +1161,9 @@ window.showPopup = function(msg,type="success"){
 
 
   
-
-window.closePopup = function(){
+window.closeSessionPopup = function(){
   customPopup.style.display = "none";
+  window.location.href = "index.html";
 };
 
 
@@ -1238,21 +1238,24 @@ function resetTimer() {
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
+
+    // 🔥 logout (silent)
     signOut(auth).then(() => {
       localStorage.removeItem("loginSuccess");
-      redirectAfterClose = true;
-showPopup("Session expired! Login again", "error");
     });
-  }, 3 * 60 * 1000); // 3 min
+
+    // 🔥 popup show
+    showPopup("Session expired! Please login again", "error");
+
+  }, 3 * 60 * 1000); // 3 min idle
 }
 
-// 👇 Activity detect
+// activity detect
 window.onload = resetTimer;
 document.onmousemove = resetTimer;
 document.onkeypress = resetTimer;
 document.onclick = resetTimer;
 document.onscroll = resetTimer;
-
 // ====================================  
 
 
