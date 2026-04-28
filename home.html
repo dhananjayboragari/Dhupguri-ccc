@@ -886,6 +886,14 @@ align-items:center;
 
 window.sessionOk = function(){
   customPopup.style.display = "none";
+
+  if (window.popupCallback) {
+    const cb = window.popupCallback;
+    window.popupCallback = null;
+    cb();
+    return;
+  }
+
   window.location.href = "index.html";
 };
 
@@ -1133,22 +1141,21 @@ window.closeProfile = function(){
 
   
 
-window.showPopup = function(msg,type="success"){
+window.showPopup = function(msg, type = "success", callback = null) {
   popupText.innerText = msg;
 
   const box = document.querySelector(".popupBox");
   const btn = box.querySelector("button");
   const icon = document.getElementById("popupIcon");
 
-  // reset
   icon.classList.remove("loadingAnim");
 
-  if(type==="loading"){
+  if (type === "loading") {
     btn.style.display = "none";
     icon.innerText = "⏳";
     icon.classList.add("loadingAnim");
   } 
-  else if(type==="error"){
+  else if (type === "error") {
     btn.style.display = "inline-block";
     icon.innerText = "❌";
   } 
@@ -1157,12 +1164,8 @@ window.showPopup = function(msg,type="success"){
     icon.innerText = "✅";
   }
 
-  if(type==="error"){
-    box.style.boxShadow = "0 0 20px rgba(255,0,0,0.6)";
-  } else {
-    box.style.boxShadow =
-      "0 0 20px rgba(0,255,204,0.3), 0 0 40px rgba(0,119,255,0.2)";
-  }
+  box.dataset.callback = callback ? "true" : "";
+  window.popupCallback = callback;
 
   customPopup.style.display = "flex";
 };
@@ -1243,32 +1246,25 @@ document.getElementById("profileImage").addEventListener("change", function(e){
 
 let idleTimer;
 
-let idleTimer;
-
 function resetTimer() {
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
 
-    // ❌ logout এখনই করো না
     showPopup(
-      "Session expired! Please login again",
+      "Session expired! Login again",
       "error",
       function () {
-
-        // 👉 OK চাপলে logout + redirect
         signOut(auth).then(() => {
           localStorage.removeItem("loginSuccess");
           window.location.href = "index.html";
         });
-
       }
     );
 
   }, 3 * 60 * 1000);
 }
 
-// activity detect
 window.onload = resetTimer;
 document.onmousemove = resetTimer;
 document.onkeypress = resetTimer;
