@@ -636,7 +636,74 @@ align-items:center;
 }
 
 
+#customPopup{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
 
+.popup-box{
+  background:#fff;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  width:80%;
+  max-width:320px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  animation: popupFade 0.3s ease;
+}
+
+.popup-box .icon{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  border:3px solid #ff6b6b;
+  color:#ff6b6b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin:0 auto 15px;
+}
+
+.popup-box h2{
+  margin:0;
+  font-size:20px;
+}
+
+.popup-box p{
+  color:gray;
+  margin:10px 0 20px;
+  font-size:14px;
+}
+
+.popup-box button{
+  padding:10px 25px;
+  border:none;
+  border-radius:8px;
+  background: linear-gradient(45deg,#3b82f6,#2563eb);
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+
+@keyframes popupFade{
+  from{
+    transform: scale(0.8);
+    opacity:0;
+  }
+  to{
+    transform: scale(1);
+    opacity:1;
+  }
+}
 
   
   
@@ -807,6 +874,23 @@ align-items:center;
 </div>
 
 </div>
+
+
+<div id="customPopup">
+  <div class="popup-box">
+    
+    <div class="icon">!</div>
+
+    <h2>Session expired!</h2>
+    <p>Login again to continue.</p>
+
+    <button onclick="goLogin()">OK</button>
+
+  </div>
+</div>
+
+
+  
 
 <script>
 function startLoad(e, el){
@@ -1155,8 +1239,7 @@ function resetTimer() {
   idleTimer = setTimeout(() => {
     signOut(auth).then(() => {
       localStorage.removeItem("loginSuccess");
-      alert("Session expired! Login again.");
-      window.location.href = "index.html";
+      showPopup();
     });
   }, 5 * 60 * 1000); // 5 min
 }
@@ -1169,6 +1252,18 @@ document.onclick = resetTimer;
 document.onscroll = resetTimer;
 
 // ====================================  
+
+
+
+
+function showPopup(){
+  document.getElementById("customPopup").style.display = "flex";
+}
+
+function goLogin(){
+  window.location.href = "index.html";
+}
+
 
   
 </script>
