@@ -763,7 +763,7 @@ align-items:center;
   <div class="popupBox" onclick="event.stopPropagation()">
   <div id="popupIcon">⏳</div>
   <p id="popupText"></p>
-<button onclick="sessionOk()">OK</button>
+<button onclick="popupOk()">OK</button>
 </div>
 </div>
 
@@ -884,17 +884,13 @@ align-items:center;
 <script>
 
 
-window.sessionOk = function(){
+window.popupOk = function(){
   customPopup.style.display = "none";
 
-  if (window.popupCallback) {
-    const cb = window.popupCallback;
+  if (typeof window.popupCallback === "function") {
+    window.popupCallback();
     window.popupCallback = null;
-    cb();
-    return;
   }
-
-  window.location.href = "index.html";
 };
 
 
