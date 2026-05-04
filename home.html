@@ -760,7 +760,7 @@ align-items:center;
 </div>
 
 <!-- POPUP -->
-<div id="customPopup" onclick="closePopup()">
+<div id="customPopup">
   
   <div class="popupBox" onclick="event.stopPropagation()">
   <div id="popupIcon">⏳</div>
@@ -900,12 +900,7 @@ window.popupOk = function(){
   let redirectAfterClose = false;
 
 function closePopup(){
-  const popup = document.getElementById("customPopup");
-  popup.style.display = "none";
-
-  if(redirectAfterClose){
-    window.location.href = "index.html";
-  }
+  // কিছুই করবে না
 }
   
 function startLoad(e, el){
