@@ -400,11 +400,11 @@ function showPopup(message, callback) {
 
   let box = document.createElement("div");
   box.style = "background:#fff;padding:20px;border-radius:10px;text-align:center;width:300px;font-family:Arial;";
-  
+
   box.innerHTML = `
     <h3 style="color:red;">⚠ Session Expired</h3>
     <p>${message}</p>
-    <button id="okBtn" style="padding:8px 15px;background:#007bff;color:#fff;border:none;border-radius:5px;">OK</button>
+    <button id="okBtn">OK</button>
   `;
 
   overlay.appendChild(box);
@@ -416,13 +416,20 @@ function showPopup(message, callback) {
   };
 }
 
-// ===== LISTEN LOGOUT (ALL PAGES) =====
+// ===== LOGOUT FUNCTION =====
+function logoutNow(){
+  localStorage.setItem("logout_event", Date.now());
+
+  showPopup("Login again to continue", function () {
+    localStorage.removeItem("loginSuccess");
+    window.location.href = "index.html";
+  });
+}
+
+// ===== CROSS PAGE LISTENER =====
 window.addEventListener("storage", (event) => {
   if (event.key === "logout_event") {
-    showPopup("Login again to continue", function () {
-      localStorage.removeItem("loginSuccess");
-      window.location.href = "index.html";
-    });
+    logoutNow();
   }
 });
 
@@ -433,10 +440,7 @@ function resetTimer() {
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
-
-    // 🔥 শুধু signal দিবে (popup না)
-    localStorage.setItem("logout_event", Date.now());
-
+    logoutNow(); // 🔥 direct logout
   }, 3 * 60 * 1000);
 }
 
