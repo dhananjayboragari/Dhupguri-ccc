@@ -387,19 +387,7 @@ window.addEventListener("visibilitychange",function(){
 </script>
 
 
-<script>
-// login না থাকলে redirect
-if (!localStorage.getItem("loginSuccess")) {
-  window.location.href = "index.html";
-}
-
-// অন্য page থেকে logout হলে detect
-window.addEventListener("storage", (event) => {
-  if (event.key === "logout_event") {
-    window.location.href = "index.html";
-  }
-});
-</script>
+localStorage.setItem("logout_event", Date.now());
   
 </body>
 </html>
