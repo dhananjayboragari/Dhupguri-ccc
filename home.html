@@ -1242,7 +1242,7 @@ function resetTimer() {
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
-
+localStorage.setItem("logout_event", Date.now());
     showPopup(
       "Session expired! Login again",
       "error",
