@@ -386,5 +386,32 @@ window.addEventListener("visibilitychange",function(){
 });
 </script>
 
+
+<script>
+if (!localStorage.getItem("loginSuccess")) {
+  window.location.href = "index.html";
+}
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "logout_event") {
+
+    if (typeof showPopup === "function") {
+      showPopup(
+        "Session expired! Login again",
+        "error",
+        function () {
+          window.location.href = "index.html";
+        }
+      );
+    } else {
+      alert("Session expired! Login again");
+      window.location.href = "index.html";
+    }
+
+  }
+});
+</script>
+
+  
 </body>
 </html>
