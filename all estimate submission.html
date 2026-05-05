@@ -388,30 +388,45 @@ window.addEventListener("visibilitychange",function(){
 
 
 <script>
+// ===== LOGIN CHECK =====
 if (!localStorage.getItem("loginSuccess")) {
   window.location.href = "index.html";
 }
 
+// ===== CROSS PAGE LOGOUT =====
 window.addEventListener("storage", (event) => {
   if (event.key === "logout_event") {
-
-    if (typeof showPopup === "function") {
-      showPopup(
-        "Session expired! Login again",
-        "error",
-        function () {
-          window.location.href = "index.html";
-        }
-      );
-    } else {
-      alert("Session expired! Login again");
-      window.location.href = "index.html";
-    }
-
+    alert("Session expired! Login again");
+    window.location.href = "index.html";
   }
 });
-</script>
 
+// ===== IDLE TIMER =====
+let idleTimer;
+
+function resetTimer() {
+  clearTimeout(idleTimer);
+
+  idleTimer = setTimeout(() => {
+
+    // 🔥 logout signal সব page-এ যাবে
+    localStorage.setItem("logout_event", Date.now());
+
+    alert("Session expired! Login again");
+
+    localStorage.removeItem("loginSuccess");
+    window.location.href = "index.html";
+
+  }, 3 * 60 * 1000); // 3 মিনিট
+}
+
+// events
+window.onload = resetTimer;
+document.onmousemove = resetTimer;
+document.onkeypress = resetTimer;
+document.onclick = resetTimer;
+document.onscroll = resetTimer;
+</script>
   
 </body>
 </html>
