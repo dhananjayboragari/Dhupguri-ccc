@@ -416,16 +416,17 @@ function showPopup(message, callback) {
   };
 }
 
-// ===== CROSS PAGE LOGOUT =====
+// ===== LISTEN LOGOUT (ALL PAGES) =====
 window.addEventListener("storage", (event) => {
   if (event.key === "logout_event") {
     showPopup("Login again to continue", function () {
+      localStorage.removeItem("loginSuccess");
       window.location.href = "index.html";
     });
   }
 });
 
-// ===== IDLE TIMER (IMPORTANT) =====
+// ===== IDLE TIMER =====
 let idleTimer;
 
 function resetTimer() {
@@ -433,15 +434,10 @@ function resetTimer() {
 
   idleTimer = setTimeout(() => {
 
-    // 🔥 সব page-এ signal যাবে
+    // 🔥 শুধু signal দিবে (popup না)
     localStorage.setItem("logout_event", Date.now());
 
-    showPopup("Login again to continue", function () {
-      localStorage.removeItem("loginSuccess");
-      window.location.href = "index.html";
-    });
-
-  }, 3 * 60 * 1000); // 3 min
+  }, 3 * 60 * 1000);
 }
 
 // events
