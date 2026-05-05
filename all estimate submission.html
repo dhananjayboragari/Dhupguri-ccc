@@ -404,6 +404,42 @@ window.addEventListener("storage", (event) => {
   }
 });
 </script>
+
+
+<script>
+// ===== AUTO LOGOUT SYSTEM =====
+let inactivityTime = 180000; // 3 min
+let timeout;
+
+function logoutUser(){
+  localStorage.setItem("logout_event", Date.now());
+  window.location.href = "index.html";
+}
+
+function resetTimer(){
+  clearTimeout(timeout);
+  timeout = setTimeout(logoutUser, inactivityTime);
+}
+
+// ✅ activity detect
+document.onmousemove = resetTimer;
+document.onkeypress = resetTimer;
+document.onclick = resetTimer;
+document.onscroll = resetTimer;
+
+// ✅ page load
+window.onload = function () {
+
+  // 🔥 popup check (home page er popup show korbe)
+  if(localStorage.getItem("showLogoutPopup")){
+    alert("Session expired! Login again"); // 👉 test er jonno
+    localStorage.removeItem("showLogoutPopup");
+  }
+
+  resetTimer();
+};
+</script>
+
   
 </body>
 </html>
