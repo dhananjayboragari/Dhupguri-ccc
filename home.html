@@ -1257,7 +1257,7 @@ localStorage.setItem("logout_event", Date.now());
   }, 3 * 60 * 1000);
 }
 
-window.onload = resetTimer;
+
 document.onmousemove = resetTimer;
 document.onkeypress = resetTimer;
 document.onclick = resetTimer;
@@ -1268,17 +1268,23 @@ document.onscroll = resetTimer;
 </script>
 
 
-
-  <script>
+<script>
 window.onload = function () {
 
+  // ✅ popup show
   if(localStorage.getItem("showLogoutPopup")){
     showPopup("Session expired! Login again");
     localStorage.removeItem("showLogoutPopup");
   }
 
+  // ✅ idle timer start
+  if (typeof resetTimer === "function") {
+    resetTimer();
+  }
+
 };
 </script>
+  
 
 </body>
 </html>
