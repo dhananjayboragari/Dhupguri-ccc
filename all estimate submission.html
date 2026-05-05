@@ -393,37 +393,18 @@ if (!localStorage.getItem("loginSuccess")) {
   window.location.href = "index.html";
 }
 
-// ===== SIMPLE POPUP (HOME STYLE LIKE) =====
+// ===== POPUP =====
 function showPopup(message, callback) {
-
-  // overlay
   let overlay = document.createElement("div");
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.background = "rgba(0,0,0,0.6)";
-  overlay.style.display = "flex";
-  overlay.style.justifyContent = "center";
-  overlay.style.alignItems = "center";
-  overlay.style.zIndex = "9999";
+  overlay.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;";
 
-  // popup box
   let box = document.createElement("div");
-  box.style.background = "#fff";
-  box.style.padding = "20px";
-  box.style.borderRadius = "10px";
-  box.style.textAlign = "center";
-  box.style.width = "300px";
-  box.style.fontFamily = "Arial";
-
+  box.style = "background:#fff;padding:20px;border-radius:10px;text-align:center;width:300px;font-family:Arial;";
+  
   box.innerHTML = `
-    <h3 style="color:red;margin-bottom:10px;">⚠ Session Expired</h3>
-    <p style="margin-bottom:20px;">${message}</p>
-    <button id="okBtn" style="padding:8px 15px;background:#007bff;color:#fff;border:none;border-radius:5px;cursor:pointer;">
-      OK
-    </button>
+    <h3 style="color:red;">⚠ Session Expired</h3>
+    <p>${message}</p>
+    <button id="okBtn" style="padding:8px 15px;background:#007bff;color:#fff;border:none;border-radius:5px;">OK</button>
   `;
 
   overlay.appendChild(box);
@@ -435,16 +416,40 @@ function showPopup(message, callback) {
   };
 }
 
-// ===== LISTEN LOGOUT FROM OTHER PAGE =====
+// ===== CROSS PAGE LOGOUT =====
 window.addEventListener("storage", (event) => {
   if (event.key === "logout_event") {
-
     showPopup("Login again to continue", function () {
       window.location.href = "index.html";
     });
-
   }
 });
+
+// ===== IDLE TIMER (IMPORTANT) =====
+let idleTimer;
+
+function resetTimer() {
+  clearTimeout(idleTimer);
+
+  idleTimer = setTimeout(() => {
+
+    // 🔥 সব page-এ signal যাবে
+    localStorage.setItem("logout_event", Date.now());
+
+    showPopup("Login again to continue", function () {
+      localStorage.removeItem("loginSuccess");
+      window.location.href = "index.html";
+    });
+
+  }, 3 * 60 * 1000); // 3 min
+}
+
+// events
+window.onload = resetTimer;
+document.onmousemove = resetTimer;
+document.onkeypress = resetTimer;
+document.onclick = resetTimer;
+document.onscroll = resetTimer;
 </script>
   
 </body>
