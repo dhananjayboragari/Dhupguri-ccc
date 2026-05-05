@@ -1265,13 +1265,20 @@ document.onscroll = resetTimer;
 // ====================================  
 
 
-
-
-  
-
-  
 </script>
-  
+
+
+
+  <script>
+window.onload = function () {
+
+  if(localStorage.getItem("showLogoutPopup")){
+    showPopup("Session expired! Login again");
+    localStorage.removeItem("showLogoutPopup");
+  }
+
+};
+</script>
 
 </body>
 </html>
