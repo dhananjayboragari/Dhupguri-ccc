@@ -403,15 +403,26 @@ if (!localStorage.getItem("loginSuccess")) {
 // ===== AUTO LOGOUT SYSTEM =====
 let inactivityTime = 180000; // 3 min
 let timeout;
+  
 
 function logoutUser(){
 
-  clearTimeout(timeout); // 🔥 timer বন্ধ
+  // 🔥 timer বন্ধ
+  clearTimeout(timeout);
 
+  // 🔥 event listener বন্ধ (MAIN FIX)
+  window.removeEventListener("mousemove", resetTimer);
+  window.removeEventListener("keypress", resetTimer);
+  window.removeEventListener("click", resetTimer);
+  window.removeEventListener("scroll", resetTimer);
+
+  // 🔥 popup trigger
   localStorage.setItem("showLogoutPopup", "true");
 
+  // 🔥 logout
   localStorage.removeItem("loginSuccess");
 
+  // 🔥 redirect
   window.location.href = "home.html";
 }
 
