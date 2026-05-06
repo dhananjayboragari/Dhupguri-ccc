@@ -405,8 +405,13 @@ let inactivityTime = 180000; // 3 min
 let timeout;
 
 function logoutUser(){
-  localStorage.setItem("showLogoutPopup", "true"); // 🔥 trigger
+
+  clearTimeout(timeout); // 🔥 timer বন্ধ
+
+  localStorage.setItem("showLogoutPopup", "true");
+
   localStorage.removeItem("loginSuccess");
+
   window.location.href = "home.html";
 }
 
@@ -422,7 +427,7 @@ window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
 
 // page load
-window.addEventListener("load", function () {
+document.addEventListener("DOMContentLoaded", function () {
   resetTimer();
 });
 </script>
