@@ -960,7 +960,8 @@ let user = null;
 console.log("JS Loaded ✅");
 
 onAuthStateChanged(auth, async (u) => {
-
+  
+resetTimer();
   const isLoggedIn = localStorage.getItem("loginSuccess");
 
   // 🔴 BLOCK (login ছাড়া ঢুকলে)
@@ -1238,7 +1239,7 @@ document.getElementById("profileImage").addEventListener("change", function(e){
 
 let idleTimer;
 
-function resetTimer() {
+window.resetTimer = function() {
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
@@ -1258,10 +1259,10 @@ localStorage.setItem("logout_event", Date.now());
 }
 
 
-document.onmousemove = resetTimer;
-document.onkeypress = resetTimer;
-document.onclick = resetTimer;
-document.onscroll = resetTimer;
+window.addEventListener("mousemove", resetTimer);
+window.addEventListener("keypress", resetTimer);
+window.addEventListener("click", resetTimer);
+window.addEventListener("scroll", resetTimer);
 // ====================================  
 
 
