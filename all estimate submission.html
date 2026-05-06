@@ -409,7 +409,8 @@ function logoutUser(){
 
   // 🔥 timer বন্ধ
   clearTimeout(timeout);
-
+  
+window.onbeforeunload = null;
   // 🔥 event listener বন্ধ (MAIN FIX)
   window.removeEventListener("mousemove", resetTimer);
   window.removeEventListener("keypress", resetTimer);
