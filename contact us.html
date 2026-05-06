@@ -239,5 +239,44 @@ window.addEventListener("resize", function(){
 
 </script>
 
+
+
+
+<script>
+
+// ===== LOGIN CHECK =====
+if (!localStorage.getItem("loginSuccess")) {
+  window.location.href = "index.html";
+}
+
+// ===== AUTO LOGOUT SYSTEM =====
+let inactivityTime = 180000; // 3 min
+let timeout;
+
+function logoutUser(){
+  localStorage.setItem("showLogoutPopup", "true"); // 🔥 trigger
+  localStorage.removeItem("loginSuccess");
+  window.location.href = "home.html";
+}
+
+function resetTimer(){
+  clearTimeout(timeout);
+  timeout = setTimeout(logoutUser, inactivityTime);
+}
+
+// activity detect
+window.addEventListener("mousemove", resetTimer);
+window.addEventListener("keypress", resetTimer);
+window.addEventListener("click", resetTimer);
+window.addEventListener("scroll", resetTimer);
+
+// page load
+window.addEventListener("load", function () {
+  resetTimer();
+});
+</script>
+
+  
+
 </body>
 </html>
