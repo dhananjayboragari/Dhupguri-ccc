@@ -243,37 +243,39 @@ window.addEventListener("resize", function(){
 
 
 <script>
-
-// ===== LOGIN CHECK =====
-if (!localStorage.getItem("loginSuccess")) {
-  window.location.href = "index.html";
-}
-
-// ===== AUTO LOGOUT SYSTEM =====
-let inactivityTime = 180000; // 3 min
+let inactivityTime = 180000; // 3 মিনিট
 let timeout;
 
+// ===== LOGOUT FUNCTION =====
 function logoutUser(){
-  localStorage.setItem("showLogoutPopup", "true"); // 🔥 trigger
-  localStorage.removeItem("loginSuccess");
+  localStorage.setItem("showLogoutPopup", "true"); // 👈 ADD
+  localStorage.setItem("logout_event", Date.now());
   window.location.href = "home.html";
 }
 
+// ===== STORAGE SYNC (সব tab logout) =====
+window.addEventListener("storage", (event) => {
+  if (event.key === "logout_event") {
+    window.location.href = "home.html";
+  }
+});
+
+// ===== AUTO LOGOUT TIMER =====
 function resetTimer(){
   clearTimeout(timeout);
-  timeout = setTimeout(logoutUser, inactivityTime);
+
+  timeout = setTimeout(() => {
+    logoutUser();
+  }, inactivityTime);
 }
 
 // activity detect
-window.addEventListener("mousemove", resetTimer);
-window.addEventListener("keypress", resetTimer);
-window.addEventListener("click", resetTimer);
-window.addEventListener("scroll", resetTimer);
-
-// page load
-window.addEventListener("load", function () {
-  resetTimer();
+["click","mousemove","keydown","scroll","touchstart"].forEach(ev => {
+  document.addEventListener(ev, resetTimer);
 });
+
+// start timer
+resetTimer();
 </script>
 
   
