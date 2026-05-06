@@ -1278,9 +1278,11 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("showLogoutPopup");
   }
 
-  // ✅ idle timer start
-  if (typeof resetTimer === "function") {
-    resetTimer();
+  // ✅ idle timer start (ONLY if no popup)
+  if (!localStorage.getItem("showLogoutPopup")) {
+    if (typeof resetTimer === "function") {
+      resetTimer();
+    }
   }
 
 });
