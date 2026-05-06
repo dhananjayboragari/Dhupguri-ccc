@@ -399,15 +399,15 @@ window.addEventListener("visibilitychange",function(){
 if (!localStorage.getItem("loginSuccess")) {
   window.location.href = "index.html";
 }
-  
+
 // ===== AUTO LOGOUT SYSTEM =====
 let inactivityTime = 180000; // 3 min
 let timeout;
 
 function logoutUser(){
-  localStorage.setItem("showLogoutPopup", "true"); // 🔥 popup trigger
-  localStorage.removeItem("loginSuccess");         // 🔥 logout
-  window.location.href = "home.html";              // 🔥 home page
+  localStorage.setItem("showLogoutPopup", "true"); // 🔥 trigger
+  localStorage.removeItem("loginSuccess");
+  window.location.href = "home.html";
 }
 
 function resetTimer(){
@@ -415,21 +415,14 @@ function resetTimer(){
   timeout = setTimeout(logoutUser, inactivityTime);
 }
 
-// ✅ activity detect
+// activity detect
 window.addEventListener("mousemove", resetTimer);
 window.addEventListener("keypress", resetTimer);
 window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
 
-// ✅ page load
+// page load
 window.onload = function () {
-
-  // 🔥 popup check (home page er popup show korbe)
-  if(localStorage.getItem("showLogoutPopup")){
-    alert("Session expired! Login again"); // 👉 test er jonno
-    localStorage.removeItem("showLogoutPopup");
-  }
-
   resetTimer();
 };
 </script>
