@@ -387,33 +387,27 @@ window.addEventListener("visibilitychange",function(){
 </script>
 
 
+
+
+
+
+
+
 <script>
+
 // ===== LOGIN CHECK =====
 if (!localStorage.getItem("loginSuccess")) {
   window.location.href = "index.html";
 }
-
-// ===== LISTENER =====
-window.addEventListener("storage", (event) => {
-  if (event.key === "logout_event") {
-    
-    // 👉 Home page popup trigger করবে
-    localStorage.setItem("showLogoutPopup", "true");
-
-    window.location.href = "home.html";
-  }
-});
-</script>
-
-
-<script>
+  
 // ===== AUTO LOGOUT SYSTEM =====
 let inactivityTime = 180000; // 3 min
 let timeout;
 
 function logoutUser(){
-  localStorage.setItem("logout_event", Date.now());
-  window.location.href = "home.html";
+  localStorage.setItem("showLogoutPopup", "true"); // 🔥 popup trigger
+  localStorage.removeItem("loginSuccess");         // 🔥 logout
+  window.location.href = "home.html";              // 🔥 home page
 }
 
 function resetTimer(){
@@ -422,10 +416,10 @@ function resetTimer(){
 }
 
 // ✅ activity detect
-document.onmousemove = resetTimer;
-document.onkeypress = resetTimer;
-document.onclick = resetTimer;
-document.onscroll = resetTimer;
+window.addEventListener("mousemove", resetTimer);
+window.addEventListener("keypress", resetTimer);
+window.addEventListener("click", resetTimer);
+window.addEventListener("scroll", resetTimer);
 
 // ✅ page load
 window.onload = function () {
