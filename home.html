@@ -1270,7 +1270,7 @@ window.addEventListener("scroll", resetTimer);
 
 
 <script>
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
 
   // ✅ popup show
   if(localStorage.getItem("showLogoutPopup")){
@@ -1283,7 +1283,7 @@ window.onload = function () {
     resetTimer();
   }
 
-};
+});
 </script>
   
 
