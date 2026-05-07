@@ -966,10 +966,33 @@ resetTimer();
 
   // 🔴 BLOCK (login ছাড়া ঢুকলে)
   if (!u || !isLoggedIn) {
-    localStorage.removeItem("loginSuccess");
-    window.location.href = "index.html";
+
+  // 🔥 যদি logout popup show করতে হয়
+  if(localStorage.getItem("showLogoutPopup") === "expired"){
+
+    setTimeout(() => {
+
+      showPopup(
+        "Session expired! Login again",
+        "error",
+        function(){
+
+          localStorage.removeItem("showLogoutPopup");
+          window.location.href = "index.html";
+
+        }
+      );
+
+    }, 300);
+
     return;
   }
+
+  // 🔥 normal redirect
+  localStorage.removeItem("loginSuccess");
+  window.location.href = "index.html";
+  return;
+}
 
   // ✅ USER OK
   user = u;
@@ -1269,34 +1292,7 @@ window.addEventListener("scroll", resetTimer);
 </script>
 
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
 
-  const logoutPopup = localStorage.getItem("showLogoutPopup");
-
-if(logoutPopup === "expired"){
-
-  // 🔥 আগে remove
-  localStorage.removeItem("showLogoutPopup");
-
-  // 🔥 তারপর popup
-  setTimeout(() => {
-    showPopup(
-      "Session expired! Login again",
-      "error"
-    );
-  }, 300);
-
-  return;
-}
-
-  // ✅ normal case → timer start
-  if (typeof resetTimer === "function") {
-    resetTimer();
-  }
-
-});
-</script>
   
 
 </body>
