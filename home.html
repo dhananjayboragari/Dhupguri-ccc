@@ -970,23 +970,20 @@ resetTimer();
   // 🔥 যদি logout popup show করতে হয়
   if(localStorage.getItem("showLogoutPopup") === "expired"){
 
-    setTimeout(() => {
+  localStorage.removeItem("showLogoutPopup");
 
-      showPopup(
-        "Session expired! Login again",
-        "error",
-        function(){
+  showPopup(
+    "Session expired! Login again",
+    "error",
+    function(){
 
-          localStorage.removeItem("showLogoutPopup");
-          window.location.href = "index.html";
+      window.location.href = "index.html";
 
-        }
-      );
+    }
+  );
 
-    }, 300);
-
-    return;
-  }
+  return;
+}
 
   // 🔥 normal redirect
   localStorage.removeItem("loginSuccess");
