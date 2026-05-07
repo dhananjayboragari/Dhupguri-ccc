@@ -405,11 +405,25 @@ if (!localStorage.getItem("loginSuccess")) {
 // ===== AUTO LOGOUT SYSTEM =====
 let inactivityTime = 180000; // 3 min
 let timeout;
+  
 
 function logoutUser(){
-  localStorage.setItem("showLogoutPopup", "true"); // 🔥 trigger
+
+  clearTimeout(timeout);
+
+  window.removeEventListener("mousemove", resetTimer);
+  window.removeEventListener("keypress", resetTimer);
+  window.removeEventListener("click", resetTimer);
+  window.removeEventListener("scroll", resetTimer);
+
+  // 🔥 popup flag
+  localStorage.setItem("showLogoutPopup", "expired");
+
+  // 🔥 logout
   localStorage.removeItem("loginSuccess");
-  window.location.href = "home.html";
+
+  // 🔥 redirect
+window.location.replace("home.html");
 }
 
 function resetTimer(){
@@ -424,11 +438,10 @@ window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
 
 // page load
-window.addEventListener("load", function () {
+document.addEventListener("DOMContentLoaded", function () {
   resetTimer();
 });
 </script>
-
 
   
 </body>
