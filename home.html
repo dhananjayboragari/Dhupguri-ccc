@@ -1272,18 +1272,23 @@ window.addEventListener("scroll", resetTimer);
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  // 🔥 যদি logout popup থাকে
-  if(localStorage.getItem("showLogoutPopup")){
+  const logoutPopup = localStorage.getItem("showLogoutPopup");
 
-    // ✅ popup show
-    showPopup("Session expired! Login again");
+if(logoutPopup === "expired"){
 
-    // 🔥 remove পরে হবে (এখানে না)
-    localStorage.removeItem("showLogoutPopup");
+  // 🔥 আগে remove
+  localStorage.removeItem("showLogoutPopup");
 
-    // ❌ নিচের code run হবে না
-    return; // 🔥 MAIN FIX
-  }
+  // 🔥 তারপর popup
+  setTimeout(() => {
+    showPopup(
+      "Session expired! Login again",
+      "error"
+    );
+  }, 300);
+
+  return;
+}
 
   // ✅ normal case → timer start
   if (typeof resetTimer === "function") {
