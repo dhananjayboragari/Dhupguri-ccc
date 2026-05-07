@@ -1160,14 +1160,14 @@ window.showPopup = function(msg, type = "success", callback = null) {
   box.dataset.callback = callback ? "true" : "";
   window.popupCallback = callback;
 
-  customPopup.style.display = "flex";
+  document.getElementById("customPopup").style.display = "flex";
 };
 
 
 
   
 window.closeSessionPopup = function(){
-  customPopup.style.display = "none";
+  document.getElementById("customPopup").style.display = "none";
   window.location.href = "index.html";
 };
 
