@@ -243,39 +243,51 @@ window.addEventListener("resize", function(){
 
 
 <script>
-let inactivityTime = 180000; // 3 মিনিট
-let timeout;
 
-// ===== LOGOUT FUNCTION =====
-function logoutUser(){
-  localStorage.setItem("showLogoutPopup", "true"); // 👈 ADD
-  localStorage.setItem("logout_event", Date.now());
-  window.location.href = "home.html";
+// ===== LOGIN CHECK =====
+if (!localStorage.getItem("loginSuccess")) {
+  window.location.href = "index.html";
 }
 
-// ===== STORAGE SYNC (সব tab logout) =====
-window.addEventListener("storage", (event) => {
-  if (event.key === "logout_event") {
-    window.location.href = "home.html";
-  }
-});
+// ===== AUTO LOGOUT SYSTEM =====
+let inactivityTime = 180000; // 3 min
+let timeout;
+  
 
-// ===== AUTO LOGOUT TIMER =====
-function resetTimer(){
+function logoutUser(){
+
   clearTimeout(timeout);
 
-  timeout = setTimeout(() => {
-    logoutUser();
-  }, inactivityTime);
+  window.removeEventListener("mousemove", resetTimer);
+  window.removeEventListener("keypress", resetTimer);
+  window.removeEventListener("click", resetTimer);
+  window.removeEventListener("scroll", resetTimer);
+
+  // 🔥 popup flag
+  localStorage.setItem("showLogoutPopup", "expired");
+
+  // 🔥 logout
+  localStorage.removeItem("loginSuccess");
+
+  // 🔥 redirect
+window.location.replace("home.html");
+}
+
+function resetTimer(){
+  clearTimeout(timeout);
+  timeout = setTimeout(logoutUser, inactivityTime);
 }
 
 // activity detect
-["click","mousemove","keydown","scroll","touchstart"].forEach(ev => {
-  document.addEventListener(ev, resetTimer);
-});
+window.addEventListener("mousemove", resetTimer);
+window.addEventListener("keypress", resetTimer);
+window.addEventListener("click", resetTimer);
+window.addEventListener("scroll", resetTimer);
 
-// start timer
-resetTimer();
+// page load
+document.addEventListener("DOMContentLoaded", function () {
+  resetTimer();
+});
 </script>
 
   
