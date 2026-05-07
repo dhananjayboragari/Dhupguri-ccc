@@ -407,24 +407,21 @@ let timeout;
 
 function logoutUser(){
 
-  // 🔥 timer বন্ধ
   clearTimeout(timeout);
-  
-window.onbeforeunload = null;
-  // 🔥 event listener বন্ধ (MAIN FIX)
+
   window.removeEventListener("mousemove", resetTimer);
   window.removeEventListener("keypress", resetTimer);
   window.removeEventListener("click", resetTimer);
   window.removeEventListener("scroll", resetTimer);
 
-  // 🔥 popup trigger
-  localStorage.setItem("showLogoutPopup", "true");
+  // 🔥 popup flag
+  localStorage.setItem("showLogoutPopup", "expired");
 
   // 🔥 logout
   localStorage.removeItem("loginSuccess");
 
   // 🔥 redirect
-  window.location.replace("home.html");
+  window.location.href = "home.html";
 }
 
 function resetTimer(){
