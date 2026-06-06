@@ -308,7 +308,7 @@ h2{ margin:5px 0 10px; }
     <i class="fab fa-facebook-f"></i>
   </a>
 
-  <a href="#" onclick="googleLogin()">
+  <a href="https://google.com" target="_blank">
     <i class="fab fa-google"></i>
   </a>
 
@@ -515,19 +515,7 @@ window.resendEmail = async function(){
 }
 
 
-import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-window.googleLogin = async function(){
-  const provider = new GoogleAuthProvider();
-
-  try{
-    await signInWithPopup(auth, provider);
-    alert("Google Login Success");
-    window.location.href="home.html";
-  }catch(e){
-    alert("Google login failed");
-  }
-}
 
   
 </script>
