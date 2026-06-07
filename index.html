@@ -13,18 +13,22 @@ body{
   margin:0;
   font-family:'Segoe UI', sans-serif;
   background:linear-gradient(135deg,#e0eafc,#cfdef3);
+
   display:flex;
   justify-content:center;
-  align-items:center;
-  height:100vh;
+
+  align-items:flex-start; /* 🔥 CHANGE */
+  min-height:100vh;
+
+  padding:20px 0;
 }
 .card{
   display:flex;
   flex-direction:column;
   align-items:center;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.55);
   backdrop-filter: blur(10px);
-  padding:30px 25px;
+  padding:30px 25px 40px;
   width:90%;
   max-width:360px;
   border-radius:20px;
@@ -200,13 +204,14 @@ h2{ margin:5px 0 10px; }
 
 /* OPEN */
 .extra.open{
-  max-height:200px;
+  max-height:1000px;
 }
 
 /* LINKS */
   
 .social{
   margin-top:15px;
+  margin-bottom:25px;
   display:flex;
   justify-content:center;
   gap:15px;
@@ -248,6 +253,60 @@ h2{ margin:5px 0 10px; }
   background:linear-gradient(45deg,#25d366,#128c7e);
 }
 
+
+
+.link-row{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:100%;
+}
+
+/* BOX STYLE */
+.link-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px;
+  border-radius:14px;
+
+  /* 🔥 GLASS BLUR */
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border:1px solid rgba(255,255,255,0.3);
+
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.3s ease;
+}
+
+/* ICON */
+.link-box i{
+  color:#007bff;
+  font-size:16px;
+  transition:0.3s;
+}
+
+/* HOVER EFFECT */
+.link-box:hover{
+  background:linear-gradient(45deg,#007bff,#00c6ff);
+  color:#fff;
+  transform:translateY(-4px) scale(1.03);
+  box-shadow:0 10px 20px rgba(0,123,255,0.3);
+}
+
+.link-box:hover i{
+  color:#fff;
+}
+
+/* CLICK EFFECT */
+.link-box:active{
+  transform:scale(0.96);
+}
+  
          
 </style>
 </head>
@@ -294,14 +353,22 @@ h2{ margin:5px 0 10px; }
 <div class="extra" id="extra">
 
   <br>
+
 <div class="link-row">
-  <span onclick="location.href='signup.html'"><u>Create Account</u></span>
-  <br>
-  <br>
-  <br>
-  <span onclick="location.href='forgot.html'"><u>Forgot Password</u></span>
+
+  <div class="link-box" onclick="location.href='signup.html'">
+    <i class="fas fa-user-plus"></i>
+    <span>Create Account</span>
+  </div>
+
+  <div class="link-box" onclick="location.href='forgot.html'">
+    <i class="fas fa-key"></i>
+    <span>Forgot Password</span>
+  </div>
+
 </div>
-<br>
+  
+  <br>
 <div class="social">
 
   <a href="https://facebook.com" target="_blank">
