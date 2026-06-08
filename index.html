@@ -17,24 +17,28 @@ body{
   display:flex;
   justify-content:center;
 
-  align-items:flex-start; /* 🔥 CHANGE */
+  align-items:center; /* 🔥 CHANGE */
   min-height:100vh;
-
-  padding:20px 0;
+  padding:20px;
+  overflow-y:auto;
 }
 .card{
+  width:100%;
+  max-width:360px;
+  margin:auto;
+
   display:flex;
   flex-direction:column;
   align-items:center;
+text-align:center;
   background: rgba(255,255,255,0.55);
   backdrop-filter: blur(10px);
+
   padding:30px 25px 40px;
-  width:90%;
-  max-width:360px;
   border-radius:20px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  text-align:center;
 }
+  
 .icon-box{
   width:80px;height:80px;
   background:#007bff;
@@ -55,6 +59,7 @@ body{
   position:relative;
   width:100%;
   margin:10px 0;
+  text-align:left;
 }
 .left,.right{
   position:absolute;
@@ -306,7 +311,36 @@ h2{ margin:5px 0 10px; }
 .link-box:active{
   transform:scale(0.96);
 }
-  
+
+  @media (max-width: 480px){
+  .card{
+    width:95%;
+    padding:20px 15px;
+  }
+
+  h2{
+    font-size:18px;
+  }
+
+  .company{
+    font-size:16px;
+  }
+}
+
+  @media (min-width: 768px){
+  .card{
+    width:360px;
+  }
+}
+
+  @media (max-width: 480px){
+  .social i{
+    width:45px;
+    height:45px;
+    line-height:45px;
+    font-size:16px;
+  }
+}
          
 </style>
 </head>
@@ -582,9 +616,6 @@ window.resendEmail = async function(){
 }
 
 
-
-
-  
 </script>
 
 </body>
