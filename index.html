@@ -360,6 +360,16 @@ overflow:visible;
     transform: scale(1.25);
   }
 }
+
+.card.active{
+  background: linear-gradient(
+    135deg,
+    rgb(137,226,212) 0%,
+    rgb(126,221,231) 35%,
+    rgb(129,221,222) 65%,
+    rgb(139,227,205) 100%
+  );
+}
   
 </style>
 </head>
@@ -635,6 +645,36 @@ window.resendEmail = async function(){
 }
 
 
+
+
+const card = document.querySelector(".card");
+
+// track state
+let isActive = false;
+
+// CARD CLICK = ON
+card.addEventListener("click", function (e) {
+
+  // ❌ ignore clicks from inputs/buttons/toggle/social etc
+  if (e.target.closest("input, button, .toggle-more, i, a, .link-box, .social i")) {
+    return;
+  }
+
+  isActive = true;
+  card.classList.add("active");
+});
+
+// OUTSIDE CLICK = OFF
+document.addEventListener("click", function (e) {
+
+  // ❌ if click inside card → ignore
+  if (e.target.closest(".card")) return;
+
+  isActive = false;
+  card.classList.remove("active");
+});
+
+  
 </script>
 
 </body>
