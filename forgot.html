@@ -93,7 +93,60 @@ button.loading{
   color:#007bff;
   cursor:pointer;
   font-size:14px;
+  }
+
+  /* CAPTCHA UI */
+.captcha-box{
+  position:relative;
+  padding:12px 15px;
+  border-radius:12px;
+  background:#f1f1f1;
+  border:1.5px solid #ddd;
+  font-weight:bold;
+  font-size:18px;
+  margin-top:10px;
 }
+
+.captcha-refresh{
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:#ff9800;
+  transition:0.3s;
+}
+
+.captcha-refresh:hover{
+  transform:translateY(-50%) rotate(180deg);
+}
+
+#captchaText{
+  padding-right:30px;
+  display:block;
+}
+
+/* BACK BUTTON */
+.back-btn{
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  border-radius:12px;
+  border:2px solid #ddd;
+  background:#f8f9fa;
+  cursor:pointer;
+  color:#000;
+}
+
+.back-btn:hover{
+  background:#e9ecef;
+}
+
+.back-btn:active{
+  background:#ff9800;
+  color:#fff;
+}
+  
 </style>
 </head>
 
@@ -111,7 +164,7 @@ DHUPGURI C.C.C
 
 <h2>Reset Password</h2>
 
-<p style="font-size:14px;color:#666;">
+<p style="font-size:14px;color:red;">
 Enter your email to receive password reset link
 </p>
 
@@ -120,13 +173,26 @@ Enter your email to receive password reset link
 <input id="email" placeholder="Enter Email">
 </div>
 
+
+  <!-- EMAIL INPUT er niche boshao -->
+
+<div class="captcha-box">
+  <span id="captchaText"></span>
+  <i class="fas fa-rotate-right captcha-refresh" onclick="generateCaptcha()"></i>
+</div>
+
+<div class="input-box">
+  <input type="text" id="captchaInput" placeholder="Solve CAPTCHA">
+</div>
+  
 <button id="btn" onclick="reset()">Send Reset Link</button>
 
 <div id="msg" class="msg"></div>
-
-<br><span class="link" onclick="location.href='index.html'">Back to Login</span>
-
-</div>
+<br>
+  
+<button class="back-btn" onclick="location.href='index.html'">
+  <i class="fas fa-arrow-left"></i> Back to Login
+</button>
 
 <!-- ✅ ONLY FIREBASE CHANGED -->
 <script type="module">
@@ -158,6 +224,16 @@ if(email===""){
   return;
 }
 
+
+  let captchaInput = document.getElementById("captchaInput").value;
+
+if(parseInt(captchaInput) !== getAnswer()){
+  msg.innerHTML="❌ Wrong CAPTCHA";
+  msg.className="msg error";
+  generateCaptcha();
+  return;
+}
+  
 btn.classList.add("loading");
 msg.innerHTML="⏳ Sending reset link...";
 
@@ -176,6 +252,29 @@ sendPasswordResetEmail(auth,email)
 });
 
 }
+</script>
+
+  <script>
+let num1, num2, operator;
+
+function generateCaptcha(){
+  const ops = ["+", "-", "×"];
+
+  num1 = Math.floor(Math.random()*10)+1;
+  num2 = Math.floor(Math.random()*10)+1;
+  operator = ops[Math.floor(Math.random()*ops.length)];
+
+  document.getElementById("captchaText").innerText =
+    num1 + " " + operator + " " + num2 + " = ?";
+}
+
+function getAnswer(){
+  if(operator === "+") return num1 + num2;
+  if(operator === "-") return num1 - num2;
+  if(operator === "×") return num1 * num2;
+}
+
+window.addEventListener("load", generateCaptcha);
 </script>
 
 </body>
