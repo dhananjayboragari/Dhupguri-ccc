@@ -680,9 +680,7 @@ let colorInterval = null;
   function startColorChange(){
   if(colorInterval) return; // 🔥 multiple interval stop
 
-  // 🔥 instant resume (no delay)
-  colorIndex = (colorIndex + 1) % gradients.length;
-  card.style.backgroundImage = gradients[colorIndex];
+  // 🔥 instant image change (no delay)
 
   colorInterval = setInterval(()=>{
     colorIndex = (colorIndex + 1) % gradients.length;
