@@ -650,8 +650,12 @@ const card = document.querySelector(".card");
 
   // ⏳ 3 sec por image start
   setTimeout(() => {
-    startColorChange();
-  }, 3000);
+  // 👉 first image instant show
+  card.style.backgroundImage = gradients[0];
+
+  // 👉 then start animation
+  startColorChange();
+}, 3000);
 });
 
   // 🎨 image LIST
