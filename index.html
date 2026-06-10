@@ -710,6 +710,17 @@ let isActive = false;
 });
   
 
+
+  card.addEventListener("click", function () {
+
+  if (isActive) return;
+
+  isActive = true;
+  card.classList.add("active");
+
+  startColorChange();
+});
+  
   
 </script>
 
