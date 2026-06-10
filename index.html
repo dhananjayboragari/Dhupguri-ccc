@@ -31,13 +31,19 @@ position:relative;
   flex-direction:column;
   align-items:center;
 text-align:center;
-  background: rgba(255,255,255,0.55);
+  background-color: rgba(255,255,255,0.55);
   backdrop-filter: blur(10px);
 
   padding:35px 30px 45px;
   border-radius:20px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   transition:0.3s ease;
+
+
+  background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+transition: background-image 2s ease-in-out;
 }
   
 .icon-box{
@@ -351,15 +357,11 @@ overflow:visible;
 /* 🔥 DESKTOP ZOOM EFFECT */
 
 
-.card.active{
-  background: linear-gradient(
-    135deg,
-    rgb(137,226,212) 0%,
-    rgb(126,221,231) 35%,
-    rgb(129,221,222) 65%,
-    rgb(139,227,205) 100%
-  );
+
+  .card.active{
+  transition: background 1s ease;
 }
+  
   
 </style>
 </head>
@@ -639,30 +641,72 @@ window.resendEmail = async function(){
 
 const card = document.querySelector(".card");
 
+  // 👉 page load এ auto start
+
+  window.addEventListener("load", () => {
+  // 🔥 first normal white thakbe
+  card.style.backgroundImage = "none";
+  card.style.background = "rgba(255,255,255,0.55)";
+
+  // ⏳ 3 sec por image start
+  setTimeout(() => {
+    startColorChange();
+  }, 3000);
+});
+
+  // 🎨 image LIST
+  const gradients = [
+  "url('https://i.ibb.co/k21vCMth/images-7.jpg')",
+  "url('https://i.ibb.co/S4v26WWK/abstract-smooth-curve-line-on-pink-gradient-lighting-color-background-vector.jpg')",
+  "url('https://i.ibb.co/zkCFKrm/images-6.jpg')",
+  "url('https://i.ibb.co/wNFVNwp3/abstract-background-wavy-lines-color-spectrum-curved-lines-colorful-wave-206325-1471.jpg')",
+  "url('https://i.ibb.co/Mxzv1Zs1/abstract-multicolor-wave-background-260nw-61294492.jpg')",
+  "url('https://i.ibb.co/bMp2PhsB/1000-F-627857006-O7-L0m-CW1-Z2n3o-FXW1mq1y-IFDvic-Ao-JYK.jpg')",
+  "url('https://i.ibb.co/tpMbHcL5/images-4.jpg')",
+  "url('https://i.ibb.co/7xRM40Nt/images-3.jpg')",
+  "url('https://i.ibb.co/8nJg94Xw/images-1.jpg')",
+  "url('https://i.ibb.co/1JMWVdRM/images-2.jpg')",
+  "url('https://i.ibb.co/q3MWXP9F/images-5.jpg')"
+];
+
+
+  let colorIndex = 0;
+let colorInterval = null;
+
+function startColorChange(){
+  colorInterval = setInterval(()=>{
+    colorIndex = (colorIndex + 1) % gradients.length;
+    card.style.backgroundImage = gradients[colorIndex];
+  },3000);
+}
+  
+
+
+function stopColorChange(){
+  clearInterval(colorInterval);
+  colorInterval = null;
+}
+
 // track state
 let isActive = false;
 
-// CARD CLICK = ON
-card.addEventListener("click", function (e) {
 
-  // ❌ ignore clicks from inputs/buttons/toggle/social etc
-  if (e.target.closest("input, button, .toggle-more, i, a, .link-box, .social i")) {
-    return;
-  }
 
-  isActive = true;
-  card.classList.add("active");
-});
 
-// OUTSIDE CLICK = OFF
-document.addEventListener("click", function (e) {
 
-  // ❌ if click inside card → ignore
+  document.addEventListener("click", function (e) {
+
   if (e.target.closest(".card")) return;
 
   isActive = false;
   card.classList.remove("active");
+
+  stopColorChange();
+
+  // 👉 back to normal
+  card.style.backgroundImage = "none"; card.style.background = "rgba(255,255,255,0.55)";
 });
+  
 
   
 </script>
