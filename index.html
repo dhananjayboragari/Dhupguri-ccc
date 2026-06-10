@@ -676,7 +676,14 @@ const card = document.querySelector(".card");
   let colorIndex = 0;
 let colorInterval = null;
 
-function startColorChange(){
+
+  function startColorChange(){
+  if(colorInterval) return; // 🔥 multiple interval stop
+
+  // 🔥 instant resume (no delay)
+  colorIndex = (colorIndex + 1) % gradients.length;
+  card.style.backgroundImage = gradients[colorIndex];
+
   colorInterval = setInterval(()=>{
     colorIndex = (colorIndex + 1) % gradients.length;
     card.style.backgroundImage = gradients[colorIndex];
@@ -712,6 +719,7 @@ let isActive = false;
   
 
 
+  
   card.addEventListener("click", function () {
 
   if (isActive) return;
@@ -719,9 +727,11 @@ let isActive = false;
   isActive = true;
   card.classList.add("active");
 
+  // 🔥 resume from last position instantly
+  card.style.backgroundImage = gradients[colorIndex];
+
   startColorChange();
 });
-  
 
   
 </script>
