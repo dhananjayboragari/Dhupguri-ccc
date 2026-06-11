@@ -718,14 +718,30 @@ let isActive = false;
 
 
   
-  card.addEventListener("click", function () {
+
+  card.addEventListener("click", function (e) {
+
+  const target = e.target;
+
+  // 🔥 ignore these clicks
+  if (
+    target instanceof Element &&
+    (
+      target.closest("input") ||
+      target.closest("button") ||
+      target.closest(".input-box") ||
+      target.closest(".link-box") ||
+      target.closest(".toggle-more")
+    )
+  ){
+    return;
+  }
 
   if (isActive) return;
 
   isActive = true;
   card.classList.add("active");
 
-  // 🔥 resume from last position instantly
   card.style.backgroundImage = gradients[colorIndex];
 
   startColorChange();
