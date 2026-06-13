@@ -362,12 +362,58 @@ overflow:visible;
   .card.active{
   transition: background 1s ease;
 }
+
+
+
+
+  /* 🔥 LOADER STYLE */
+#loader{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#ffffff;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.spinner{
+  width:40px;
+  height:40px;
+  border:4px solid #ccc;
+  border-top:4px solid #000;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+.loader-text{
+  margin-top:10px;
+  font-size:18px;
+  font-weight:bold;
+  color:#333;
+}
+
+@keyframes spin{
+  100%{transform:rotate(360deg);}
+}
+
+
   
   
 </style>
 </head>
 
 <body>
+
+  <!-- 🔥 Loader -->
+<div id="loader">
+  <div class="spinner"></div>
+  <div class="loader-text">Please Wait...</div>
+</div>
 
 <div class="card">
   <div class="icon-box">
@@ -642,23 +688,10 @@ window.resendEmail = async function(){
 
 const card = document.querySelector(".card");
 
-  // 👉 page load এ auto start
+  
 
-  window.addEventListener("load", () => {
-  // 🔥 first normal white thakbe
-  card.style.backgroundImage = "none";
-  card.style.background = "rgba(255,255,255,0.55)";
 
-  // ⏳ 3 sec por image start
-  setTimeout(() => {
-  // 👉 first image instant show
-  card.style.backgroundImage = gradients[0];
-
-  // 👉 then start animation
-  startColorChange();
-}, 3000);
-});
-
+  
   // 🎨 image LIST
   const gradients = [
   "url('https://i.ibb.co/zkCFKrm/images-6.jpg')",
@@ -671,6 +704,58 @@ const card = document.querySelector(".card");
   
 ];
 
+
+
+    // 🔥 IMAGE PRELOAD FUNCTION
+function preloadImages(list){
+  list.forEach(src => {
+    const img = new Image();
+    img.src = src.replace(/url\(['"]?(.*?)['"]?\)/i, "$1");
+  });
+}
+
+  
+
+
+  window.addEventListener("load", () => {
+
+  const loader = document.getElementById("loader");
+
+  let loaded = 0;
+
+  // 👉 first normal color
+  card.style.backgroundImage = "none";
+  card.style.background = "rgba(255,255,255,0.55)";
+
+  // 🔄 সব image load হচ্ছে
+  gradients.forEach(src => {
+    const img = new Image();
+    img.src = src.replace(/url\(['"]?(.*?)['"]?\)/i, "$1");
+
+    img.onload = () => {
+      loaded++;
+
+      if (loaded === gradients.length) {
+
+        // 🔥 loader hide
+        loader.style.display = "none";
+
+        // ⏳ 3 sec পরে start
+        setTimeout(() => {
+          card.style.backgroundImage = gradients[0];
+          startColorChange();
+        }, 3000);
+
+      }
+    };
+  });
+
+});
+
+
+
+
+  
 
   let colorIndex = 0;
 let colorInterval = null;
