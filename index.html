@@ -372,7 +372,7 @@ overflow:visible;
 
   /* 🔥 LOADER STYLE */
 #loader{
-  position:absolute;
+  position:fixed;
   inset:0;
   top:0;
   left:0;
@@ -881,41 +881,46 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   
-  
 <script>
-  // ১. পেজ খোলার সাথে সাথে আগে নিশ্চিত করো লোডারটি স্ক্রিনে দেখা যাচ্ছে
-  (function() {
-    var loader = document.getElementById('loader');
-    if (loader) {
-      loader.style.display = 'flex';
-    }
-  })();
+  // ১. বোতাম টিপে আসার সাথে সাথে সবার আগে লোডারটি স্ক্রিনে চালু করে ধরে রাখবে
+  var loader = document.getElementById('loader');
+  if (loader) {
+    loader.style.display = 'flex';
+  }
 
-  // ২. প্রথমবার পেজ ওপেন হলে বা বোতাম (Link) টিপে index.html এ আসলে লোডার বন্ধ হবে
+  // ২. পেজের ভেতরের সব ছবি, ডিজাইন ও ফাইল ১০০% সম্পূর্ণ লোড হলে তবেই লোডার সরবে 🔥
   window.addEventListener('load', function() {
     var loader = document.getElementById('loader');
     if (loader) {
-      // একটু সুন্দর এফেক্টের জন্য সামান্য (২০০ মিলিসেকেন্ড) অপেক্ষা করে বন্ধ হবে
-      setTimeout(function() {
-        loader.style.display = 'none';
-      }, 200);
+      loader.style.display = 'none';
     }
   });
 
-  // ৩. মোবাইলের ব্যাক বাটন (Back Button) টিপে ফিরে আসলেও যেন সেম কাজ হয়
+  // ৩. মোবাইল বা অ্যাপের ব্যাক বোতাম টিপে আসলেও যাতে হুবহু সেম নিয়মে ফুল লোড হয়ে খোলে
   window.addEventListener('pageshow', function(event) {
     var loader = document.getElementById('loader');
     if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
       if (loader) {
         loader.style.display = 'flex';
       }
-      // পেজটি যেহেতু আগে থেকেই মেমোরিতে আছে, তাই একটু পর লোডার বন্ধ করো
-      setTimeout(function() {
+      // ব্যাক বাটন থেকে আসলেও ফুল লোড কমপ্লিট হওয়া পর্যন্ত অপেক্ষা করবে
+      if (document.readyState === 'complete') {
         if (loader) loader.style.display = 'none';
-      }, 500);
+      } else {
+        window.addEventListener('load', function() {
+          if (loader) loader.style.display = 'none';
+        });
+      }
     }
   });
+
+  // ৪. নিচে লুকানো মেনু খোলার ফাংশন (আপনার আগের কোড)
+  function toggleMore() {
+    var extra = document.getElementById('extra');
+    extra.classList.toggle('open');
+  }
 </script>
+
 
 
 
