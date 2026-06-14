@@ -176,7 +176,18 @@ h2{ margin:5px 0 10px; }
 .popup.error{ background:#dc3545; }
 .popup.waiting{ background:#007bff; }
 
-  
+  .popup.waiting::after{
+  content:"";
+  display:none;
+  width:14px;
+  height:14px;
+  margin-left:8px;
+  border:2px solid #fff;
+  border-top:2px solid transparent;
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+
     
 @keyframes spin{
   to{ transform:rotate(360deg); }
