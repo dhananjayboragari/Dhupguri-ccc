@@ -44,7 +44,7 @@ text-align:center;
   background-size: cover;
 background-position: center;
 background-repeat: no-repeat;
-transition: background-image 2s ease-in-out;
+transition: background 1s ease-in-out;
 }
   
 .icon-box{
@@ -397,9 +397,6 @@ overflow:visible;
   color:#333;
 }
 
-@keyframes spin{
-  100%{transform:rotate(360deg);}
-}
 
 
   
@@ -717,17 +714,16 @@ function preloadImages(list){
   
 
 
-  window.addEventListener("load", () => {
+  
+    window.addEventListener("load", () => {
 
   const loader = document.getElementById("loader");
 
   let loaded = 0;
 
-  // 👉 first normal color
-  card.style.backgroundImage = "none";
+  // 👉 normal color থাকবে (correct)
   card.style.background = "rgba(255,255,255,0.55)";
 
-  // 🔄 সব image load হচ্ছে
   gradients.forEach(src => {
     const img = new Image();
     img.src = src.replace(/url\(['"]?(.*?)['"]?\)/i, "$1");
@@ -737,13 +733,16 @@ function preloadImages(list){
 
       if (loaded === gradients.length) {
 
-        // 🔥 loader hide
+        // 🔥 সব image ready → loader off
         loader.style.display = "none";
 
-        // ⏳ 3 sec পরে start
+        // ⏳ 3 sec delay (তোর requirement)
         setTimeout(() => {
+
           card.style.backgroundImage = gradients[0];
+
           startColorChange();
+
         }, 3000);
 
       }
@@ -754,7 +753,6 @@ function preloadImages(list){
 
 
 
-
   
 
   let colorIndex = 0;
@@ -762,7 +760,7 @@ let colorInterval = null;
 
 
   function startColorChange(){
-  if(colorInterval) return; // 🔥 multiple interval stop
+   // 🔥 multiple interval stop
 
   // 🔥 instant image change (no delay)
 
