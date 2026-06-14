@@ -880,32 +880,42 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 
-  <script>
-  // ১. প্রথমবার পেজ সম্পূর্ণ লোড হলে লোডার বন্ধ করার জন্য
+  
+<script>
+  // ১. পেজ খোলার সাথে সাথে আগে নিশ্চিত করো লোডারটি স্ক্রিনে দেখা যাচ্ছে
+  (function() {
+    var loader = document.getElementById('loader');
+    if (loader) {
+      loader.style.display = 'flex';
+    }
+  })();
+
+  // ২. প্রথমবার পেজ ওপেন হলে বা বোতাম (Link) টিপে index.html এ আসলে লোডার বন্ধ হবে
   window.addEventListener('load', function() {
     var loader = document.getElementById('loader');
     if (loader) {
-      loader.style.display = 'none';
+      // একটু সুন্দর এফেক্টের জন্য সামান্য (২০০ মিলিসেকেন্ড) অপেক্ষা করে বন্ধ হবে
+      setTimeout(function() {
+        loader.style.display = 'none';
+      }, 200);
     }
   });
 
-  // ২. AppCreator24 এবং মোবাইলে ব্যাক বাটন টিপলে পেজকে জোর করে রিলোড করার আসল ট্রিক 🔥
+  // ৩. মোবাইলের ব্যাক বাটন (Back Button) টিপে ফিরে আসলেও যেন সেম কাজ হয়
   window.addEventListener('pageshow', function(event) {
-    // যদি পেজটি ব্যাক বাটন বা অ্যাপের ক্যাশ/মেমোরি থেকে আসে
+    var loader = document.getElementById('loader');
     if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-      
-      // প্রথমে স্ক্রিনে লোডারটি দেখাও
-      var loader = document.getElementById('loader');
       if (loader) {
         loader.style.display = 'flex';
       }
-      
-      // এরপর পেজটিকে একদম নতুন করে রিফ্রেশ/রিলোড করো 
-      // এর ফলে প্রথমবার পেজ খোলার মতোই হুবহু সেম কাজ হবে
-      window.location.reload(true);
+      // পেজটি যেহেতু আগে থেকেই মেমোরিতে আছে, তাই একটু পর লোডার বন্ধ করো
+      setTimeout(function() {
+        if (loader) loader.style.display = 'none';
+      }, 500);
     }
   });
 </script>
+
 
 
 
