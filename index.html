@@ -381,6 +381,7 @@ overflow:visible;
   align-items:center;
   z-index:99999;
   transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .spinner{
@@ -832,6 +833,22 @@ let isActive = false;
   startColorChange();
 });
 
+
+
+
+  window.addEventListener("load", function() {
+  let loaders = document.querySelectorAll("#loader");
+
+  // যদি ১টার বেশি loader থাকে → extra delete
+  if(loaders.length > 1){
+    for(let i = 1; i < loaders.length; i++){
+      loaders[i].remove();
+    }
+  }
+
+  // তারপর loader hide
+  document.getElementById("loader").style.display = "none";
+});
   
 </script>
 
