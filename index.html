@@ -880,25 +880,38 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 
-  <!-- আপনার আগের কোড এখানে শেষ হচ্ছে... -->
-
-<script>
-  // ১. প্রথমবার পেজ খুললে লোডার বন্ধ করার জন্য
+  <script>
+  // ১. প্রথমবার পেজ সম্পূর্ণ লোড হলে লোডার বন্ধ করার জন্য
   window.addEventListener('load', function() {
-    document.getElementById('loader').style.display = 'none';
+    var loader = document.getElementById('loader');
+    if (loader) {
+      loader.style.display = 'none';
+    }
   });
 
-  // ২. ব্যাক বাটন টিপে ফিরে আসলে লোডার দেখানোর জন্য
+  // ২. AppCreator24 এবং মোবাইলে ব্যাক বাটন টিপলে পেজকে জোর করে রিলোড করার আসল ট্রিক 🔥
   window.addEventListener('pageshow', function(event) {
-    var loader = document.getElementById('loader');
-    if (event.persisted) {
-      loader.style.display = 'flex'; // লোডার চালু করো
-      setTimeout(function() {
-        loader.style.display = 'none'; // আধ সেকেন্ড পর বন্ধ করো
-      }, 500);
+    // যদি পেজটি ব্যাক বাটন বা অ্যাপের ক্যাশ/মেমোরি থেকে আসে
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+      
+      // প্রথমে স্ক্রিনে লোডারটি দেখাও
+      var loader = document.getElementById('loader');
+      if (loader) {
+        loader.style.display = 'flex';
+      }
+      
+      // এরপর পেজটিকে একদম নতুন করে রিফ্রেশ/রিলোড করো 
+      // এর ফলে প্রথমবার পেজ খোলার মতোই হুবহু সেম কাজ হবে
+      window.location.reload(true);
     }
   });
 </script>
+
+
+
+
+
+  
 
 </body>
 </html>
