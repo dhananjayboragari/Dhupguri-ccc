@@ -879,5 +879,30 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </script>
 
+
+  <!-- আপনার আগের কোড এখানে শেষ হচ্ছে... -->
+
+<script>
+  // ১. প্রথমবার পেজ খুললে লোডার বন্ধ করার জন্য
+  window.addEventListener('load', function() {
+    document.getElementById('loader').style.display = 'none';
+  });
+
+  // ২. ব্যাক বাটন টিপে ফিরে আসলে লোডার দেখানোর জন্য
+  window.addEventListener('pageshow', function(event) {
+    var loader = document.getElementById('loader');
+    if (event.persisted) {
+      loader.style.display = 'flex'; // লোডার চালু করো
+      setTimeout(function() {
+        loader.style.display = 'none'; // আধ সেকেন্ড পর বন্ধ করো
+      }, 500);
+    }
+  });
+</script>
+
+</body>
+</html>
+
+
 </body>
 </html>
