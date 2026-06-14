@@ -854,6 +854,25 @@ let isActive = false;
   // তারপর loader hide
   document.getElementById("loader").style.display = "none";
 });
+
+
+
+
+
+  // 🚀 শুধু AppCreator24 অ্যাপের ভেতর আপনার দেওয়া লোডারটি বন্ধ করার কোড
+document.addEventListener("DOMContentLoaded", function() {
+  const loader = document.getElementById("loader");
+  
+  // চেক করা হচ্ছে ভিজিটর AppCreator24 অ্যাপের ভেতরে আছে কি না
+  const isApp = /wv|WebView|Android.*wv/i.test(navigator.userAgent) || (window.Android !== undefined);
+  
+  if (isApp) {
+    // শুধুমাত্র অ্যাপের ভেতরে থাকলে আপনার কোডের লোডারটি সাথে সাথে বন্ধ বা হাইড হয়ে যাবে
+    if (loader) loader.style.display = "none";
+  }
+});
+
+  
   
 </script>
 
