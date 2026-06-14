@@ -369,6 +369,7 @@ overflow:visible;
   /* 🔥 LOADER STYLE */
 #loader{
   position:fixed;
+  inset:0;
   top:0;
   left:0;
   width:100%;
@@ -524,19 +525,7 @@ function checkCaps(e){
   }
 }
 
-window.onload = function(){
-  let savedEmail = localStorage.getItem("rememberEmail");
 
-  if(savedEmail){
-    document.getElementById("email").value = savedEmail;
-    document.getElementById("remember").checked = true;
-    document.getElementById("password").focus(); // 🔥 auto focus
-  }
-
-  document.addEventListener("keydown", function(e){
-    if(e.key==="Enter"){ login(); }
-  });
-}
 </script>
 
 <script type="module">
@@ -720,6 +709,19 @@ function preloadImages(list){
   const loader = document.getElementById("loader");
 
   let loaded = 0;
+
+      // 🔥 REMEMBER EMAIL (moved এখানে)
+let savedEmail = localStorage.getItem("rememberEmail");
+
+if(savedEmail){
+  document.getElementById("email").value = savedEmail;
+  document.getElementById("remember").checked = true;
+  document.getElementById("password").focus();
+}
+
+document.addEventListener("keydown", function(e){
+  if(e.key==="Enter"){ login(); }
+});
 
   // 👉 normal color থাকবে (correct)
   card.style.background = "rgba(255,255,255,0.55)";
