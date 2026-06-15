@@ -51,6 +51,7 @@ body::before{
 
 .card-box{
   position:relative;
+  transition: transform 0.2s linear, opacity 0.2s linear;
 }
 
 .card-border{
@@ -706,6 +707,9 @@ align-items:center;
 }
 
 
+  body{
+  padding-bottom: 180px;
+}
 
   
   
@@ -839,6 +843,7 @@ align-items:center;
 </a>
 </div>
 
+  
 <div class="card-box">
 <a href="download.html" onclick="startLoad(event,this)">
 <div class="card-border">
@@ -851,6 +856,7 @@ align-items:center;
 </a>
 </div>
 
+  
 <div class="card-box">
 <a href="send feedback.html" onclick="startLoad(event,this)">
 <div class="card-border">
@@ -1289,6 +1295,41 @@ window.addEventListener("scroll", resetTimer);
 </script>
 
 
+  <script>
+const cards = document.querySelectorAll(".card-box");
+
+window.addEventListener("scroll", () => {
+
+  let windowHeight = window.innerHeight;
+
+  cards.forEach(card => {
+    let rect = card.getBoundingClientRect();
+
+    // 🔥 Effect start point (tumi jeta adjust korte chao)
+    let startPoint = windowHeight * 0.60;
+
+    // 🔥 Top side normal (no effect)
+    if(rect.top < startPoint){
+      card.style.transform = "scale(1)";
+      card.style.opacity = "1";
+      return;
+    }
+
+    // 🔥 Bottom side effect
+    let distance = rect.top - startPoint;
+
+    let scale = 1 - (distance / 300);
+    if(scale < 0) scale = 0;
+
+    let opacity = 1 - (distance / 250);
+    if(opacity < 0) opacity = 0;
+
+    card.style.transform = `scale(${scale})`;
+    card.style.opacity = opacity;
+  });
+
+});
+</script>
 
   
 
