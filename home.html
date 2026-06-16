@@ -1292,6 +1292,25 @@ window.addEventListener("scroll", resetTimer);
 // ====================================  
 
 
+
+  window.addEventListener("scroll", () => {
+
+  let scrollY = window.scrollY;
+
+  // 🔥 max gap limit
+  let maxGap = 200;
+
+  // 🔥 gap increase (scroll অনুযায়ী)
+  let gap = scrollY * 0.4;
+
+  if(gap > maxGap) gap = maxGap;
+
+  // 👉 container up-down gap
+  document.querySelector(".container").style.marginTop = 60 + gap + "px";
+  document.querySelector(".container").style.marginBottom = gap + "px";
+
+});
+
 </script>
 
 
