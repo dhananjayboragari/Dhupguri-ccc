@@ -176,23 +176,6 @@ h2{ margin:5px 0 10px; }
 .popup.error{ background:#dc3545; }
 .popup.waiting{ background:#007bff; }
 
-  .popup.waiting::after{
-  content:"";
-  display:none;
-  width:14px;
-  height:14px;
-  margin-left:8px;
-  border:2px solid #fff;
-  border-top:2px solid transparent;
-  border-radius:50%;
-  animation:spin 0.7s linear infinite;
-}
-
-    
-@keyframes spin{
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 
 
 
@@ -388,26 +371,14 @@ overflow:visible;
   backface-visibility: hidden;
 }
 
-.spinner{
-  width:40px;
-  height:40px;
-  border:4px solid transparent;
-  border-top:4px solid #007bff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
 
-
-.loader-text{
+  .loader-text{
   margin-top:10px;
-  font-size:18px;
-  font-weight:bold;
-  color:#333;
+  font-size:20px;
+  font-weight:600;
+  color:#007bff;
 }
 
-
-
-  
   
 </style>
 </head>
@@ -416,7 +387,6 @@ overflow:visible;
 
   <!-- 🔥 Loader -->
 <div id="loader">
-  <div class="spinner"></div>
   <div class="loader-text">Please Wait...</div>
 </div>
 
@@ -839,99 +809,29 @@ let isActive = false;
   startColorChange();
 });
 
-
-
-
-  window.addEventListener("load", function() {
-  let loaders = document.querySelectorAll("#loader");
-
-  // যদি ১টার বেশি loader থাকে → extra delete
-  if(loaders.length > 1){
-    for(let i = 1; i < loaders.length; i++){
-      loaders[i].remove();
-    }
-  }
-
-  // তারপর loader hide
-  document.getElementById("loader").style.display = "none";
-});
-
-
-
-
-
-// 🚀 শুধু AppCreator24 অ্যাপের ভেতর মাঝখানের গোল চাকাটি বন্ধ করার কোড
-document.addEventListener("DOMContentLoaded", function() {
-  // আপনার কোডের ভেতরের স্পিন চাকাটি খুঁজে বের করা হচ্ছে
-  const spinner = document.querySelector("#loader .spinner");
-  
-  // চেক করা হচ্ছে ভিজিটর AppCreator24 অ্যাপের ভেতরে আছে কি না
-  const isApp = /wv|WebView|Android.*wv/i.test(navigator.userAgent) || (window.Android !== undefined);
-  
-  if (isApp) {
-    // শুধুমাত্র অ্যাপের ভেতরে থাকলে মাঝখানের গোল চাকাটি হাইড হয়ে যাবে
-    if (spinner) spinner.style.display = "none";
-  }
-});
-
-
-  
   
 </script>
-
-
   
 <script>
-  // ১. বোতাম টিপে আসার সাথে সাথে সবার আগে লোডারটি স্ক্রিনে চালু করে ধরে রাখবে
   var loader = document.getElementById('loader');
-  if (loader) {
-    loader.style.display = 'flex';
-  }
 
-  // ২. পেজের ভেতরের সব ছবি, ডিজাইন ও ফাইল ১০০% সম্পূর্ণ লোড হলে তবেই লোডার সরবে 🔥
-  window.addEventListener('load', function() {
-    var loader = document.getElementById('loader');
-    if (loader) {
-      loader.style.display = 'none';
-    }
-  });
 
-  // ৩. মোবাইল বা অ্যাপের ব্যাক বোতাম টিপে আসলেও যাতে হুবহু সেম নিয়মে ফুল লোড হয়ে খোলে
+  // Back / forward cache handle
   window.addEventListener('pageshow', function(event) {
-    var loader = document.getElementById('loader');
-    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-      if (loader) {
-        loader.style.display = 'flex';
-      }
-      // ব্যাক বাটন থেকে আসলেও ফুল লোড কমপ্লিট হওয়া পর্যন্ত অপেক্ষা করবে
-      if (document.readyState === 'complete') {
+    if (event.persisted) {
+      if (loader) loader.style.display = 'flex';
+
+      setTimeout(function(){
         if (loader) loader.style.display = 'none';
-      } else {
-        window.addEventListener('load', function() {
-          if (loader) loader.style.display = 'none';
-        });
-      }
+      }, 500); // small delay for smoothness
     }
   });
 
-  // ৪. নিচে লুকানো মেনু খোলার ফাংশন (আপনার আগের কোড)
   function toggleMore() {
     var extra = document.getElementById('extra');
-    extra.classList.toggle('open');
+    if(extra) extra.classList.toggle('open');
   }
 </script>
-
-
-
-
-
-
-
-
-  
-
-</body>
-</html>
 
 
 </body>
