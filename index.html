@@ -671,52 +671,36 @@ function preloadImages(list){
 }
 
   
-    window.addEventListener("load", () => {
+
+    window.addEventListener("load", async () => {
 
   const loader = document.getElementById("loader");
 
-  let loaded = 0;
-
-      // 🔥 REMEMBER EMAIL (moved এখানে)
-let savedEmail = localStorage.getItem("rememberEmail");
-
-if(savedEmail){
-  document.getElementById("email").value = savedEmail;
-  document.getElementById("remember").checked = true;
-  document.getElementById("password").focus();
-}
-
-document.addEventListener("keydown", function(e){
-  if(e.key==="Enter"){ login(); }
-});
-
-  // 👉 normal color থাকবে (correct)
+  // 👉 normal color first
   card.style.background = "rgba(255,255,255,0.55)";
+  card.style.backgroundImage = "none";
 
-  gradients.forEach(src => {
-    const img = new Image();
-    img.src = src.replace(/url\(['"]?(.*?)['"]?\)/i, "$1");
+  // 🔥 সব image preload
+  function preloadAllImages(list){
+    return Promise.all(
+      list.map(src => {
+        return new Promise(resolve => {
+          const img = new Image();
+          img.src = src.replace(/url\(['"]?(.*?)['"]?\)/i, "$1");
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      })
+    );
+  }
 
-    img.onload = () => {
-      loaded++;
+  await preloadAllImages(gradients);
 
-      if (loaded === gradients.length) {
+  // 👉 loader hide
+  loader.style.display = "none";
 
-        // 🔥 সব image ready → loader off
-        loader.style.display = "none";
-
-        // ⏳ 3 sec delay (তোর requirement)
-        setTimeout(() => {
-
-          card.style.backgroundImage = gradients[0];
-
-          startColorChange();
-
-        }, 3000);
-
-      }
-    };
-  });
+  // 👉 animation start
+  startColorChange();
 
 });
 
@@ -728,17 +712,27 @@ document.addEventListener("keydown", function(e){
 let colorInterval = null;
 
 
-  function startColorChange(){
-   // 🔥 multiple interval stop
-
-  // 🔥 instant image change (no delay)
-
-  colorInterval = setInterval(()=>{
-    colorIndex = (colorIndex + 1) % gradients.length;
-    card.style.backgroundImage = gradients[colorIndex];
-  },3000);
-}
   
+
+  function startColorChange(){
+
+  if(colorInterval){
+    clearInterval(colorInterval);
+  }
+
+  let index = 1; // 🔥 এখানেই আসল fix
+
+  colorInterval = setInterval(() => {
+
+    let imgIndex = (index - 1) % gradients.length;
+    card.style.backgroundImage = gradients[imgIndex];
+
+    index++;
+
+  }, 3000);
+
+}
+
 
 
 function stopColorChange(){
@@ -794,7 +788,7 @@ let isActive = false;
   isActive = true;
   card.classList.add("active");
 
-  card.style.backgroundImage = gradients[colorIndex];
+  
 
   startColorChange();
 });
