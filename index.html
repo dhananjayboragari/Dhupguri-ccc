@@ -795,6 +795,21 @@ let isActive = false;
 
   
 </script>
+
+
+
+
+  <script>
+window.addEventListener("load", () => {
+  const savedEmail = localStorage.getItem("rememberEmail");
+
+  if(savedEmail){
+    document.getElementById("email").value = savedEmail;
+    document.getElementById("remember").checked = true;
+  }
+});
+</script>
+  
   
 <script>
   var loader = document.getElementById('loader');
