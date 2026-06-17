@@ -379,6 +379,13 @@ overflow:visible;
   color:#007bff;
 }
 
+
+
+
+input.typing {
+  background-color: #fffde7 !important;
+  transition: 0.3s;
+}
   
 </style>
 </head>
@@ -830,6 +837,36 @@ window.addEventListener("load", () => {
     var extra = document.getElementById('extra');
     if(extra) extra.classList.toggle('open');
   }
+
+
+
+
+  
+
+function updateInputColor(input){
+  if(input.value.trim().length > 0){
+    input.classList.add("typing");
+  } else {
+    input.classList.remove("typing");
+  }
+}
+
+const inputs = document.querySelectorAll("input");
+
+// typing করলে
+inputs.forEach(input => {
+  input.addEventListener("input", function () {
+    updateInputColor(this);
+  });
+});
+
+// page load হলে (আগে থেকে value থাকলে)
+window.addEventListener("load", () => {
+  inputs.forEach(input => {
+    updateInputColor(input);
+  });
+});
+  
 </script>
 
 
