@@ -999,6 +999,10 @@ resetTimer();
 
   // ✅ USER OK
   user = u;
+
+
+  profileBtn.disabled = false; // ✅ enable button
+  
   await updateDoc(doc(db,"users",user.uid),{
   isOnline: true,
   lastActive: serverTimestamp()
@@ -1052,14 +1056,16 @@ resetTimer();
   
 
 // ✅ BUTTON CLICK FIX
-document.getElementById("profileBtn").addEventListener("click", () => {
-  if(!user){
-    alert("Login required ❌");
-    return;
-  }
+  
+const profileBtn = document.getElementById("profileBtn");
+
+profileBtn.disabled = true; // 🔴 শুরুতে বন্ধ থাকবে
+
+profileBtn.addEventListener("click", () => {
   openProfile();
 });
 
+  
 window.openProfile = async function(force=false, missingFields=[]){
 
   if (!user){
@@ -1269,16 +1275,17 @@ document.getElementById("profileImage").addEventListener("change", function(e){
 
 let idleTimer;
 
-window.resetTimer = function() {
+window.resetTimer = async function() {
   clearTimeout(idleTimer);
 
-  idleTimer = setTimeout(() => {
+  idleTimer = setTimeout(async () => {    if(user){
 
  await updateDoc(doc(db,"users",user.uid),{
   isOnline: false,
   lastLogout: serverTimestamp()
 });  
-    
+  }
+                                          
 localStorage.setItem("logout_event", Date.now());
     showPopup(
       "Session expired! Login again",
@@ -1295,10 +1302,12 @@ localStorage.setItem("logout_event", Date.now());
 }
 
 
-window.addEventListener("mousemove", resetTimer);
-window.addEventListener("keypress", resetTimer);
-window.addEventListener("click", resetTimer);
-window.addEventListener("scroll", resetTimer);
+
+
+  ["mousemove","keypress","click","scroll","touchstart"].forEach(event=>{
+  window.addEventListener(event, resetTimer);
+});
+
 // ====================================  
 
 
@@ -1349,7 +1358,16 @@ window.addEventListener("scroll", () => {
     });
   }
 });
-    
+
+
+    window.addEventListener("beforeunload", async () => {
+  if(user){
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline: false,
+      lastLogout: serverTimestamp()
+    });
+  }
+});
 </script>
 
   
