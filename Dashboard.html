@@ -18,7 +18,12 @@ body{
   padding:20px;
 }
 
-/* Top Cards */
+/* Header */
+h1{
+  margin-bottom:20px;
+}
+
+/* Cards */
 .cards{
   display:flex;
   gap:20px;
@@ -27,25 +32,28 @@ body{
 
 .card{
   flex:1;
-  min-width:200px;
+  min-width:220px;
   padding:20px;
   border-radius:15px;
   background:rgba(255,255,255,0.1);
   backdrop-filter: blur(10px);
-  box-shadow:0 0 20px rgba(0,0,0,0.2);
   text-align:center;
 }
 
 .card h2{
-  font-size:30px;
+  font-size:28px;
 }
 
 /* Table */
+.table-container{
+  margin-top:20px;
+  overflow-x:auto;
+}
+
 table{
   width:100%;
-  margin-top:20px;
   border-collapse: collapse;
-  background:rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.08);
   backdrop-filter: blur(10px);
   border-radius:10px;
   overflow:hidden;
@@ -53,17 +61,37 @@ table{
 
 th,td{
   padding:12px;
-  text-align:center;
+  text-align:left;
 }
 
 th{
-  background:rgba(0,0,0,0.3);
+  background:rgba(0,0,0,0.4);
+}
+
+tr{
+  border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
 tr:hover{
-  background:rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.08);
 }
 
+/* User Info */
+.user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.user img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #fff;
+}
+
+/* Status */
 .online{
   color:#00ff9d;
   font-weight:bold;
@@ -93,25 +121,28 @@ tr:hover{
   </div>
 </div>
 
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th>Name</th>
+<th>User</th>
+<th>Email</th>
 <th>Phone</th>
 <th>Address</th>
 <th>Status</th>
-<th>Last Logout</th>
+<th>Last Seen</th>
 </tr>
 </thead>
 
 <tbody id="userTable"></tbody>
 </table>
+</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
@@ -126,13 +157,14 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
 
   if(!user){
     window.location.href="login.html";
     return;
   }
 
+  // ✅ Admin check
   const admins = [
     "dhananjayboragari@gmail.com",
     "chakrabortyelectricalsdhup@gmail.com"
@@ -144,26 +176,56 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
 
+  // ✅ Set admin online
+  await updateDoc(doc(db,"users",user.uid),{
+    isOnline:true
+  });
+
+  // 🔴 Tab close = offline
+  window.addEventListener("beforeunload", async () => {
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline:false,
+      lastLogout:serverTimestamp()
+    });
+  });
+
+  // 🔥 LIVE DATA
   onSnapshot(collection(db,"users"), (snapshot)=>{
 
     let total = snapshot.size;
     let online = 0;
     let html = "";
 
-    snapshot.forEach(doc=>{
-      let d = doc.data();
+    snapshot.forEach(docSnap=>{
+      let d = docSnap.data();
 
       if(d.isOnline) online++;
 
       html += `
       <tr>
-        <td>${d.name || "-"}</td>
+        <td>
+          <div class="user">
+            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+            <span>${d.name || "-"}</span>
+          </div>
+        </td>
+
+        <td>${d.email || "-"}</td>
         <td>${d.phone || "-"}</td>
         <td>${d.address || "-"}</td>
-        <td class="${d.isOnline ? 'online' : 'offline'}">
-          ${d.isOnline ? "🟢 Online" : "🔴 Offline"}
+
+        <td class="${d.isOnline ? 'online':'offline'}">
+          ${d.isOnline ? "🟢 Online":"🔴 Offline"}
         </td>
-        <td>${d.lastLogout ? new Date(d.lastLogout.seconds * 1000).toLocaleString() : "-"}</td>
+
+        <td>
+          ${d.isOnline 
+            ? "Active Now" 
+            : d.lastLogout 
+              ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
+              : "-"
+          }
+        </td>
       </tr>
       `;
     });
