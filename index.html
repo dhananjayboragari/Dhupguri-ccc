@@ -866,6 +866,32 @@ window.addEventListener("load", () => {
     updateInputColor(input);
   });
 });
+
+
+
+
+
+
+
+  const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+// 👉 Email এ Enter দিলে Password এ focus যাবে
+emailInput.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    passwordInput.focus();
+  }
+});
+
+// 👉 Password এ Enter দিলে Login হবে
+passwordInput.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    login();
+  }
+});
+
   
 </script>
 
