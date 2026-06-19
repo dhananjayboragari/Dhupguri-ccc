@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premium Admin Dashboard</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI;
+}
+
+body{
+  background: linear-gradient(135deg,#1d2671,#c33764);
+  color:#fff;
+  padding:20px;
+}
+
+/* Top Cards */
+.cards{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.card{
+  flex:1;
+  min-width:200px;
+  padding:20px;
+  border-radius:15px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  box-shadow:0 0 20px rgba(0,0,0,0.2);
+  text-align:center;
+}
+
+.card h2{
+  font-size:30px;
+}
+
+/* Table */
+table{
+  width:100%;
+  margin-top:20px;
+  border-collapse: collapse;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+th,td{
+  padding:12px;
+  text-align:center;
+}
+
+th{
+  background:rgba(0,0,0,0.3);
+}
+
+tr:hover{
+  background:rgba(255,255,255,0.1);
+}
+
+.online{
+  color:#00ff9d;
+  font-weight:bold;
+}
+
+.offline{
+  color:#ff4d4d;
+  font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🔥 Admin Dashboard</h1>
+
+<div class="cards">
+  <div class="card">
+    <p>Total Users</p>
+    <h2 id="total">0</h2>
+  </div>
+
+  <div class="card">
+    <p>Online Users</p>
+    <h2 id="online">0</h2>
+  </div>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Address</th>
+<th>Status</th>
+<th>Last Logout</th>
+</tr>
+</thead>
+
+<tbody id="userTable"></tbody>
+</table>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
+
+onAuthStateChanged(auth, (user) => {
+
+  if(!user){
+    window.location.href="login.html";
+    return;
+  }
+
+  const admins = [
+    "dhananjayboragari@gmail.com",
+    "chakrabortyelectricalsdhup@gmail.com"
+  ];
+
+  if(!admins.includes(user.email)){
+    alert("Access Denied ❌");
+    window.location.href="login.html";
+    return;
+  }
+
+  onSnapshot(collection(db,"users"), (snapshot)=>{
+
+    let total = snapshot.size;
+    let online = 0;
+    let html = "";
+
+    snapshot.forEach(doc=>{
+      let d = doc.data();
+
+      if(d.isOnline) online++;
+
+      html += `
+      <tr>
+        <td>${d.name || "-"}</td>
+        <td>${d.phone || "-"}</td>
+        <td>${d.address || "-"}</td>
+        <td class="${d.isOnline ? 'online' : 'offline'}">
+          ${d.isOnline ? "🟢 Online" : "🔴 Offline"}
+        </td>
+        <td>${d.lastLogout ? new Date(d.lastLogout.seconds * 1000).toLocaleString() : "-"}</td>
+      </tr>
+      `;
+    });
+
+    document.getElementById("total").innerText = total;
+    document.getElementById("online").innerText = online;
+    document.getElementById("userTable").innerHTML = html;
+
+  });
+
+});
+
+</script>
+
+</body>
+</html>
