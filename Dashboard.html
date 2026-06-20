@@ -150,6 +150,8 @@ import { getFirestore, collection, onSnapshot, doc, updateDoc, serverTimestamp }
   import { getDatabase, ref, onValue, set, onDisconnect } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+  
+
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
   authDomain: "dhupguri-ccc.firebaseapp.com",
@@ -169,6 +171,25 @@ const rtdb = getDatabase(app);
 
 onAuthStateChanged(auth, async (user) => {
 
+  if(user){
+
+  const rtdb = getDatabase(app);
+  const statusRef = ref(rtdb, "status/" + user.uid);
+
+  // ✅ Online set
+  set(statusRef, {
+    state: "online",
+    lastChanged: Date.now()
+  });
+
+  // ✅ Offline set (VERY IMPORTANT)
+  onDisconnect(statusRef).set({
+    state: "offline",
+    lastChanged: Date.now()
+  });
+
+}
+  
   if(!user){
     window.location.href="login.html";
     return;
@@ -271,12 +292,11 @@ await updateDoc(doc(db,"users",user.uid),{
   }
 </td>
 
+
 <td>
-  ${d.isOnline 
-    ? "Active Now"
-    : d.lastSeen 
-      ? new Date(d.lastSeen.seconds * 1000).toLocaleString()
-      : "-"
+  ${d.lastSeen 
+    ? new Date(d.lastSeen.seconds * 1000).toLocaleString()
+    : "-"
   }
 </td>
       </tr>
