@@ -991,39 +991,48 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   lastSeen: serverTimestamp()
 },{merge:true});
 
-// ONLINE
+
+  // 🟢 ONLINE
 set(statusRef, {
   state: "online",
+  lastLogin: Date.now(),
   lastChanged: Date.now()
 });
 
-// DISCONNECT
+// 🔴 OFFLINE (VERY IMPORTANT)
 onDisconnect(statusRef).set({
   state: "offline",
+  lastLogout: Date.now(),
   lastChanged: Date.now()
 });
 
 // 🔥 REALTIME SYNC
+
+
+
+  
+  
 
   onValue(statusRef, async (snap) => {
 
   const data = snap.val();
   if(!data) return;
 
-  // 🔴 OFFLINE
-  if(data.state === "offline"){
-    await setDoc(doc(db,"users",user.uid),{
-      isOnline:false,
-      lastLogout: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    },{merge:true});
-  }
-
   // 🟢 ONLINE
   if(data.state === "online"){
     await setDoc(doc(db,"users",user.uid),{
       isOnline:true,
-      lastSeen: serverTimestamp()
+      lastLogin: new Date(data.lastLogin || Date.now()),
+      lastSeen: new Date(data.lastChanged)
+    },{merge:true});
+  }
+
+  // 🔴 OFFLINE
+  if(data.state === "offline"){
+    await setDoc(doc(db,"users",user.uid),{
+      isOnline:false,
+      lastLogout: new Date(data.lastLogout || Date.now()),
+      lastSeen: new Date(data.lastChanged)
     },{merge:true});
   }
 
@@ -1411,6 +1420,25 @@ window.addEventListener("scroll", () => {
 
 
 
+    function formatTime(ts){
+  if(!ts) return "-";
+
+  let date;
+
+  if(ts.seconds){
+    date = new Date(ts.seconds * 1000);
+  }else{
+    date = new Date(ts);
+  }
+
+  return date.toLocaleString("en-IN", {
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
 
     
 </script>
