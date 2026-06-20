@@ -171,24 +171,6 @@ const rtdb = getDatabase(app);
 
 onAuthStateChanged(auth, async (user) => {
 
-  if(user){
-
-  const rtdb = getDatabase(app);
-  const statusRef = ref(rtdb, "status/" + user.uid);
-
-  // ✅ Online set
-  set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
-  // ✅ Offline set (VERY IMPORTANT)
-  onDisconnect(statusRef).set({
-    state: "offline",
-    lastChanged: Date.now()
-  });
-
-}
   
   if(!user){
     window.location.href="login.html";
@@ -249,6 +231,17 @@ await updateDoc(doc(db,"users",user.uid),{
   }
 });
 
+  // 🔥 ADD THIS BELOW onValue block
+window.addEventListener("beforeunload", async () => {
+  if(auth.currentUser){
+    await updateDoc(doc(db,"users",auth.currentUser.uid),{
+      isOnline:false,
+      lastLogout: serverTimestamp(),
+      lastSeen: serverTimestamp()
+    });
+  }
+});
+
   // 🔥 LIVE DATA
   onSnapshot(collection(db,"users"), (snapshot)=>{
 
@@ -279,25 +272,35 @@ await updateDoc(doc(db,"users",user.uid),{
         </td>
 
         <td>
-  ${d.lastLogin 
-    ? new Date(d.lastLogin.seconds * 1000).toLocaleString()
-    : "-"
-  }
-</td>
-
-<td>
-  ${d.lastLogout 
-    ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
-    : "-"
-  }
+  ${d.lastLogin?.toDate
+  ? d.lastLogin.toDate().toLocaleString()
+  : "-"
+}
 </td>
 
 
 <td>
-  ${d.lastSeen 
-    ? new Date(d.lastSeen.seconds * 1000).toLocaleString()
-    : "-"
+  ${
+    d.lastLogout?.toDate
+      ? d.lastLogout.toDate().toLocaleString()
+      : (d.lastLogout?.seconds
+          ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
+          : "-"
+        )
   }
+</td>
+
+
+
+<td>
+  ${
+  d.lastSeen?.toDate
+    ? d.lastSeen.toDate().toLocaleString()
+    : (d.lastSeen?.seconds
+        ? new Date(d.lastSeen.seconds * 1000).toLocaleString()
+        : "-"
+      )
+}
 </td>
       </tr>
       `;
