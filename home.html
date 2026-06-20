@@ -966,6 +966,11 @@ let user = null;
 console.log("JS Loaded ✅");
 
 onAuthStateChanged(auth, async (u) => {
+
+  user = u;
+  await updateDoc(doc(db,"users",user.uid),{
+  isOnline: true
+});
   
 resetTimer();
   const isLoggedIn = localStorage.getItem("loginSuccess");
@@ -1329,6 +1334,18 @@ window.addEventListener("scroll", () => {
   });
 
 });
+
+
+
+window.addEventListener("beforeunload", async () => {
+  if(auth.currentUser){
+    await updateDoc(doc(db,"users",auth.currentUser.uid),{
+      isOnline:false,
+      lastLogout: serverTimestamp()
+    });
+  }
+});
+    
 </script>
 
   
