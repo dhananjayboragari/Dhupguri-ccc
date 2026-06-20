@@ -221,7 +221,59 @@ onAuthStateChanged(auth, async (user) => {
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
 
-      if(d.isOnline) online++;
+      
+let state = statusData[uid]?.state || "offline";
+
+html += `
+<tr>
+  <td>
+    <div class="user">
+      <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+      <span>${d.name || "-"}</span>
+    </div>
+  </td>
+
+  <td>${d.email || "-"}</td>
+  <td>${d.phone || "-"}</td>
+  <td>${d.address || "-"}</td>
+
+  <td class="${state === 'online' ? 'online':'offline'}">
+    ${state === 'online' ? "🟢 Online":"🔴 Offline"}
+  </td>
+
+  <td>
+    ${state === 'online' ? "Active Now" : "Offline"}
+  </td>
+</tr>
+`;
+    document.getElementById("total").innerText = total;
+    document.getElementById("online").innerText = online;
+    document.getElementById("userTable").innerHTML = html;
+
+  });
+
+});
+
+
+  const statusRefAll = ref(rtdb, "status");
+
+onValue(statusRefAll, (snap) => {
+
+  const statusData = snap.val() || {};
+
+  onSnapshot(collection(db,"users"), (snapshot)=>{
+
+    let total = snapshot.size;
+    let online = 0;
+    let html = "";
+
+    snapshot.forEach(docSnap=>{
+      let d = docSnap.data();
+      let uid = docSnap.id;
+
+      let state = statusData[uid]?.state || "offline";
+
+      if(state === "online") online++;
 
       html += `
       <tr>
@@ -236,17 +288,12 @@ onAuthStateChanged(auth, async (user) => {
         <td>${d.phone || "-"}</td>
         <td>${d.address || "-"}</td>
 
-        <td class="${d.isOnline ? 'online':'offline'}">
-          ${d.isOnline ? "🟢 Online":"🔴 Offline"}
+        <td class="${state === 'online' ? 'online':'offline'}">
+          ${state === 'online' ? "🟢 Online":"🔴 Offline"}
         </td>
 
         <td>
-          ${d.isOnline 
-            ? "Active Now" 
-            : d.lastLogout 
-              ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
-              : "-"
-          }
+          ${state === 'online' ? "Active Now" : "Offline"}
         </td>
       </tr>
       `;
@@ -259,7 +306,6 @@ onAuthStateChanged(auth, async (user) => {
   });
 
 });
-
 </script>
 
 </body>
