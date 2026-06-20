@@ -144,6 +144,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  import { getDatabase, ref, onValue, set, onDisconnect } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
   authDomain: "dhupguri-ccc.firebaseapp.com",
@@ -156,6 +159,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
+
+
+
+const rtdb = getDatabase(app);
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -176,16 +183,31 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // ✅ Set admin online
+  // ✅ Firestore Online
   await updateDoc(doc(db,"users",user.uid),{
     isOnline:true
   });
 
-  // 🔴 Tab close = offline
-  window.addEventListener("beforeunload", async () => {
+  // 🔥 Realtime Presence START
+  
+  const statusRef = ref(rtdb, "status/" + user.uid);
+
+  set(statusRef, {
+    state: "online",
+    lastChanged: Date.now()
+  });
+
+  onDisconnect(statusRef).set({
+    state: "offline",
+    lastChanged: Date.now()
+  });
+
+  onValue(statusRef, async (snap) => {
+    const status = snap.val();
+
     await updateDoc(doc(db,"users",user.uid),{
-      isOnline:false,
-      lastLogout:serverTimestamp()
+      isOnline: status.state === "online",
+      lastLogout: serverTimestamp()
     });
   });
 
