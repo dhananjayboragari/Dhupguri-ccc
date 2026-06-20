@@ -984,11 +984,12 @@ if (!user) return;
 const statusRef = ref(rtdb, "status/" + user.uid);
 
   // 🔥 LOGIN TIME
-await updateDoc(doc(db,"users",user.uid),{
+
+  await setDoc(doc(db,"users",user.uid),{
   isOnline: true,
   lastLogin: serverTimestamp(),
   lastSeen: serverTimestamp()
-});
+},{merge:true});
 
 // ONLINE
 set(statusRef, {
@@ -1005,23 +1006,27 @@ onDisconnect(statusRef).set({
 // 🔥 REALTIME SYNC
 
   onValue(statusRef, async (snap) => {
-  const status = snap.val();
 
-  if(!status) return;
+  const data = snap.val();
+  if(!data) return;
 
-  if(status.state === "offline"){
-    await updateDoc(doc(db,"users",user.uid),{
+  // 🔴 OFFLINE
+  if(data.state === "offline"){
+    await setDoc(doc(db,"users",user.uid),{
       isOnline:false,
       lastLogout: serverTimestamp(),
       lastSeen: serverTimestamp()
-    });
-  } 
-  else if(status.state === "online"){
-    await updateDoc(doc(db,"users",user.uid),{
+    },{merge:true});
+  }
+
+  // 🟢 ONLINE
+  if(data.state === "online"){
+    await setDoc(doc(db,"users",user.uid),{
       isOnline:true,
       lastSeen: serverTimestamp()
-    });
+    },{merge:true});
   }
+
 });
 
 
@@ -1325,25 +1330,39 @@ document.getElementById("profileImage").addEventListener("change", function(e){
 
 let idleTimer;
 
-window.resetTimer = function() {
+  window.resetTimer = function() {
+
+  if(!user) return; // 🔥 ADD THIS LINE
+
   clearTimeout(idleTimer);
 
   idleTimer = setTimeout(() => {
-localStorage.setItem("logout_event", Date.now());
+
+    localStorage.setItem("logout_event", Date.now());
+
     showPopup(
       "Session expired! Login again",
       "error",
-      function () {
+      async function () {
+
+        if(!user) return; // 🔥 ADD THIS ALSO
+
+        await setDoc(doc(db,"users",user.uid),{
+          isOnline:false,
+          lastLogout: serverTimestamp(),
+          lastSeen: serverTimestamp()
+        },{merge:true});
+
         signOut(auth).then(() => {
           localStorage.removeItem("loginSuccess");
           window.location.href = "index.html";
         });
+
       }
     );
 
   }, 3 * 60 * 1000);
 }
-
 
 window.addEventListener("mousemove", resetTimer);
 window.addEventListener("keypress", resetTimer);
