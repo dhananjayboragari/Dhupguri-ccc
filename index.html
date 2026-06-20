@@ -584,6 +584,12 @@ window.login = async function(){
     msg.innerHTML="✅ Login Success";
 msg.style.color="green";
 
+   await setDoc(doc(db,"users",currentUser.uid),{
+  isOnline: true,
+  lastLogin: serverTimestamp()
+}, { merge: true });
+    
+
 // 🔥 IMPORTANT
 localStorage.setItem("loginSuccess", "true");
 
