@@ -130,7 +130,10 @@ tr:hover{
 <th>Phone</th>
 <th>Address</th>
 <th>Status</th>
+<th>Last Login</th>
+<th>Last Logout</th>
 <th>Last Seen</th>
+  
 </tr>
 </thead>
 
@@ -184,9 +187,11 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   // ✅ Firestore Online
-  await updateDoc(doc(db,"users",user.uid),{
-    isOnline:true
-  });
+  // ✅ Firestore Online + Login Time
+await updateDoc(doc(db,"users",user.uid),{
+  isOnline:true,
+  lastLogin: serverTimestamp()   // ✅ ADD
+});
 
   // 🔥 Realtime Presence START
   
@@ -202,14 +207,26 @@ onAuthStateChanged(auth, async (user) => {
     lastChanged: Date.now()
   });
 
-  onValue(statusRef, async (snap) => {
-    const status = snap.val();
 
+
+
+  
+  onValue(statusRef, async (snap) => {
+  const status = snap.val();
+
+  if(status.state === "offline"){
     await updateDoc(doc(db,"users",user.uid),{
-      isOnline: status.state === "online",
-      lastLogout: serverTimestamp()
+      isOnline:false,
+      lastLogout: serverTimestamp(),   // ✅ logout time
+      lastSeen: serverTimestamp()      // ✅ last seen
     });
-  });
+  } else {
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline:true,
+      lastSeen: serverTimestamp()      // ✅ active seen
+    });
+  }
+});
 
   // 🔥 LIVE DATA
   onSnapshot(collection(db,"users"), (snapshot)=>{
@@ -241,13 +258,27 @@ onAuthStateChanged(auth, async (user) => {
         </td>
 
         <td>
-          ${d.isOnline 
-            ? "Active Now" 
-            : d.lastLogout 
-              ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
-              : "-"
-          }
-        </td>
+  ${d.lastLogin 
+    ? new Date(d.lastLogin.seconds * 1000).toLocaleString()
+    : "-"
+  }
+</td>
+
+<td>
+  ${d.lastLogout 
+    ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
+    : "-"
+  }
+</td>
+
+<td>
+  ${d.isOnline 
+    ? "Active Now"
+    : d.lastSeen 
+      ? new Date(d.lastSeen.seconds * 1000).toLocaleString()
+      : "-"
+  }
+</td>
       </tr>
       `;
     });
