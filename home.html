@@ -1003,8 +1003,11 @@ onDisconnect(statusRef).set({
 });
 
 // 🔥 REALTIME SYNC
-onValue(statusRef, async (snap) => {
+
+  onValue(statusRef, async (snap) => {
   const status = snap.val();
+
+  if(!status) return;
 
   if(status.state === "offline"){
     await updateDoc(doc(db,"users",user.uid),{
@@ -1012,7 +1015,8 @@ onValue(statusRef, async (snap) => {
       lastLogout: serverTimestamp(),
       lastSeen: serverTimestamp()
     });
-  } else {
+  } 
+  else if(status.state === "online"){
     await updateDoc(doc(db,"users",user.uid),{
       isOnline:true,
       lastSeen: serverTimestamp()
@@ -1020,13 +1024,8 @@ onValue(statusRef, async (snap) => {
   }
 });
 
-set(statusRef, {
-  state: "online"
-});
 
-onDisconnect(statusRef).set({
-  state: "offline"
-});  
+ 
   
 resetTimer();
   const isLoggedIn = localStorage.getItem("loginSuccess");
@@ -1394,14 +1393,6 @@ window.addEventListener("scroll", () => {
 
 
 
-    window.addEventListener("beforeunload", () => {
-  
-      updateDoc(doc(db,"users",auth.currentUser.uid),{
-  isOnline:false,
-  lastLogout: serverTimestamp(),
-  lastSeen: serverTimestamp()
-});
-    });
     
 </script>
 
