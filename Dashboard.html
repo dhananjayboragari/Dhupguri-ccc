@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Premium Admin Dashboard</title>
 
 <style>
@@ -9,7 +10,7 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Segoe UI;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body{
@@ -101,7 +102,6 @@ tr:hover{
   color:#ff4d4d;
   font-weight:bold;
 }
-
 </style>
 </head>
 
@@ -139,17 +139,14 @@ tr:hover{
 </div>
 
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  import { getDatabase, ref, onValue, set, onDisconnect } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { initializeApp } from "https://gstatic.com";
+import { getAuth, onAuthStateChanged } from "https://gstatic.com";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, serverTimestamp } from "https://gstatic.com";
+import { getDatabase, ref, set, onDisconnect } from "https://gstatic.com";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
-  authDomain: "dhupguri-ccc.firebaseapp.com",
+  authDomain: "://firebaseapp.com",
   projectId: "dhupguri-ccc",
   storageBucket: "dhupguri-ccc.firebasestorage.app",
   messagingSenderId: "278611213070",
@@ -159,39 +156,37 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
-
-
-
 const rtdb = getDatabase(app);
 
 onAuthStateChanged(auth, async (user) => {
-
   if(!user){
     window.location.href="login.html";
     return;
   }
 
-  // ✅ Admin check
+  // ✅ ১. অ্যাডমিন ইমেইল চেক
   const admins = [
     "dhananjayboragari@gmail.com",
     "chakrabortyelectricalsdhup@gmail.com"
   ];
 
-  if(!admins.includes(user.email)){
-    alert("Access Denied ❌");
+  if(!admins.includes(user.email.toLowerCase())){
+    alert("Access Denied ❌ আপনি অ্যাডমিন নন।");
     window.location.href="login.html";
     return;
   }
 
-  // ✅ Firestore Online
-  await updateDoc(doc(db,"users",user.uid),{
-    isOnline:true
-  });
+  // ✅ ২. অ্যাডমিন অনলাইন হলে Firestore আপডেট
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      isOnline: true
+    });
+  } catch(e) {
+    console.log("Firestore আপডেট করা যায়নি, সম্ভবত Rules লক করা:", e);
+  }
 
-  // 🔥 Realtime Presence START
-  
+  // ✅ ৩. রিয়েলটাইম ডাটাবেস দিয়ে অ্যাপ ট্র্যাকিং (অ্যাপ বা ব্রাউজার ক্লোজ করলে অফলাইন করার জন্য)
   const statusRef = ref(rtdb, "status/" + user.uid);
-
   set(statusRef, {
     state: "online",
     lastChanged: Date.now()
@@ -202,52 +197,54 @@ onAuthStateChanged(auth, async (user) => {
     lastChanged: Date.now()
   });
 
-  onValue(statusRef, async (snap) => {
-    const status = snap.val();
-
-    await updateDoc(doc(db,"users",user.uid),{
-      isOnline: status.state === "online",
-      lastLogout: serverTimestamp()
-    });
+  // ব্রাউজার ট্যাব হঠাৎ কেটে দিলে সাথে সাথে অফলাইন মার্ক করার ব্যাকআপ নিয়ম
+  window.addEventListener("pagehide", () => {
+    if(user) {
+      updateDoc(doc(db, "users", user.uid), {
+        isOnline: false,
+        lastLogout: serverTimestamp()
+      });
+    }
   });
 
-  // 🔥 LIVE DATA
-  onSnapshot(collection(db,"users"), (snapshot)=>{
-
+  // ✅ ৪. লাইভ ডাটা লোড এবং টেবিল শো করা
+  onSnapshot(collection(db, "users"), (snapshot) => {
     let total = snapshot.size;
     let online = 0;
     let html = "";
 
-    snapshot.forEach(docSnap=>{
+    snapshot.forEach(docSnap => {
       let d = docSnap.data();
-
       if(d.isOnline) online++;
+
+      // টাইম ফরম্যাট ঠিক করা
+      let lastSeenTime = "-";
+      if(d.isOnline) {
+        lastSeenTime = "Active Now";
+      } else if(d.lastLogout) {
+        let dateObj = d.lastLogout.seconds ? new Date(d.lastLogout.seconds * 1000) : new Date(d.lastLogout);
+        if(!isNaN(dateObj)) {
+          lastSeenTime = dateObj.toLocaleDateString("en-IN", { day: '2-digit', month: '2-digit', year: 'numeric' }) + 
+                         " " + 
+                         dateObj.toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+      }
 
       html += `
       <tr>
         <td>
           <div class="user">
-            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+            <img src="${d.image || 'https://imgur.com'}" onerror="this.src='https://imgur.com'">
             <span>${d.name || "-"}</span>
           </div>
         </td>
-
         <td>${d.email || "-"}</td>
         <td>${d.phone || "-"}</td>
         <td>${d.address || "-"}</td>
-
         <td class="${d.isOnline ? 'online':'offline'}">
-          ${d.isOnline ? "🟢 Online":"🔴 Offline"}
+          ${d.isOnline ? "🟢 Online" : "🔴 Offline"}
         </td>
-
-        <td>
-          ${d.isOnline 
-            ? "Active Now" 
-            : d.lastLogout 
-              ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
-              : "-"
-          }
-        </td>
+        <td>${lastSeenTime}</td>
       </tr>
       `;
     });
@@ -255,11 +252,11 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
     document.getElementById("userTable").innerHTML = html;
-
+  }, (error) => {
+    console.error("ডাটাবেস থেকে তথ্য লোড করা যাচ্ছে না! এরর মেসেজ:", error);
+    alert("ডাটা শো হচ্ছে না! অনুগ্রহ করে আপনার Firebase Firestore Rules চেক করুন।");
   });
-
 });
-
 </script>
 
 </body>
