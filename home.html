@@ -1055,13 +1055,7 @@ onValue(statusRef, async (snap) => {
 
 
   
-  await setDoc(userRef, {
-    isOnline: false,
-    lastLogout: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
-}
-  });
+
 
  
   
