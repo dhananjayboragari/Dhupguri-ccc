@@ -968,6 +968,7 @@ const auth = getAuth(app);
 
 
 let user = null;
+  let statusListenerSet = false;
 
 // DEBUG
 console.log("JS Loaded ✅");
@@ -983,6 +984,8 @@ if (!user) return;
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
 
+  const connectedRef = ref(rtdb, ".info/connected");
+
   // 🔥 LOGIN TIME
 
   await setDoc(doc(db,"users",user.uid),{
@@ -991,52 +994,57 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   lastSeen: serverTimestamp()
 },{merge:true});
 
+onValue(connectedRef, (snap) => {
 
-  // 🟢 ONLINE
-set(statusRef, {
-  state: "online",
-  lastLogin: Date.now(),
-  lastChanged: Date.now()
+  if (snap.val() === false) return;
+
+  // 🔴 disconnect হলে কি হবে (আগে define)
+  onDisconnect(statusRef).set({
+    state: "offline",
+    lastLogout: Date.now(),
+    lastChanged: Date.now()
+  });
+
+  // 🟢 এখন user online set
+  set(statusRef, {
+    state: "online",
+    lastLogin: Date.now(),
+    lastChanged: Date.now()
+  });
+
 });
 
-// 🔴 OFFLINE (VERY IMPORTANT)
-onDisconnect(statusRef).set({
-  state: "offline",
-  lastLogout: Date.now(),
-  lastChanged: Date.now()
-});
 
+
+  
 // 🔥 REALTIME SYNC
-
-
-
-  
-  
+  if(!statusListenerSet){
+  statusListenerSet = true;
 
   onValue(statusRef, async (snap) => {
 
-  const data = snap.val();
-  if(!data) return;
+    const data = snap.val();
+    if(!data) return;
 
-  // 🟢 ONLINE
-  if(data.state === "online"){
-    await setDoc(doc(db,"users",user.uid),{
-      isOnline:true,
-      lastLogin: new Date(data.lastLogin || Date.now()),
-      lastSeen: new Date(data.lastChanged)
-    },{merge:true});
-  }
+    if(data.state === "online"){
+      await setDoc(doc(db,"users",user.uid),{
+        isOnline:true,
+        lastLogin: new Date(data.lastLogin || Date.now()),
+        lastSeen: new Date(data.lastChanged)
+      },{merge:true});
+    }
 
-  // 🔴 OFFLINE
-  if(data.state === "offline"){
-    await setDoc(doc(db,"users",user.uid),{
-      isOnline:false,
-      lastLogout: new Date(data.lastLogout || Date.now()),
-      lastSeen: new Date(data.lastChanged)
-    },{merge:true});
-  }
+    if(data.state === "offline"){
+      await setDoc(doc(db,"users",user.uid),{
+        isOnline:false,
+        lastLogout: new Date(data.lastLogout || Date.now()),
+        lastSeen: new Date(data.lastChanged)
+      },{merge:true});
+    }
 
-});
+  });
+
+}
 
 
  
