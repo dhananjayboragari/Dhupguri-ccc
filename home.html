@@ -1014,33 +1014,32 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   
 // 🔥 REALTIME SYNC
 
-  onValue(statusRef, async (snap) => {
+  let lastState = null;
 
+onValue(statusRef, async (snap) => {
   const data = snap.val();
   if (!data) return;
+
+  if (data.state === lastState) return; // 🔥 important line
+  lastState = data.state;
 
   const userRef = doc(db, "users", user.uid);
 
   if (data.state === "online") {
-
     await setDoc(userRef, {
       isOnline: true,
       lastLogin: new Date(data.lastLogin),
       lastSeen: new Date(data.lastChanged)
     }, { merge: true });
-
   }
 
   if (data.state === "offline") {
-
     await setDoc(userRef, {
       isOnline: false,
       lastLogout: new Date(),
       lastSeen: new Date(data.lastChanged)
     }, { merge: true });
-
   }
-
 });
 
 
@@ -1448,15 +1447,7 @@ window.addEventListener("scroll", () => {
 
 
 
-    window.addEventListener("beforeunload", async () => {
-  if(user){
-    await setDoc(doc(db,"users",user.uid),{
-      isOnline:false,
-      lastLogout: new Date(),
-      lastSeen: new Date()
-    },{merge:true});
-  }
-});
+    
     
 </script>
 
