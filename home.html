@@ -995,9 +995,6 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
   if (snap.val() === false) return;
 
-  // 🔴 Cancel previous disconnect
-  await onDisconnect(statusRef).cancel();
-
   // 🔴 Set offline when disconnect
   await onDisconnect(statusRef).set({
     state: "offline",
