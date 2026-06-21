@@ -881,7 +881,7 @@ align-items:center;
 </a>
 </div>
 
-<div class="card-box" id="User Dashboard">
+<div class="card-box" id="userDashboard">
 <a href="Dashboard.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
@@ -994,6 +994,16 @@ onAuthStateChanged(auth, async (u) => {
 
  user = u;
 
+  
+const admins = [
+  "dhananjayboragari@gmail.com",
+  "chakrabortyelectricalsdhup@gmail.com"
+];
+
+if (!admins.includes(u.email)) {
+  document.getElementById("userDashboard").style.display = "none";
+}
+  
 if (!user) return;
 
 
@@ -1464,14 +1474,7 @@ window.addEventListener("scroll", () => {
   });
 } 
 
-const admins = [
-  "dhananjayboragari@gmail.com",
-  "chakrabortyelectricalsdhup@gmail.com"
-];
 
-if(!admins.includes(user.email)){
-  document.getElementById("User Dashboard").style.display = "none";
-}
 
     
 </script>
