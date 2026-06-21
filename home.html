@@ -876,16 +876,22 @@ align-items:center;
 <img src="https://i.ibb.co/q3Zt54rR/images.jpg" alt="REPORT SUBMISSION">
 <h3>CONTACT US</h3>
 </div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
 
-
-<div class="card-box">
+<div class="card-box" id="User Dashboard">
 <a href="Dashboard.html" onclick="startLoad(event,this)">
 <div class="card-border">
 <div class="card-btn">
 <img src="https://i.ibb.co/cXZqBdYL/admin1.png" alt="USER DASHBOARD">
 <h3>USER DASHBOARD</h3>
 </div>
-  
+  </div>
+<div class="loader"></div>
+</a>
+</div>
   
 </div>
 <div class="loader"></div>
@@ -1457,6 +1463,16 @@ window.addEventListener("scroll", () => {
     minute:"2-digit"
   });
 } 
+
+const admins = [
+  "dhananjayboragari@gmail.com",
+  "chakrabortyelectricalsdhup@gmail.com"
+];
+
+if(!admins.includes(user.email)){
+  document.getElementById("User Dashboard").style.display = "none";
+}
+
     
 </script>
 
