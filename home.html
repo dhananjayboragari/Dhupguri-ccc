@@ -1015,7 +1015,7 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
   // 🔥 REALTIME SYNC FIX (NO BUG)
 
-onValue(statusRef, async (snap) => {
+onValue(statusRef, (snap) => {
 
   const data = snap.val();
   if (!data) return;
@@ -1024,14 +1024,23 @@ onValue(statusRef, async (snap) => {
 
   // 🟢 ONLINE
   if (data.state === "online") {
-
-    await setDoc(userRef, {
+    setDoc(userRef, {
       isOnline: true,
       lastLogin: serverTimestamp(),
       lastSeen: serverTimestamp()
     }, { merge: true });
-
   }
+
+  // 🔴 OFFLINE
+  if (data.state === "offline") {
+    setDoc(userRef, {
+      isOnline: false,
+      lastLogout: serverTimestamp(),
+      lastSeen: serverTimestamp()
+    }, { merge: true });
+  }
+
+});
 
   // 🔴 OFFLINE
   if (data.state === "offline") {
