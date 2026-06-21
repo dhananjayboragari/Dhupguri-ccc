@@ -991,18 +991,17 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   
  
 
-  onValue(connectedRef, (snap) => {
 
-  if (snap.val() === false) return;
+  onValue(connectedRef, async (snap) => {
 
-  // offline set hobe auto
-  onDisconnect(statusRef).set({
+  if (!snap.val()) return;
+
+  await onDisconnect(statusRef).set({
     state: "offline",
     lastChanged: Date.now()
   });
 
-  // online set
-  set(statusRef, {
+  await set(statusRef, {
     state: "online",
     lastChanged: Date.now()
   });
@@ -1015,25 +1014,24 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
   // 🔥 REALTIME SYNC FIX (NO BUG)
 
-onValue(statusRef, (snap) => {
+
+  onValue(statusRef, async (snap) => {
 
   const data = snap.val();
   if (!data) return;
 
   const userRef = doc(db, "users", user.uid);
 
-  // 🟢 ONLINE
   if (data.state === "online") {
-    setDoc(userRef, {
+    await setDoc(userRef, {
       isOnline: true,
       lastLogin: serverTimestamp(),
       lastSeen: serverTimestamp()
     }, { merge: true });
   }
 
-  // 🔴 OFFLINE
   if (data.state === "offline") {
-    setDoc(userRef, {
+    await setDoc(userRef, {
       isOnline: false,
       lastLogout: serverTimestamp(),
       lastSeen: serverTimestamp()
@@ -1042,17 +1040,16 @@ onValue(statusRef, (snap) => {
 
 });
 
-  // 🔴 OFFLINE
-  if (data.state === "offline") {
 
-    await setDoc(userRef, {
-      isOnline: false,
-      lastLogout: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    }, { merge: true });
 
-  }
 
+
+  // 🔥 FORCE OFFLINE FIX
+window.addEventListener("beforeunload", () => {
+  set(statusRef, {
+    state: "offline",
+    lastChanged: Date.now()
+  });
 });
 
 
