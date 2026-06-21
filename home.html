@@ -1017,27 +1017,44 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   
 // 🔥 REALTIME SYNC
 
-  let lastState = null;
+  // 🔥 REALTIME SYNC FIX (NO BUG)
 
-  onValue(statusRef, async (snap) => {
+onValue(statusRef, async (snap) => {
+
   const data = snap.val();
-if (!data) return;
+  if (!data) return;
 
-// 🔥 IMPORTANT LINE
-if (data.state === lastState) return;
-lastState = data.state;
+  const userRef = doc(db, "users", user.uid);
 
-const userRef = doc(db, "users", user.uid);
+  // 🟢 ONLINE
+  if (data.state === "online") {
 
-if (data.state === "online") {
-  await setDoc(userRef, {
-    isOnline: true,
-    lastLogin: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
-}
+    await setDoc(userRef, {
+      isOnline: true,
+      lastLogin: serverTimestamp(),
+      lastSeen: serverTimestamp()
+    }, { merge: true });
 
-if (data.state === "offline") {
+  }
+
+  // 🔴 OFFLINE
+  if (data.state === "offline") {
+
+    await setDoc(userRef, {
+      isOnline: false,
+      lastLogout: serverTimestamp(),
+      lastSeen: serverTimestamp()
+    }, { merge: true });
+
+  }
+
+});
+
+
+
+
+
+  
   await setDoc(userRef, {
     isOnline: false,
     lastLogout: serverTimestamp(),
