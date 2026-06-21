@@ -989,61 +989,62 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
 
   
-  onValue(connectedRef, (snap) => {
+ 
 
-  if (snap.val() === true) {
+  onValue(connectedRef, async (snap) => {
 
-    // 🟢 ONLINE
-    set(statusRef, {
-      state: "online",
-      lastLogin: Date.now(),
-      lastChanged: Date.now()
-    });
+  if (snap.val() === false) return;
 
-    // 🔴 OFFLINE (disconnect হলে auto trigger)
-    onDisconnect(statusRef).set({
-  state: "offline",
-  lastChanged: Date.now()
+  // 🔴 Cancel previous disconnect
+  await onDisconnect(statusRef).cancel();
+
+  // 🔴 Set offline when disconnect
+  await onDisconnect(statusRef).set({
+    state: "offline",
+    lastChanged: Date.now()
+  });
+
+  // 🟢 Set online
+  await set(statusRef, {
+    state: "online",
+    lastLogin: Date.now(),
+    lastChanged: Date.now()
+  });
+
 });
-
-  }
-
-});
-
 
 
   
 // 🔥 REALTIME SYNC
 
+  let lastState = null;
+
   onValue(statusRef, async (snap) => {
-
   const data = snap.val();
-  if (!data) return;
+if (!data) return;
 
-  const userRef = doc(db, "users", user.uid);
+// 🔥 IMPORTANT LINE
+if (data.state === lastState) return;
+lastState = data.state;
 
-  if (data.state === "online") {
+const userRef = doc(db, "users", user.uid);
 
-    await setDoc(userRef, {
-      isOnline: true,
-      lastLogin: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    }, { merge: true });
+if (data.state === "online") {
+  await setDoc(userRef, {
+    isOnline: true,
+    lastLogin: serverTimestamp(),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+}
 
-  }
-
-  if (data.state === "offline") {
-
-    await setDoc(userRef, {
-      isOnline: false,
-      lastLogout: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    }, { merge: true });
-
-  }
-
-});
-
+if (data.state === "offline") {
+  await setDoc(userRef, {
+    isOnline: false,
+    lastLogout: serverTimestamp(),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+}
+  });
 
  
   
