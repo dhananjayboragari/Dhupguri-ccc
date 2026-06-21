@@ -63,6 +63,9 @@ th,td{
   padding:12px;
   text-align:left;
 }
+  td{
+  white-space: nowrap;
+}
 
 th{
   background:rgba(0,0,0,0.4);
@@ -169,6 +172,37 @@ const db = getFirestore();
 
 const rtdb = getDatabase(app);
 
+  function formatTime(ts){
+  if(!ts) return "-";
+
+  let date;
+
+  if(ts.toDate){
+    date = ts.toDate();
+  } else if(ts.seconds){
+    date = new Date(ts.seconds * 1000);
+  } else {
+    date = new Date(ts);
+  }
+
+  if(isNaN(date.getTime())) return "-";
+
+  let day = String(date.getDate()).padStart(2,'0');
+  let month = String(date.getMonth()+1).padStart(2,'0');
+  let year = date.getFullYear();
+
+  let hours = date.getHours();
+  let minutes = String(date.getMinutes()).padStart(2,'0');
+  let seconds = String(date.getSeconds()).padStart(2,'0');
+
+  let ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  hours = String(hours).padStart(2,'0');
+
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
 onAuthStateChanged(auth, async (user) => {
 
   
@@ -271,37 +305,19 @@ window.addEventListener("beforeunload", async () => {
           ${d.isOnline ? "🟢 Online":"🔴 Offline"}
         </td>
 
-        <td>
-  ${d.lastLogin?.toDate
-  ? d.lastLogin.toDate().toLocaleString()
-  : "-"
-}
-</td>
 
-
-<td>
-  ${
-    d.lastLogout?.toDate
-      ? d.lastLogout.toDate().toLocaleString()
-      : (d.lastLogout?.seconds
-          ? new Date(d.lastLogout.seconds * 1000).toLocaleString()
-          : "-"
-        )
-  }
-</td>
+        <td>${formatTime(d.lastLogin)}</td>
 
 
 
-<td>
-  ${
-  d.lastSeen?.toDate
-    ? d.lastSeen.toDate().toLocaleString()
-    : (d.lastSeen?.seconds
-        ? new Date(d.lastSeen.seconds * 1000).toLocaleString()
-        : "-"
-      )
-}
-</td>
+<td>${formatTime(d.lastLogout)}</td>
+
+
+
+
+<td>${formatTime(d.lastSeen)}</td>
+
+
       </tr>
       `;
     });
