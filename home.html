@@ -991,20 +991,19 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   
  
 
-  onValue(connectedRef, async (snap) => {
+  onValue(connectedRef, (snap) => {
 
   if (snap.val() === false) return;
 
-  // 🔴 Set offline when disconnect
-  await onDisconnect(statusRef).set({
+  // offline set hobe auto
+  onDisconnect(statusRef).set({
     state: "offline",
     lastChanged: Date.now()
   });
 
-  // 🟢 Set online
-  await set(statusRef, {
+  // online set
+  set(statusRef, {
     state: "online",
-    lastLogin: Date.now(),
     lastChanged: Date.now()
   });
 
