@@ -989,67 +989,49 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
 
   
- 
-
 
   onValue(connectedRef, async (snap) => {
 
   if (!snap.val()) return;
 
-  await onDisconnect(statusRef).set({
+  const userRef = doc(db, "users", user.uid);
+
+  // 🔴 OFFLINE (auto when disconnect)
+  onDisconnect(statusRef).set({
     state: "offline",
     lastChanged: Date.now()
   });
 
+  onDisconnect(ref(rtdb, "dummy/" + user.uid)).set(true);
+
+  // 🟢 ONLINE
   await set(statusRef, {
     state: "online",
     lastChanged: Date.now()
   });
 
-});
-
-
-  
-// 🔥 REALTIME SYNC
-
-  // 🔥 REALTIME SYNC FIX (NO BUG)
-
-
-  onValue(statusRef, async (snap) => {
-
-  const data = snap.val();
-  if (!data) return;
-
-  const userRef = doc(db, "users", user.uid);
-
-  if (data.state === "online") {
-    await setDoc(userRef, {
-      isOnline: true,
-      lastLogin: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    }, { merge: true });
-  }
-
-  if (data.state === "offline") {
-    await setDoc(userRef, {
-      isOnline: false,
-      lastLogout: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    }, { merge: true });
-  }
+  await setDoc(userRef, {
+    isOnline: true,
+    lastLogin: serverTimestamp(),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
 
 });
-
 
 
 
 
   // 🔥 FORCE OFFLINE FIX
-window.addEventListener("beforeunload", () => {
-  set(statusRef, {
-    state: "offline",
-    lastChanged: Date.now()
-  });
+  window.addEventListener("beforeunload", async () => {
+
+  const userRef = doc(db, "users", user.uid);
+
+  await setDoc(userRef, {
+    isOnline: false,
+    lastLogout: serverTimestamp(),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+
 });
 
 
@@ -1251,9 +1233,6 @@ window.closeProfile = function(){
   document.body.style.overflow = "auto";
 };
 
-
-  
-
 window.showPopup = function(msg, type = "success", callback = null) {
   popupText.innerText = msg;
 
@@ -1282,18 +1261,11 @@ window.showPopup = function(msg, type = "success", callback = null) {
 
   document.getElementById("customPopup").style.display = "flex";
 };
-
-
-
   
 window.closeSessionPopup = function(){
   document.getElementById("customPopup").style.display = "none";
   window.location.href = "index.html";
 };
-
-
-
-
 
 const apiKey = "a5d421a5cbe17ebcfd2e0b90915c2501";
 
@@ -1334,9 +1306,6 @@ async function uploadToImgBB(file){
     reader.readAsDataURL(file);
   });
 }
-
-
-
 
 
 document.getElementById("profileImage").addEventListener("change", function(e){
@@ -1398,8 +1367,6 @@ window.addEventListener("keypress", resetTimer);
 window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
 // ====================================  
-
-
 </script>
 
 
@@ -1458,15 +1425,9 @@ window.addEventListener("scroll", () => {
     hour:"2-digit",
     minute:"2-digit"
   });
-}
-
-
-
-    
+} 
     
 </script>
-
-  
 
 </body>
 </html>
