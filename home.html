@@ -1002,7 +1002,8 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
     // 🔴 OFFLINE (disconnect হলে auto trigger)
     onDisconnect(statusRef).set({
-  state: "offline"
+  state: "offline",
+  lastChanged: Date.now()
 });
 
   }
@@ -1036,7 +1037,7 @@ onValue(statusRef, async (snap) => {
   if (data.state === "offline") {
     await setDoc(userRef, {
       isOnline: false,
-      lastLogout: new Date(),
+      lastLogout: new Date(data.lastChanged),
       lastSeen: new Date(data.lastChanged)
     }, { merge: true });
   }
@@ -1447,6 +1448,13 @@ window.addEventListener("scroll", () => {
 
 
 
+    window.addEventListener("beforeunload", async () => {
+  await setDoc(doc(db,"users",user.uid),{
+    isOnline:false,
+    lastLogout: new Date(),
+    lastSeen: new Date()
+  },{merge:true});
+});
     
     
 </script>
