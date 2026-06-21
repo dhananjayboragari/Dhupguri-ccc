@@ -985,7 +985,27 @@ if (!user) return;
 const statusRef = ref(rtdb, "status/" + user.uid);
 
   const connectedRef = ref(rtdb, ".info/connected");
+  
 
+  // 🔥 BACK / CLOSE DETECT (BEST PLACE)
+function setOfflineNow(){
+  if(!user) return;
+
+  set(statusRef, {
+    state: "offline",
+    lastChanged: Date.now()
+  });
+}
+
+// 🔥 Tab close / back / refresh
+window.addEventListener("pagehide", setOfflineNow);
+
+// 🔥 App minimize / switch tab
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){
+    setOfflineNow();
+  }
+});
 
 
   
