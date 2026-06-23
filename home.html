@@ -1000,8 +1000,19 @@ let user = null;
 console.log("JS Loaded ✅");
 
 onAuthStateChanged(auth, async (u) => {
+  
+  if (!user) return;
 
  user = u;
+
+  const admins = [
+  "dhananjayboragari@gmail.com",
+  "chakrabortyelectricalsdhup@gmail.com"
+];
+
+if (!admins.includes(user.email)) {
+  document.getElementById("userDashboard").style.display = "none";
+}
 
   // 🔥 HEARTBEAT (IMPORTANT FIX)
 setInterval(() => {
@@ -1010,16 +1021,9 @@ setInterval(() => {
   }
 }, 5000);
   
-const admins = [
-  "dhananjayboragari@gmail.com",
-  "chakrabortyelectricalsdhup@gmail.com"
-];
 
-if (!admins.includes(u.email)) {
-  document.getElementById("userDashboard").style.display = "none";
-}
   
-if (!user) return;
+
 
 
   updateLastSeen();
@@ -1044,12 +1048,41 @@ function setOfflineNow(){
 window.addEventListener("pagehide", setOfflineNow);
 
 // 🔥 App minimize / switch tab
-document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "visible"){
-    updateLastSeen(); // 🔥 ADD
+  document.addEventListener("visibilitychange", async () => {
+
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+  
+
+  if (document.visibilityState === "hidden") {
+    
+    // 🔴 minimize
+    await updateDoc(userRef, {
+      isOnline: false,
+      lastSeen: serverTimestamp()
+    });
+
+    set(statusRef, {
+      state: "offline",
+      lastChanged: Date.now()
+    });
+
   } else {
-    setOfflineNow();
+
+    // 🟢 app open
+    await updateDoc(userRef, {
+      isOnline: true,
+      lastSeen: serverTimestamp()
+    });
+
+    set(statusRef, {
+      state: "online",
+      lastChanged: Date.now()
+    });
+
   }
+
 });
 
 
@@ -1139,7 +1172,7 @@ resetTimer();
 }
 
   // ✅ USER OK
-  user = u;
+  
 
   try {
 
@@ -1496,32 +1529,7 @@ window.addEventListener("scroll", () => {
 } 
 
 
-document.addEventListener("visibilitychange", async () => {
 
-  if (!user) return;
-
-  const userRef = doc(db, "users", user.uid);
-
-  if (document.visibilityState === "hidden") {
-    
-    // 🔴 App minimize / background
-    await updateDoc(userRef, {
-      isOnline: false,
-      lastSeen: serverTimestamp()
-    });
-
-  } else {
-
-    // 🟢 App আবার open
-    await updateDoc(userRef, {
-      isOnline: true,
-      lastSeen: serverTimestamp()
-    });
-
-  }
-
-});
-    
 </script>
 
 </body>
