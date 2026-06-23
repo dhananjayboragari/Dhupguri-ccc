@@ -985,48 +985,28 @@ const auth = getAuth(app);
 
 
 let user = null;
-
-  function updateLastSeen(){
-  if(!user) return;
-
-  const userRef = doc(db, "users", user.uid);
-
-  updateDoc(userRef, {
-    lastSeen: serverTimestamp()
-  });
-}
+  
 
 // DEBUG
 console.log("JS Loaded ✅");
 
 onAuthStateChanged(auth, async (u) => {
-  
-  if (!user) return;
 
  user = u;
 
-  const admins = [
+  
+const admins = [
   "dhananjayboragari@gmail.com",
   "chakrabortyelectricalsdhup@gmail.com"
 ];
 
-if (!admins.includes(user.email)) {
+if (!admins.includes(u.email)) {
   document.getElementById("userDashboard").style.display = "none";
 }
-
-  // 🔥 HEARTBEAT (IMPORTANT FIX)
-setInterval(() => {
-  if(user){
-    set(ref(rtdb, "status/" + user.uid + "/lastActive"), Date.now());
-  }
-}, 5000);
   
-
-  
-
+if (!user) return;
 
 
-  updateLastSeen();
 
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
@@ -1048,41 +1028,10 @@ function setOfflineNow(){
 window.addEventListener("pagehide", setOfflineNow);
 
 // 🔥 App minimize / switch tab
-  document.addEventListener("visibilitychange", async () => {
-
-  if (!user) return;
-
-  const userRef = doc(db, "users", user.uid);
-  
-
-  if (document.visibilityState === "hidden") {
-    
-    // 🔴 minimize
-    await updateDoc(userRef, {
-      isOnline: false,
-      lastSeen: serverTimestamp()
-    });
-
-    set(statusRef, {
-      state: "offline",
-      lastChanged: Date.now()
-    });
-
-  } else {
-
-    // 🟢 app open
-    await updateDoc(userRef, {
-      isOnline: true,
-      lastSeen: serverTimestamp()
-    });
-
-    set(statusRef, {
-      state: "online",
-      lastChanged: Date.now()
-    });
-
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){
+    setOfflineNow();
   }
-
 });
 
 
@@ -1172,7 +1121,7 @@ resetTimer();
 }
 
   // ✅ USER OK
-  
+  user = u;
 
   try {
 
@@ -1464,9 +1413,6 @@ window.addEventListener("mousemove", resetTimer);
 window.addEventListener("keypress", resetTimer);
 window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
-  ["click","scroll","keydown","touchstart"].forEach(event => {
-  document.addEventListener(event, updateLastSeen);
-});
 // ====================================  
 </script>
 
@@ -1530,6 +1476,7 @@ window.addEventListener("scroll", () => {
 
 
 
+    
 </script>
 
 </body>
