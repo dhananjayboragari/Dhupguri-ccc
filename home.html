@@ -1003,6 +1003,13 @@ onAuthStateChanged(auth, async (u) => {
 
  user = u;
 
+  // 🔥 HEARTBEAT (IMPORTANT FIX)
+setInterval(() => {
+  if(user){
+    set(ref(rtdb, "status/" + user.uid + "/lastActive"), Date.now());
+  }
+}, 5000);
+  
 const admins = [
   "dhananjayboragari@gmail.com",
   "chakrabortyelectricalsdhup@gmail.com"
