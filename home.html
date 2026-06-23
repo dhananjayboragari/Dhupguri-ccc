@@ -1496,7 +1496,31 @@ window.addEventListener("scroll", () => {
 } 
 
 
+document.addEventListener("visibilitychange", async () => {
 
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  if (document.visibilityState === "hidden") {
+    
+    // 🔴 App minimize / background
+    await updateDoc(userRef, {
+      isOnline: false,
+      lastSeen: serverTimestamp()
+    });
+
+  } else {
+
+    // 🟢 App আবার open
+    await updateDoc(userRef, {
+      isOnline: true,
+      lastSeen: serverTimestamp()
+    });
+
+  }
+
+});
     
 </script>
 
