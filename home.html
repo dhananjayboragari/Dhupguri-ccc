@@ -985,7 +985,16 @@ const auth = getAuth(app);
 
 
 let user = null;
-  
+
+  function updateLastSeen(){
+  if(!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  updateDoc(userRef, {
+    lastSeen: serverTimestamp()
+  });
+}
 
 // DEBUG
 console.log("JS Loaded ✅");
@@ -994,7 +1003,6 @@ onAuthStateChanged(auth, async (u) => {
 
  user = u;
 
-  
 const admins = [
   "dhananjayboragari@gmail.com",
   "chakrabortyelectricalsdhup@gmail.com"
@@ -1007,6 +1015,7 @@ if (!admins.includes(u.email)) {
 if (!user) return;
 
 
+  updateLastSeen();
 
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
@@ -1029,7 +1038,9 @@ window.addEventListener("pagehide", setOfflineNow);
 
 // 🔥 App minimize / switch tab
 document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "hidden"){
+  if(document.visibilityState === "visible"){
+    updateLastSeen(); // 🔥 ADD
+  } else {
     setOfflineNow();
   }
 });
@@ -1413,6 +1424,9 @@ window.addEventListener("mousemove", resetTimer);
 window.addEventListener("keypress", resetTimer);
 window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
+  ["click","scroll","keydown","touchstart"].forEach(event => {
+  document.addEventListener(event, updateLastSeen);
+});
 // ====================================  
 </script>
 
