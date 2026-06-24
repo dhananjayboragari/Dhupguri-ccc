@@ -994,6 +994,15 @@ onAuthStateChanged(auth, async (u) => {
 
  user = u;
 
+  // 🔥 HEARTBEAT ONLINE (ADD INSIDE onAuthStateChanged)
+setInterval(() => {
+  if(user){
+    set(statusRef, {
+      state: "online",
+      lastChanged: Date.now()
+    });
+  }
+}, 5000);
   
 const admins = [
   "dhananjayboragari@gmail.com",
@@ -1023,6 +1032,9 @@ function setOfflineNow(){
     lastChanged: Date.now()
   });
 }
+
+  // 🔥 EXTRA DETECT (ADD HERE)
+window.addEventListener("blur", setOfflineNow);
 
 // 🔥 Tab close / back / refresh
 window.addEventListener("pagehide", setOfflineNow);
