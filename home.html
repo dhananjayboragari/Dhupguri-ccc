@@ -994,15 +994,7 @@ onAuthStateChanged(auth, async (u) => {
 
  user = u;
 
-  // 🔥 HEARTBEAT ONLINE (ADD INSIDE onAuthStateChanged)
-setInterval(() => {
-  if(user){
-    set(statusRef, {
-      state: "online",
-      lastChanged: Date.now()
-    });
-  }
-}, 5000);
+ 
   
 const admins = [
   "dhananjayboragari@gmail.com",
@@ -1020,6 +1012,16 @@ if (!user) return;
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
 
+   // 🔥 HEARTBEAT ONLINE (ADD INSIDE onAuthStateChanged)
+setInterval(() => {
+  if(user){
+    set(statusRef, {
+      state: "online",
+      lastChanged: Date.now()
+    });
+  }
+}, 5000);
+
   const connectedRef = ref(rtdb, ".info/connected");
   
 
@@ -1036,6 +1038,15 @@ function setOfflineNow(){
   // 🔥 EXTRA DETECT (ADD HERE)
 window.addEventListener("blur", setOfflineNow);
 
+  window.addEventListener("focus", () => {
+  if(user){
+    set(statusRef, {
+      state: "online",
+      lastChanged: Date.now()
+    });
+  }
+});
+
 // 🔥 Tab close / back / refresh
 window.addEventListener("pagehide", setOfflineNow);
 
@@ -1043,6 +1054,13 @@ window.addEventListener("pagehide", setOfflineNow);
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "hidden"){
     setOfflineNow();
+  } else {
+    if(user){
+      set(statusRef, {
+        state: "online",
+        lastChanged: Date.now()
+      });
+    }
   }
 });
 
