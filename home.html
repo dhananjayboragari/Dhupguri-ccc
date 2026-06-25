@@ -990,40 +990,32 @@ let user = null;
 // DEBUG
 console.log("JS Loaded ✅");
 
+  let idleTimeout;
+let isIdle = false;
+let listenerAdded = false;
+
 onAuthStateChanged(auth, async (u) => {
 
  user = u;
-  
-  let idleTimeout;
-let isIdle = false;
 
 let heartbeatInterval = null;
-let listenerAdded = false;
-
 
   
   function resetIdleTimer() {
- 
 
   if(!user) return;
 
   clearTimeout(idleTimeout);
 
-  // 🟢 Active হলে আবার online
-  if(isIdle){
-    isIdle = false;
-
-    set(statusRef, {
-      state: "online",
-      lastChanged: Date.now()
-    });
-  }
+  // 🟢 active হলেই online
+  set(statusRef, {
+    state: "online",
+    lastChanged: Date.now()
+  });
 
   idleTimeout = setTimeout(() => {
 
-    // 🔴 2 min idle → offline
-    isIdle = true;
-
+    // 🔴 2 min কিছু না করলে offline
     set(statusRef, {
       state: "offline",
       lastChanged: Date.now()
@@ -1050,25 +1042,17 @@ if (!user) return;
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
 
+  if(!listenerAdded){
   ["mousemove","click","keypress","scroll","touchstart"].forEach(event => {
-  window.addEventListener(event, resetIdleTimer);
-});
+    window.addEventListener(event, resetIdleTimer);
+  });
+  listenerAdded = true;
+}
 
 // 🔥 initial call
 resetIdleTimer();
 
    // 🔥 HEARTBEAT ONLINE (ADD INSIDE onAuthStateChanged)
-
-  if(!heartbeatInterval){
-  heartbeatInterval = setInterval(() => {
-    if(user && !isIdle){
-      set(statusRef, {
-        state: "online",
-        lastChanged: Date.now()
-      });
-    }
-  }, 5000);
-}
 
   const connectedRef = ref(rtdb, ".info/connected");
   
@@ -1086,30 +1070,18 @@ function setOfflineNow(){
   // 🔥 EXTRA DETECT (ADD HERE)
 window.addEventListener("blur", setOfflineNow);
 
-  window.addEventListener("focus", () => {
-    isIdle = false;
-  if(user){
-    set(statusRef, {
-      state: "online",
-      lastChanged: Date.now()
-    });
-  }
-});
+
+  window.addEventListener("focus", resetIdleTimer);
 
 // 🔥 Tab close / back / refresh
 window.addEventListener("pagehide", setOfflineNow);
 
 // 🔥 App minimize / switch tab
-document.addEventListener("visibilitychange", () => {
+  document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "hidden"){
     setOfflineNow();
   } else {
-    if(user){
-      set(statusRef, {
-        state: "online",
-        lastChanged: Date.now()
-      });
-    }
+    resetIdleTimer();
   }
 });
 
@@ -1169,7 +1141,7 @@ document.addEventListener("visibilitychange", () => {
 
  
   
-resetTimer();
+
   const isLoggedIn = localStorage.getItem("loginSuccess");
 
   // 🔴 BLOCK (login ছাড়া ঢুকলে)
