@@ -993,6 +993,44 @@ console.log("JS Loaded ✅");
 onAuthStateChanged(auth, async (u) => {
 
  user = u;
+  
+  let idleTimeout;
+let isIdle = false;
+
+let heartbeatInterval = null;
+let listenerAdded = false;
+
+
+  
+  function resetIdleTimer() {
+ 
+
+  if(!user) return;
+
+  clearTimeout(idleTimeout);
+
+  // 🟢 Active হলে আবার online
+  if(isIdle){
+    isIdle = false;
+
+    set(statusRef, {
+      state: "online",
+      lastChanged: Date.now()
+    });
+  }
+
+  idleTimeout = setTimeout(() => {
+
+    // 🔴 2 min idle → offline
+    isIdle = true;
+
+    set(statusRef, {
+      state: "offline",
+      lastChanged: Date.now()
+    });
+
+  }, 2 * 60 * 1000);
+}
 
  
   
@@ -1012,15 +1050,25 @@ if (!user) return;
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
 
+  ["mousemove","click","keypress","scroll","touchstart"].forEach(event => {
+  window.addEventListener(event, resetIdleTimer);
+});
+
+// 🔥 initial call
+resetIdleTimer();
+
    // 🔥 HEARTBEAT ONLINE (ADD INSIDE onAuthStateChanged)
-setInterval(() => {
-  if(user){
-    set(statusRef, {
-      state: "online",
-      lastChanged: Date.now()
-    });
-  }
-}, 5000);
+
+  if(!heartbeatInterval){
+  heartbeatInterval = setInterval(() => {
+    if(user && !isIdle){
+      set(statusRef, {
+        state: "online",
+        lastChanged: Date.now()
+      });
+    }
+  }, 5000);
+}
 
   const connectedRef = ref(rtdb, ".info/connected");
   
@@ -1039,6 +1087,7 @@ function setOfflineNow(){
 window.addEventListener("blur", setOfflineNow);
 
   window.addEventListener("focus", () => {
+    isIdle = false;
   if(user){
     set(statusRef, {
       state: "online",
