@@ -1067,6 +1067,22 @@ function setOfflineNow(){
   });
 }
 
+  // 🔥 App close / refresh
+window.addEventListener("beforeunload", setOfflineNow);
+
+// 🔥 App minimize (mobile)
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    setOfflineNow();
+  }
+});
+
+// 🔥 Force close / net off
+onDisconnect(statusRef).set({
+  state: "offline",
+  lastChanged: Date.now()
+});
+  
   // 🔥 EXTRA DETECT (ADD HERE)
 window.addEventListener("blur", setOfflineNow);
 
