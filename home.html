@@ -990,9 +990,6 @@ let user = null;
 // DEBUG
 console.log("JS Loaded ✅");
 
-  let idleTimeout;
-let isIdle = false;
-let listenerAdded = false;
 
 onAuthStateChanged(auth, async (u) => {
 
@@ -1000,147 +997,63 @@ onAuthStateChanged(auth, async (u) => {
 
 let heartbeatInterval = null;
 
-  
-  function resetIdleTimer() {
 
-  if(!user) return;
-
-  clearTimeout(idleTimeout);
-
-  // 🟢 active হলেই online
-  set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
-  idleTimeout = setTimeout(() => {
-
-    // 🔴 2 min কিছু না করলে offline
-    set(statusRef, {
-      state: "offline",
-      lastChanged: Date.now()
-    });
-
-  }, 2 * 60 * 1000);
-}
-
- 
-  
 const admins = [
   "dhananjayboragari@gmail.com",
   "chakrabortyelectricalsdhup@gmail.com"
 ];
 
-if (!admins.includes(u.email)) {
+
+  
+
+  if (u && !admins.includes(u.email)) {
   document.getElementById("userDashboard").style.display = "none";
 }
+  
   
 if (!user) return;
 
 
+  user = u;
 
-// 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
-
-  if(!listenerAdded){
-  ["mousemove","click","keypress","scroll","touchstart"].forEach(event => {
-    window.addEventListener(event, resetIdleTimer);
-  });
-  listenerAdded = true;
-}
-
-// 🔥 initial call
-resetIdleTimer();
-
-   // 🔥 HEARTBEAT ONLINE (ADD INSIDE onAuthStateChanged)
-
-  const connectedRef = ref(rtdb, ".info/connected");
-  
-
-  // 🔥 BACK / CLOSE DETECT (BEST PLACE)
-function setOfflineNow(){
-  if(!user) return;
-
-  set(statusRef, {
-    state: "offline",
-    lastChanged: Date.now()
-  });
-}
-
-  // 🔥 EXTRA DETECT (ADD HERE)
-window.addEventListener("blur", setOfflineNow);
+const connectedRef = ref(rtdb, ".info/connected");
 
 
-  window.addEventListener("focus", resetIdleTimer);
+  onValue(connectedRef, (snap) => {
 
-// 🔥 Tab close / back / refresh
-window.addEventListener("pagehide", setOfflineNow);
+  if (snap.val() === true) {
 
-// 🔥 App minimize / switch tab
-  document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "hidden"){
-    setOfflineNow();
-  } else {
-    resetIdleTimer();
+    // 🟢 Online
+    set(statusRef, {
+      isOnline: true,
+      lastSeen: Date.now()
+    });
+
+    // 🔴 Auto Offline
+    onDisconnect(statusRef).set({
+      isOnline: false,
+      lastSeen: Date.now()
+    });
+
   }
+
 });
 
 
-  
-
-  onValue(connectedRef, async (snap) => {
-
-  if (!snap.val()) return;
-
-  const userRef = doc(db, "users", user.uid);
-
-  // 🔴 OFFLINE (auto when disconnect)
-  onDisconnect(statusRef).set({
-    state: "offline",
-    lastChanged: Date.now()
-  });
-
-  onDisconnect(ref(rtdb, "dummy/" + user.uid)).set(true);
-
-  // 🟢 ONLINE
-  await set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
-  await setDoc(userRef, {
+  function updateActivity(){
+  set(statusRef, {
     isOnline: true,
-    lastLogin: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
+    lastSeen: Date.now()
+  });
+}
 
+["click","keydown","touchstart","scroll"].forEach(e=>{
+  document.addEventListener(e, updateActivity);
 });
 
 
 
-
-  // 🔥 FORCE OFFLINE FIX
-  window.addEventListener("beforeunload", async () => {
-
-  const userRef = doc(db, "users", user.uid);
-
-  await setDoc(userRef, {
-    isOnline: false,
-    lastLogout: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
-
-});
-
-
-
-
-
-  
-
-
- 
-  
 
   const isLoggedIn = localStorage.getItem("loginSuccess");
 
@@ -1446,7 +1359,7 @@ let idleTimer;
         await setDoc(doc(db,"users",user.uid),{
           isOnline:false,
           lastLogout: serverTimestamp(),
-          lastSeen: serverTimestamp()
+          
         },{merge:true});
 
         signOut(auth).then(() => {
