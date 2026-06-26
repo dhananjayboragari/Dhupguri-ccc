@@ -965,7 +965,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-import { getDatabase, ref, set, onDisconnect, onValue } 
+  import { getDatabase, ref, set, onDisconnect, onValue, update } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -1013,6 +1013,14 @@ const admins = [
   
 if (!user) return;
 
+  setInterval(()=>{
+  if(user){
+    update(statusRef, {
+      isOnline: true,
+      lastSeen: Date.now()
+    });
+  }
+}, 30000); // every 30 sec
 
   user = u;
 
@@ -1041,18 +1049,32 @@ const connectedRef = ref(rtdb, ".info/connected");
 });
 
 
-  function updateActivity(){
-  set(statusRef, {
+  let lastUpdate = 0;
+
+function updateActivity(){
+  let now = Date.now();
+
+  if(now - lastUpdate < 5000) return; // 5 sec gap
+
+  lastUpdate = now;
+
+  update(statusRef, {
     isOnline: true,
-    lastSeen: Date.now()
+    lastSeen: now
   });
 }
+  
 
 ["click","keydown","touchstart","scroll"].forEach(e=>{
   document.addEventListener(e, updateActivity);
 });
 
 
+  document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible"){
+    updateActivity();
+  }
+});
 
 
   const isLoggedIn = localStorage.getItem("loginSuccess");
