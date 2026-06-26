@@ -1012,6 +1012,21 @@ let heartbeatInterval = null;
     lastChanged: Date.now()
   });
 
+   document.addEventListener("visibilitychange", () => {
+
+  if (!user) return;
+
+  if (document.hidden) {
+    set(statusRef, {
+      state: "offline",
+      lastChanged: Date.now()
+    });
+  } else {
+    resetIdleTimer();
+  }
+
+});
+   
   idleTimeout = setTimeout(() => {
 
     // 🔴 2 min কিছু না করলে offline
@@ -1116,13 +1131,6 @@ window.addEventListener("pagehide", setOfflineNow);
   });
 
   onDisconnect(ref(rtdb, "dummy/" + user.uid)).set(true);
-
-  // 🟢 ONLINE
-  await set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
   await setDoc(userRef, {
     isOnline: true,
     lastLogin: serverTimestamp(),
