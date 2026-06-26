@@ -203,8 +203,31 @@ const rtdb = getDatabase(app);
   return `${day}/${month}/${year}<br>${hours}:${minutes}:${seconds} ${ampm}`;
 }
 
+  function getStatus(d){
+
+  if(d.isOnline) return "🟢 Online";
+
+  if(!d.lastSeen) return "⚫ Offline";
+
+  const now = Date.now();
+
+  const last = d.lastSeen.seconds 
+    ? d.lastSeen.seconds * 1000 
+    : new Date(d.lastSeen).getTime();
+
+  const diff = now - last;
+
+  if(diff < 2 * 60 * 1000){
+    return "🟡 Active recently";
+  }
+
+  return "⚫ Offline";
+}
+  
+
 onAuthStateChanged(auth, async (user) => {
 
+  
   
   if(!user){
     window.location.href="index.html";
@@ -230,51 +253,7 @@ await updateDoc(doc(db,"users",user.uid),{
   lastLogin: serverTimestamp()   // ✅ ADD
 });
 
-  // 🔥 Realtime Presence START
-  
-  const statusRef = ref(rtdb, "status/" + user.uid);
 
-  set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
-  onDisconnect(statusRef).set({
-    state: "offline",
-    lastChanged: Date.now()
-  });
-
-
-
-
-  
-  onValue(statusRef, async (snap) => {
-  const status = snap.val();
-
-  if(status.state === "offline"){
-    await updateDoc(doc(db,"users",user.uid),{
-      isOnline:false,
-      lastLogout: serverTimestamp(),   // ✅ logout time
-      lastSeen: serverTimestamp()      // ✅ last seen
-    });
-  } else {
-    await updateDoc(doc(db,"users",user.uid),{
-      isOnline:true,
-      lastSeen: serverTimestamp()      // ✅ active seen
-    });
-  }
-});
-
-  // 🔥 ADD THIS BELOW onValue block
-window.addEventListener("beforeunload", async () => {
-  if(auth.currentUser){
-    await updateDoc(doc(db,"users",auth.currentUser.uid),{
-      isOnline:false,
-      lastLogout: serverTimestamp(),
-      lastSeen: serverTimestamp()
-    });
-  }
-});
 
   // 🔥 LIVE DATA
   onSnapshot(collection(db,"users"), (snapshot)=>{
@@ -301,9 +280,9 @@ window.addEventListener("beforeunload", async () => {
         <td>${d.phone || "-"}</td>
         <td>${d.address || "-"}</td>
 
-        <td class="${d.isOnline ? 'online':'offline'}">
-          ${d.isOnline ? "🟢 Online":"🔴 Offline"}
-        </td>
+        <td>
+  ${getStatus(d)}
+</td>
 
 
         <td>${formatTime(d.lastLogin)}</td>
