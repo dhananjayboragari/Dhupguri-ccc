@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home Page</title>
- 
+
+  
 <style>
 *{box-sizing:border-box;}
 
@@ -1066,25 +1067,17 @@ function setOfflineNow(){
   });
 }
 
-  // 🔥 App close / refresh
-window.addEventListener("beforeunload", setOfflineNow);
-
-// 🔥 Force close / net off
-onDisconnect(statusRef).set({
-  state: "offline",
-  lastChanged: Date.now()
-});
-  
   // 🔥 EXTRA DETECT (ADD HERE)
 window.addEventListener("blur", setOfflineNow);
- 
+
+
   window.addEventListener("focus", resetIdleTimer);
 
 // 🔥 Tab close / back / refresh
 window.addEventListener("pagehide", setOfflineNow);
 
 // 🔥 App minimize / switch tab
-  window.addEventListener("beforeunload", async () => {
+  document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "hidden"){
     setOfflineNow();
   } else {
@@ -1108,6 +1101,13 @@ window.addEventListener("pagehide", setOfflineNow);
   });
 
   onDisconnect(ref(rtdb, "dummy/" + user.uid)).set(true);
+
+  // 🟢 ONLINE
+  await set(statusRef, {
+    state: "online",
+    lastChanged: Date.now()
+  });
+
   await setDoc(userRef, {
     isOnline: true,
     lastLogin: serverTimestamp(),
@@ -1115,6 +1115,31 @@ window.addEventListener("pagehide", setOfflineNow);
   }, { merge: true });
 
 });
+
+
+
+
+  // 🔥 FORCE OFFLINE FIX
+  window.addEventListener("beforeunload", async () => {
+
+  const userRef = doc(db, "users", user.uid);
+
+  await setDoc(userRef, {
+    isOnline: false,
+    lastLogout: serverTimestamp(),
+    lastSeen: serverTimestamp()
+  }, { merge: true });
+
+});
+
+
+
+
+
+  
+
+
+ 
   
 
   const isLoggedIn = localStorage.getItem("loginSuccess");
