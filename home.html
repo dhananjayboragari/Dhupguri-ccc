@@ -1012,21 +1012,6 @@ let heartbeatInterval = null;
     lastChanged: Date.now()
   });
 
-   document.addEventListener("visibilitychange", () => {
-
-  if (!user) return;
-
-  if (document.hidden) {
-    set(statusRef, {
-      state: "offline",
-      lastChanged: Date.now()
-    });
-  } else {
-    resetIdleTimer();
-  }
-
-});
-   
   idleTimeout = setTimeout(() => {
 
     // 🔴 2 min কিছু না করলে offline
@@ -1084,13 +1069,6 @@ function setOfflineNow(){
   // 🔥 App close / refresh
 window.addEventListener("beforeunload", setOfflineNow);
 
-// 🔥 App minimize (mobile)
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    setOfflineNow();
-  }
-});
-
 // 🔥 Force close / net off
 onDisconnect(statusRef).set({
   state: "offline",
@@ -1099,15 +1077,14 @@ onDisconnect(statusRef).set({
   
   // 🔥 EXTRA DETECT (ADD HERE)
 window.addEventListener("blur", setOfflineNow);
-
-
+ 
   window.addEventListener("focus", resetIdleTimer);
 
 // 🔥 Tab close / back / refresh
 window.addEventListener("pagehide", setOfflineNow);
 
 // 🔥 App minimize / switch tab
-  document.addEventListener("visibilitychange", () => {
+  window.addEventListener("beforeunload", async () => {
   if(document.visibilityState === "hidden"){
     setOfflineNow();
   } else {
@@ -1138,31 +1115,6 @@ window.addEventListener("pagehide", setOfflineNow);
   }, { merge: true });
 
 });
-
-
-
-
-  // 🔥 FORCE OFFLINE FIX
-  window.addEventListener("beforeunload", async () => {
-
-  const userRef = doc(db, "users", user.uid);
-
-  await setDoc(userRef, {
-    isOnline: false,
-    lastLogout: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
-
-});
-
-
-
-
-
-  
-
-
- 
   
 
   const isLoggedIn = localStorage.getItem("loginSuccess");
