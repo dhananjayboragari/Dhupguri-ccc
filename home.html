@@ -1012,6 +1012,8 @@ const admins = [
   
   
 if (!user) return;
+  const statusRef = ref(rtdb, "status/" + user.uid);
+const connectedRef = ref(rtdb, ".info/connected");
 
   setInterval(()=>{
   if(user){
@@ -1023,9 +1025,6 @@ if (!user) return;
 }, 30000); // every 30 sec
 
   user = u;
-
-const statusRef = ref(rtdb, "status/" + user.uid);
-const connectedRef = ref(rtdb, ".info/connected");
 
 
   onValue(connectedRef, (snap) => {
