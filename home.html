@@ -985,97 +985,94 @@ const auth = getAuth(app);
 
 
 let user = null;
+  let heartbeatInterval = null;
   
 
 // DEBUG
 console.log("JS Loaded ✅");
 
 
-onAuthStateChanged(auth, async (u) => {
 
- user = u;
+  onAuthStateChanged(auth, async (u) => {
 
-let heartbeatInterval = null;
+  user = u;
 
-
-const admins = [
-  "dhananjayboragari@gmail.com",
-  "chakrabortyelectricalsdhup@gmail.com"
-];
-
-
-  
+  const admins = [
+    "dhananjayboragari@gmail.com",
+    "chakrabortyelectricalsdhup@gmail.com"
+  ];
 
   if (u && !admins.includes(u.email)) {
-  document.getElementById("userDashboard").style.display = "none";
-}
-  
-  
-if (!user) return;
-  const statusRef = ref(rtdb, "status/" + user.uid);
-const connectedRef = ref(rtdb, ".info/connected");
+    document.getElementById("userDashboard").style.display = "none";
+  }
 
-  setInterval(()=>{
-  if(user){
+  if (!u) return;
+
+  const statusRef = ref(rtdb, "status/" + u.uid);
+  const connectedRef = ref(rtdb, ".info/connected");
+
+  // ✅ CLEAR OLD INTERVAL
+  if (heartbeatInterval) clearInterval(heartbeatInterval);
+
+  // ✅ HEARTBEAT FIX
+  heartbeatInterval = setInterval(()=>{
     update(statusRef, {
       isOnline: true,
       lastSeen: Date.now()
     });
-  }
-}, 30000); // every 30 sec
+  }, 30000);
 
-  user = u;
-
-
+  // ✅ CONNECTION FIX
   onValue(connectedRef, (snap) => {
+    if (snap.val() === true) {
 
-  if (snap.val() === true) {
+      set(statusRef, {
+        isOnline: true,
+        lastSeen: Date.now()
+      });
 
-    // 🟢 Online
-    set(statusRef, {
-      isOnline: true,
-      lastSeen: Date.now()
-    });
+      onDisconnect(statusRef).set({
+        isOnline: false,
+        lastSeen: Date.now()
+      });
 
-    // 🔴 Auto Offline
-    onDisconnect(statusRef).set({
-      isOnline: false,
-      lastSeen: Date.now()
-    });
+    }
+  });
 
-  }
-
-});
-
-
+  // ✅ ACTIVITY FIX
   let lastUpdate = 0;
 
-function updateActivity(){
-  let now = Date.now();
+  function updateActivity(){
+    let now = Date.now();
+    if(now - lastUpdate < 5000) return;
 
-  if(now - lastUpdate < 5000) return; // 5 sec gap
+    lastUpdate = now;
 
-  lastUpdate = now;
+    update(statusRef, {
+      isOnline: true,
+      lastSeen: now
+    });
+  }
 
-  update(statusRef, {
-    isOnline: true,
-    lastSeen: now
+  ["click","keydown","touchstart","scroll"].forEach(e=>{
+    document.addEventListener(e, updateActivity);
   });
-}
-  
-
-["click","keydown","touchstart","scroll"].forEach(e=>{
-  document.addEventListener(e, updateActivity);
-});
-
 
   document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "visible"){
-    updateActivity();
-  }
+    if(document.visibilityState === "visible"){
+      updateActivity();
+    }
+  });
+
 });
 
+  onAuthStateChanged(auth, async (u) => {
 
+    if (!u) {
+    window.location.href = "index.html";
+    return;
+  }
+    
   const isLoggedIn = localStorage.getItem("loginSuccess");
 
   // 🔴 BLOCK (login ছাড়া ঢুকলে)
