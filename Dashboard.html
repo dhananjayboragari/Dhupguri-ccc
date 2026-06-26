@@ -246,6 +246,21 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  // ✅ RTDB ONLINE/OFFLINE SYSTEM
+const userStatusRef = ref(rtdb, "status/" + user.uid);
+
+// 🟢 Online
+set(userStatusRef, {
+  isOnline: true,
+  lastSeen: Date.now()
+});
+
+// 🔴 Offline when disconnect
+onDisconnect(userStatusRef).set({
+  isOnline: false,
+  lastSeen: Date.now()
+});
+  
   // ✅ Firestore Online
   // ✅ Firestore Online + Login Time
 await updateDoc(doc(db,"users",user.uid),{
@@ -254,6 +269,27 @@ await updateDoc(doc(db,"users",user.uid),{
 });
 
 
+  // ✅ USER ACTIVITY TRACK
+function updateActivity(){
+  updateDoc(doc(db,"users",user.uid),{
+    lastSeen: serverTimestamp()
+  });
+  set(ref(rtdb, "status/" + user.uid), {
+  isOnline: true,
+  lastSeen: Date.now()
+});
+}
+
+["click","keydown","touchstart","scroll"].forEach(e=>{
+  document.addEventListener(e, updateActivity);
+});
+
+
+  let statusMap = {};
+
+onValue(ref(rtdb, "status"), (snap)=>{
+  statusMap = snap.val() || {};
+});
 
   // 🔥 LIVE DATA
   onSnapshot(collection(db,"users"), (snapshot)=>{
@@ -265,7 +301,7 @@ await updateDoc(doc(db,"users",user.uid),{
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
 
-      if(d.isOnline) online++;
+      let userStatus = statusMap[docSnap.id];  if(userStatus && userStatus.isOnline){   online++; }
 
       html += `
       <tr>
@@ -281,7 +317,7 @@ await updateDoc(doc(db,"users",user.uid),{
         <td>${d.address || "-"}</td>
 
         <td>
-  ${getStatus(d)}
+  ${getStatus({   isOnline: statusMap[docSnap.id]?.isOnline,   lastSeen: statusMap[docSnap.id]?.lastSeen || d.lastSeen })}
 </td>
 
 
