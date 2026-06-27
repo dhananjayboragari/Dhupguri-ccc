@@ -113,7 +113,6 @@ tr:hover{
 <h1>🔥 All User Dashboard</h1>
 
 <div class="cards">
-
   <div class="card">
     <p>Total Users</p>
     <h2 id="total">0</h2>
@@ -123,16 +122,7 @@ tr:hover{
     <p>Online Users</p>
     <h2 id="online">0</h2>
   </div>
-
-  <div class="card">
-    <p>Active Recently</p>
-    <h2 id="active">0</h2>
-  </div>
-
-  <div class="card">
-    <p>Offline Users</p>
-    <h2 id="offline">0</h2>
-  </div>
+</div>
 
 <div class="table-container">
 <table>
@@ -213,41 +203,8 @@ const rtdb = getDatabase(app);
   return `${day}/${month}/${year}<br>${hours}:${minutes}:${seconds} ${ampm}`;
 }
 
-
-  
-
-  function getStatus(d){
-
-  if(!d) return "⚫ Offline";
-
-  const now = Date.now();
-
-  const last = typeof d.lastSeen === "number"
-    ? d.lastSeen
-    : d.lastSeen?.seconds
-    ? d.lastSeen.seconds * 1000
-    : new Date(d.lastSeen).getTime();
-
-  const diff = now - last;
-
-  // 🟢 0–2 min
-  if(diff <= 2 * 60 * 1000){
-    return "🟢 Online";
-  }
-
-  // 🟡 2–5 min
-  if(diff <= 5 * 60 * 1000){
-    return "🟡 Active recently";
-  }
-
-  // ⚫ 5+ min
-  return "⚫ Offline";
-}
-  
-
 onAuthStateChanged(auth, async (user) => {
 
-  
   
   if(!user){
     window.location.href="index.html";
@@ -266,24 +223,6 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // ✅ RTDB ONLINE/OFFLINE SYSTEM
-const userStatusRef = ref(rtdb, "status/" + user.uid);
-
-// 🟢 Online
-
-  set(userStatusRef, {
-  lastSeen: Date.now()
-});
-
-// 🔴 Offline when disconnec
-  onDisconnect(userStatusRef).set({   lastSeen: Date.now() });
-
-  setInterval(()=>{
-  set(ref(rtdb, "status/" + user.uid), {
-    lastSeen: Date.now()
-  });
-}, 20000);
-  
   // ✅ Firestore Online
   // ✅ Firestore Online + Login Time
 await updateDoc(doc(db,"users",user.uid),{
@@ -291,34 +230,50 @@ await updateDoc(doc(db,"users",user.uid),{
   lastLogin: serverTimestamp()   // ✅ ADD
 });
 
+  // 🔥 Realtime Presence START
+  
+  const statusRef = ref(rtdb, "status/" + user.uid);
 
-  // ✅ USER ACTIVITY TRACK
-
-  let lastUpdate = 0;
-
-function updateActivity(){
-  const now = Date.now();
-
-  // ⛔ 5 sec er age update hobe na
-  if(now - lastUpdate < 5000) return;
-
-  lastUpdate = now;
-
-  set(ref(rtdb, "status/" + user.uid), {
-    lastSeen: now
+  set(statusRef, {
+    state: "online",
+    lastChanged: Date.now()
   });
-}
-    
 
-["click","keydown","touchstart","scroll"].forEach(e=>{
-  document.addEventListener(e, updateActivity);
+  onDisconnect(statusRef).set({
+    state: "offline",
+    lastChanged: Date.now()
+  });
+
+
+
+
+  
+  onValue(statusRef, async (snap) => {
+  const status = snap.val();
+
+  if(status.state === "offline"){
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline:false,
+      lastLogout: serverTimestamp(),   // ✅ logout time
+      lastSeen: serverTimestamp()      // ✅ last seen
+    });
+  } else {
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline:true,
+      lastSeen: serverTimestamp()      // ✅ active seen
+    });
+  }
 });
 
-
-  let statusMap = {};
-
-onValue(ref(rtdb, "status"), (snap)=>{
-  statusMap = snap.val() || {};
+  // 🔥 ADD THIS BELOW onValue block
+window.addEventListener("beforeunload", async () => {
+  if(auth.currentUser){
+    await updateDoc(doc(db,"users",auth.currentUser.uid),{
+      isOnline:false,
+      lastLogout: serverTimestamp(),
+      lastSeen: serverTimestamp()
+    });
+  }
 });
 
   // 🔥 LIVE DATA
@@ -326,29 +281,12 @@ onValue(ref(rtdb, "status"), (snap)=>{
 
     let total = snapshot.size;
     let online = 0;
-    let active = 0;
-let offline = 0;
     let html = "";
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
 
-      let userStatus = statusMap[docSnap.id];
-
-
-      const now = Date.now();
-const last = userStatus?.lastSeen || 0;
-const diff = now - last;
-
-if(diff <= 2 * 60 * 1000){
-  online++;
-}
-else if(diff <= 5 * 60 * 1000){
-  active++;
-}
-else{
-  offline++;
-}
+      if(d.isOnline) online++;
 
       html += `
       <tr>
@@ -363,9 +301,9 @@ else{
         <td>${d.phone || "-"}</td>
         <td>${d.address || "-"}</td>
 
-        <td>
-  ${getStatus(statusMap[docSnap.id])}
-</td>
+        <td class="${d.isOnline ? 'online':'offline'}">
+          ${d.isOnline ? "🟢 Online":"🔴 Offline"}
+        </td>
 
 
         <td>${formatTime(d.lastLogin)}</td>
@@ -377,7 +315,7 @@ else{
 
 
 
-<td>${formatTime(statusMap[docSnap.id]?.lastSeen)}</td>
+<td>${formatTime(d.lastSeen)}</td>
 
 
       </tr>
@@ -386,9 +324,6 @@ else{
 
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
-
-    document.getElementById("active").innerText = active;
-document.getElementById("offline").innerText = offline;
     document.getElementById("userTable").innerHTML = html;
 
   });
