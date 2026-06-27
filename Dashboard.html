@@ -276,7 +276,13 @@ const userStatusRef = ref(rtdb, "status/" + user.uid);
 });
 
 // 🔴 Offline when disconnec
-  onDisconnect(userStatusRef).remove();
+  onDisconnect(userStatusRef).set({   lastSeen: Date.now() });
+
+  setInterval(()=>{
+  set(ref(rtdb, "status/" + user.uid), {
+    lastSeen: Date.now()
+  });
+}, 20000);
   
   // ✅ Firestore Online
   // ✅ Firestore Online + Login Time
