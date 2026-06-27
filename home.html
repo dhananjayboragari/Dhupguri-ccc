@@ -1031,11 +1031,13 @@ console.log("JS Loaded ✅");
         lastSeen: Date.now()
       });
 
-      onDisconnect(statusRef).set({
-        isOnline: false,
-        lastSeen: Date.now()
-      });
+      onDisconnect(statusRef).update({
+  isOnline: false,
+  lastSeen: Date.now(),
+  lastLogout: Date.now()   // 🔥 ADD THIS
+});
 
+      resetTimer(); // 🔥 MUST ADD
     }
   });
 
@@ -1374,11 +1376,12 @@ let idleTimer;
 
         if(!user) return; // 🔥 ADD THIS ALSO
 
-        await setDoc(doc(db,"users",user.uid),{
-          isOnline:false,
-          lastLogout: serverTimestamp(),
-          
-        },{merge:true});
+        const statusRef = ref(rtdb, "status/" + user.uid);
+
+await update(statusRef, {
+  isOnline: false,
+  lastLogout: Date.now()
+});
 
         signOut(auth).then(() => {
           localStorage.removeItem("loginSuccess");
