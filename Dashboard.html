@@ -276,9 +276,7 @@ const userStatusRef = ref(rtdb, "status/" + user.uid);
 });
 
 // 🔴 Offline when disconnec
-  onDisconnect(userStatusRef).set({
-  lastSeen: Date.now()
-});
+  onDisconnect(userStatusRef).remove();
   
   // ✅ Firestore Online
   // ✅ Firestore Online + Login Time
@@ -373,7 +371,7 @@ else{
 
 
 
-<td>${formatTime(d.lastSeen)}</td>
+<td>${formatTime(statusMap[docSnap.id]?.lastSeen)}</td>
 
 
       </tr>
