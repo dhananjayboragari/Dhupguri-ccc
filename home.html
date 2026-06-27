@@ -1005,6 +1005,10 @@ if (!admins.includes(u.email)) {
 }
   
 if (!user) return;
+  
+  setInterval(() => {
+  updateLastSeen();
+}, 5000);
 
 
 
