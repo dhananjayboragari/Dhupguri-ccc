@@ -220,10 +220,6 @@ const rtdb = getDatabase(app);
 
   if(!d) return "⚫ Offline";
 
-  if(d.isOnline) return "🟢 Online";
-
-  if(!d.lastSeen) return "⚫ Offline";
-
   const now = Date.now();
 
   const last = typeof d.lastSeen === "number"
@@ -234,10 +230,17 @@ const rtdb = getDatabase(app);
 
   const diff = now - last;
 
-  if(diff < 2 * 60 * 1000){
+  // 🟢 0–2 min
+  if(diff <= 2 * 60 * 1000){
+    return "🟢 Online";
+  }
+
+  // 🟡 2–5 min
+  if(diff <= 5 * 60 * 1000){
     return "🟡 Active recently";
   }
 
+  // ⚫ 5+ min
   return "⚫ Offline";
 }
   
@@ -267,14 +270,13 @@ onAuthStateChanged(auth, async (user) => {
 const userStatusRef = ref(rtdb, "status/" + user.uid);
 
 // 🟢 Online
-set(userStatusRef, {
-  isOnline: true,
+
+  set(userStatusRef, {
   lastSeen: Date.now()
 });
 
 // 🔴 Offline when disconnec
   onDisconnect(userStatusRef).set({
-  isOnline: false,
   lastSeen: Date.now()
 });
   
@@ -288,13 +290,21 @@ await updateDoc(doc(db,"users",user.uid),{
 
   // ✅ USER ACTIVITY TRACK
 
-  function updateActivity(){
+  let lastUpdate = 0;
+
+function updateActivity(){
+  const now = Date.now();
+
+  // ⛔ 5 sec er age update hobe na
+  if(now - lastUpdate < 5000) return;
+
+  lastUpdate = now;
+
   set(ref(rtdb, "status/" + user.uid), {
-    isOnline: true,
-    lastSeen: Date.now()
+    lastSeen: now
   });
 }
-  
+    
 
 ["click","keydown","touchstart","scroll"].forEach(e=>{
   document.addEventListener(e, updateActivity);
@@ -321,24 +331,16 @@ let offline = 0;
 
       let userStatus = statusMap[docSnap.id];
 
-if(userStatus?.isOnline){
+
+      const now = Date.now();
+const last = userStatus?.lastSeen || 0;
+const diff = now - last;
+
+if(diff <= 2 * 60 * 1000){
   online++;
 }
-else if(userStatus?.lastSeen){
-  const now = Date.now();
-  const last = typeof userStatus.lastSeen === "number"
-    ? userStatus.lastSeen
-    : userStatus.lastSeen?.seconds
-    ? userStatus.lastSeen.seconds * 1000
-    : new Date(userStatus.lastSeen).getTime();
-
-  const diff = now - last;
-
-  if(diff < 2 * 60 * 1000){
-    active++;
-  } else {
-    offline++;
-  }
+else if(diff <= 5 * 60 * 1000){
+  active++;
 }
 else{
   offline++;
