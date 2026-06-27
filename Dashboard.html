@@ -124,6 +124,16 @@ tr:hover{
   </div>
 </div>
 
+  <div class="card">
+  <p>Active Recently</p>
+  <h2 id="active">0</h2>
+</div>
+
+<div class="card">
+  <p>Offline Users</p>
+  <h2 id="offline">0</h2>
+</div>
+
 <div class="table-container">
 <table>
 <thead>
@@ -203,7 +213,12 @@ const rtdb = getDatabase(app);
   return `${day}/${month}/${year}<br>${hours}:${minutes}:${seconds} ${ampm}`;
 }
 
+
+  
+
   function getStatus(d){
+
+  if(!d) return "⚫ Offline";
 
   if(d.isOnline) return "🟢 Online";
 
@@ -211,8 +226,10 @@ const rtdb = getDatabase(app);
 
   const now = Date.now();
 
-  const last = d.lastSeen.seconds 
-    ? d.lastSeen.seconds * 1000 
+  const last = typeof d.lastSeen === "number"
+    ? d.lastSeen
+    : d.lastSeen?.seconds
+    ? d.lastSeen.seconds * 1000
     : new Date(d.lastSeen).getTime();
 
   const diff = now - last;
@@ -255,8 +272,8 @@ set(userStatusRef, {
   lastSeen: Date.now()
 });
 
-// 🔴 Offline when disconnect
-onDisconnect(userStatusRef).set({
+// 🔴 Offline when disconnec
+  onDisconnect(userStatusRef).set({
   isOnline: false,
   lastSeen: Date.now()
 });
@@ -270,15 +287,14 @@ await updateDoc(doc(db,"users",user.uid),{
 
 
   // ✅ USER ACTIVITY TRACK
-function updateActivity(){
-  updateDoc(doc(db,"users",user.uid),{
-    lastSeen: serverTimestamp()
-  });
+
+  function updateActivity(){
   set(ref(rtdb, "status/" + user.uid), {
-  isOnline: true,
-  lastSeen: Date.now()
-});
+    isOnline: true,
+    lastSeen: Date.now()
+  });
 }
+  
 
 ["click","keydown","touchstart","scroll"].forEach(e=>{
   document.addEventListener(e, updateActivity);
@@ -296,12 +312,37 @@ onValue(ref(rtdb, "status"), (snap)=>{
 
     let total = snapshot.size;
     let online = 0;
+    let active = 0;
+let offline = 0;
     let html = "";
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
 
-      let userStatus = statusMap[docSnap.id];  if(userStatus && userStatus.isOnline){   online++; }
+      let userStatus = statusMap[docSnap.id];
+
+if(userStatus?.isOnline){
+  online++;
+}
+else if(userStatus?.lastSeen){
+  const now = Date.now();
+  const last = typeof userStatus.lastSeen === "number"
+    ? userStatus.lastSeen
+    : userStatus.lastSeen?.seconds
+    ? userStatus.lastSeen.seconds * 1000
+    : new Date(userStatus.lastSeen).getTime();
+
+  const diff = now - last;
+
+  if(diff < 2 * 60 * 1000){
+    active++;
+  } else {
+    offline++;
+  }
+}
+else{
+  offline++;
+}
 
       html += `
       <tr>
@@ -317,7 +358,7 @@ onValue(ref(rtdb, "status"), (snap)=>{
         <td>${d.address || "-"}</td>
 
         <td>
-  ${getStatus({   isOnline: statusMap[docSnap.id]?.isOnline,   lastSeen: statusMap[docSnap.id]?.lastSeen || d.lastSeen })}
+  ${getStatus(statusMap[docSnap.id])}
 </td>
 
 
@@ -339,6 +380,9 @@ onValue(ref(rtdb, "status"), (snap)=>{
 
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
+
+    document.getElementById("active").innerText = active;
+document.getElementById("offline").innerText = offline;
     document.getElementById("userTable").innerHTML = html;
 
   });
