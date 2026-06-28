@@ -12,6 +12,9 @@ const firebaseConfig = {
   authDomain: "dhupguri-ccc.firebaseapp.com",
   databaseURL: "https://dhupguri-ccc-default-rtdb.firebaseio.com",
   projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -24,20 +27,23 @@ onAuthStateChanged(auth, (user) => {
 
   const userRef = ref(db, "status/" + user.uid);
 
+  // ✅ online
   set(userRef, {
     state: "online",
     lastSeen: serverTimestamp()
   });
 
+  // ✅ disconnect
   onDisconnect(userRef).set({
     state: "offline",
     lastSeen: serverTimestamp()
   });
 
+  // ✅ update
   setInterval(() => {
     set(userRef, {
       state: "online",
-      lastSeen: Date.now()
+      lastSeen: serverTimestamp() // ⚠️ eta change korlam
     });
   }, 20000);
 });
