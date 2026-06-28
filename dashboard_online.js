@@ -8,10 +8,10 @@ import { getAuth, onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  databaseURL: "https://dhupguri-ccc-default-rtdb.firebaseio.com",
+  projectId: "dhupguri-ccc",
 };
 
 const app = initializeApp(firebaseConfig);
