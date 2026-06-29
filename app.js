@@ -4,10 +4,10 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { getDatabase, ref, set } 
+import { getDatabase, ref, update } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// 🔥 তোর Firebase config
+// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
   authDomain: "dhupguri-ccc.firebaseapp.com",
@@ -23,10 +23,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// 🔐 AUTH + STATUS SYSTEM
+// 🔐 AUTH + LAST SEEN SYSTEM
 onAuthStateChanged(auth, (user) => {
 
-  // ❌ login না থাকলে login page-এ পাঠাবে
+  // ❌ login না থাকলে redirect
   if(!user){
     if(!window.location.pathname.includes("index.html")){
       window.location.href = "index.html";
@@ -34,38 +34,30 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
 
-  // ✅ user logged in
   const userRef = ref(db, "status/" + user.uid);
 
-  function updateStatus(isOnline){
-    set(userRef, {
-      online: isOnline,
+  // 🔥 main update function
+  function updateLastSeen(){
+    update(userRef, {
       lastSeen: Date.now()
     });
   }
 
-  // 🔥 app open হলে
-  updateStatus(true);
+  // ✅ first run (delay fix)
+  setTimeout(updateLastSeen, 1000);
 
-  // ⏱️ auto update
-  setInterval(() => updateStatus(true), 15000);
+  // ⏱️ auto update (main engine)
+  setInterval(updateLastSeen, 10000);
 
   // 👆 user activity
-  window.addEventListener("click", () => updateStatus(true));
-  window.addEventListener("touchstart", () => updateStatus(true));
+  window.addEventListener("click", updateLastSeen);
+  window.addEventListener("touchstart", updateLastSeen);
 
-  // 📱 app background/foreground
+  // 📱 app resume
   document.addEventListener("visibilitychange", () => {
     if(document.visibilityState === "visible"){
-      updateStatus(true);
-    } else {
-      updateStatus(false);
+      updateLastSeen();
     }
-  });
-
-  // ❌ page close (সবসময় কাজ নাও করতে পারে)
-  window.addEventListener("beforeunload", () => {
-    updateStatus(false);
   });
 
 });
