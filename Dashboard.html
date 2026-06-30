@@ -277,7 +277,52 @@ window.addEventListener("beforeunload", async () => {
 });
 
   // 🔥 LIVE DATA
+  let latestSnapshot = null;
+
+  setInterval(()=>{
+  if(latestSnapshot){
+
+    let total = latestSnapshot.size;
+    let online = 0;
+    let html = "";
+
+    latestSnapshot.forEach(docSnap=>{
+      let d = docSnap.data();
+
+      let isOnlineNow = false;
+
+      if(d.lastSeen){
+        let time;
+
+        if(d.lastSeen.toDate){
+          time = d.lastSeen.toDate().getTime();
+        } else if(d.lastSeen.seconds){
+          time = d.lastSeen.seconds * 1000;
+        } else {
+          time = new Date(d.lastSeen).getTime();
+        }
+
+        let diff = Date.now() - time;
+
+        if(diff <= 120000){
+          isOnlineNow = true;
+        }
+      }
+
+      if(isOnlineNow) online++;
+
+      
+    });
+
+    document.getElementById("total").innerText = total;
+    document.getElementById("online").innerText = online;
+   
+
+  }
+},10000);
+  
   onSnapshot(collection(db,"users"), (snapshot)=>{
+    latestSnapshot = snapshot;
 
     let total = snapshot.size;
     let online = 0;
@@ -285,8 +330,28 @@ window.addEventListener("beforeunload", async () => {
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
+      let isOnlineNow = false;
 
-      if(d.isOnline) online++;
+if(d.lastSeen){
+  let time;
+
+  if(d.lastSeen.toDate){
+    time = d.lastSeen.toDate().getTime();
+  } else if(d.lastSeen.seconds){
+    time = d.lastSeen.seconds * 1000;
+  } else {
+    time = new Date(d.lastSeen).getTime();
+  }
+
+  let diff = Date.now() - time;
+
+  // ✅ 2 মিনিট = 120000 ms
+  if(diff <= 120000){
+    isOnlineNow = true;
+  }
+}
+
+      if(isOnlineNow) online++;
 
       html += `
       <tr>
@@ -301,9 +366,9 @@ window.addEventListener("beforeunload", async () => {
         <td>${d.phone || "-"}</td>
         <td>${d.address || "-"}</td>
 
-        <td class="${d.isOnline ? 'online':'offline'}">
-          ${d.isOnline ? "🟢 Online":"🔴 Offline"}
-        </td>
+        <td class="${isOnlineNow ? 'online':'offline'}">
+  ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
+</td>
 
 
         <td>${formatTime(d.lastLogin)}</td>
@@ -322,6 +387,7 @@ window.addEventListener("beforeunload", async () => {
       `;
     });
 
+    
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
     document.getElementById("userTable").innerHTML = html;
