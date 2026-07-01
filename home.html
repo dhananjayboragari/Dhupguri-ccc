@@ -992,6 +992,7 @@ console.log("JS Loaded ✅");
 
 onAuthStateChanged(auth, async (u) => {
 
+  if (!u) return;
  user = u;
   
 
@@ -1030,6 +1031,26 @@ window.addEventListener("keypress", updateLastSeen);
 const statusRef = ref(rtdb, "status/" + user.uid);
 
   const connectedRef = ref(rtdb, ".info/connected");
+
+  onValue(connectedRef, (snap) => {
+
+  if (snap.val() === true) {
+
+    // 🟢 online
+    set(statusRef, {
+      state: "online",
+      lastSeen: Date.now()
+    });
+
+    // 🔴 disconnect হলে auto offline
+    onDisconnect(statusRef).set({
+      state: "offline",
+      lastSeen: Date.now()
+    });
+
+  }
+
+});
   
 
   // 🔥 BACK / CLOSE DETECT (BEST PLACE)
@@ -1092,21 +1113,6 @@ window.addEventListener("pagehide", setOfflineNow);
 
 });
 
-
-
-
-  // 🔥 FORCE OFFLINE FIX
-  window.addEventListener("beforeunload", async () => {
-
-  const userRef = doc(db, "users", user.uid);
-
-  await setDoc(userRef, {
-    isOnline: false,
-    lastLogout: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
-
-});
 
 
 
