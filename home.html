@@ -1012,12 +1012,19 @@ if (!admins.includes(u.email)) {
   
 
 
-  window.updateLastSeen = function(){
-  if(!user) return;
+  window.updateLastSeen = async function () {
+  if (!user) return;
 
-  set(ref(rtdb, "status/" + user.uid), {
+  // Realtime Database
+  await set(ref(rtdb, "status/" + user.uid), {
     state: "online",
     lastSeen: Date.now()
+  });
+
+  // Firestore
+  await updateDoc(doc(db, "users", user.uid), {
+    lastSeen: serverTimestamp(),
+    isOnline: true
   });
 }
   
@@ -1026,8 +1033,9 @@ if (!admins.includes(u.email)) {
 }, 10000); // ✅ 10 sec
 
 
-  ["scroll","mousemove","click","keypress","touchstart","touchmove"].forEach(event=>{
-  window.addEventListener(event, () => {   window.updateLastSeen && window.updateLastSeen(); });
+
+  ["scroll","mousemove","click","keypress","touchstart","touchmove","keydown"].forEach(event=>{
+  window.addEventListener(event, window.updateLastSeen, { passive:true });
 });
 
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
@@ -1058,15 +1066,20 @@ const statusRef = ref(rtdb, "status/" + user.uid);
 
   // 🔥 BACK / CLOSE DETECT (BEST PLACE)
 
-  function setOfflineNow(){
+  
+async function setOfflineNow(){
   if(!user) return;
 
-  set(statusRef, {
+  await set(statusRef, {
     state: "offline",
     lastSeen: Date.now()
   });
-}
 
+  await updateDoc(doc(db, "users", user.uid), {
+    lastSeen: serverTimestamp(),
+    isOnline: false
+  });
+}
 
   // ✅ এর নিচে বসাতে হবে
 window.addEventListener("beforeunload", () => {
