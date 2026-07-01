@@ -279,6 +279,10 @@ window.addEventListener("beforeunload", async () => {
   // 🔥 LIVE DATA
   let latestSnapshot = null;
 
+
+  
+
+
   setInterval(()=>{
   if(latestSnapshot){
 
@@ -288,7 +292,6 @@ window.addEventListener("beforeunload", async () => {
 
     latestSnapshot.forEach(docSnap=>{
       let d = docSnap.data();
-
       let isOnlineNow = false;
 
       if(d.lastSeen){
@@ -311,15 +314,37 @@ window.addEventListener("beforeunload", async () => {
 
       if(isOnlineNow) online++;
 
-      
+      html += `
+      <tr>
+        <td>
+          <div class="user">
+            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+            <span>${d.name || "-"}</span>
+          </div>
+        </td>
+
+        <td>${d.email || "-"}</td>
+        <td>${d.phone || "-"}</td>
+        <td>${d.address || "-"}</td>
+
+        <td class="${isOnlineNow ? 'online':'offline'}">
+          ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
+        </td>
+
+        <td>${formatTime(d.lastLogin)}</td>
+        <td>${formatTime(d.lastLogout)}</td>
+        <td>${formatTime(d.lastSeen)}</td>
+      </tr>
+      `;
     });
 
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
-   
-
+    document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
   }
 },10000);
+
+  
   
   onSnapshot(collection(db,"users"), (snapshot)=>{
     latestSnapshot = snapshot;
