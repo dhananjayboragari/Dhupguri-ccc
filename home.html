@@ -928,7 +928,7 @@ function closePopup(){
   
 function startLoad(e, el){
   e.preventDefault();
-  updateLastSeen();
+  window.updateLastSeen && window.updateLastSeen();
   let loader = el.querySelector(".loader");
   let width = 0;
 
@@ -998,7 +998,7 @@ onAuthStateChanged(auth, async (u) => {
 
 
   // 🔥 PAGE OPEN (FIXED)
-setTimeout(() => updateLastSeen(), 200);
+setTimeout(() => {   window.updateLastSeen && window.updateLastSeen(); }, 200);
 
   
 const admins = [
@@ -1022,12 +1022,12 @@ if (!admins.includes(u.email)) {
 }
   
   setInterval(() => {
-  updateLastSeen();
+  window.updateLastSeen && window.updateLastSeen();
 }, 10000); // ✅ 10 sec
 
 
   ["scroll","mousemove","click","keypress","touchstart","touchmove"].forEach(event=>{
-  window.addEventListener(event, updateLastSeen);
+  window.addEventListener(event, () => {   window.updateLastSeen && window.updateLastSeen(); });
 });
 
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
@@ -1081,7 +1081,7 @@ window.addEventListener("pagehide", setOfflineNow);
   if(document.visibilityState === "hidden"){
     setOfflineNow(); // 🔴 minimize / app switch
   } else {
-    updateLastSeen(); // 🟢 back করলে আবার online
+    window.updateLastSeen && window.updateLastSeen(); // 🟢 back করলে আবার online
   }
 });
 
