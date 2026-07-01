@@ -1010,12 +1010,15 @@ if (!user) return;
   function updateLastSeen(){
   if(!user) return;
 
-  set(ref(rtdb, "status/" + user.uid + "/lastSeen"), Date.now());
+  set(ref(rtdb, "status/" + user.uid), {
+    state: "online",
+    lastSeen: Date.now()
+  });
 }
   
   setInterval(() => {
   updateLastSeen();
-}, 5000);
+}, 10000); // ✅ 10 sec
 
 
   window.addEventListener("scroll", updateLastSeen);
@@ -1030,22 +1033,31 @@ const statusRef = ref(rtdb, "status/" + user.uid);
   
 
   // 🔥 BACK / CLOSE DETECT (BEST PLACE)
-function setOfflineNow(){
+
+  function setOfflineNow(){
   if(!user) return;
 
   set(statusRef, {
     state: "offline",
-    lastChanged: Date.now()
+    lastSeen: Date.now()
   });
 }
 
+
+  // ✅ এর নিচে বসাতে হবে
+window.addEventListener("beforeunload", () => {
+  setOfflineNow();
+});
+  
 // 🔥 Tab close / back / refresh
 window.addEventListener("pagehide", setOfflineNow);
 
-// 🔥 App minimize / switch tab
-document.addEventListener("visibilitychange", () => {
+// 🔥 App minimize / switch
+  document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "hidden"){
-    setOfflineNow();
+    setOfflineNow(); // 🔴 minimize / app switch
+  } else {
+    updateLastSeen(); // 🟢 back করলে আবার online
   }
 });
 
@@ -1060,9 +1072,9 @@ document.addEventListener("visibilitychange", () => {
 
   // 🔴 OFFLINE (auto when disconnect)
   onDisconnect(statusRef).set({
-    state: "offline",
-    lastChanged: Date.now()
-  });
+  state: "offline",
+  lastSeen: Date.now()
+});
 
   onDisconnect(ref(rtdb, "dummy/" + user.uid)).set(true);
 
