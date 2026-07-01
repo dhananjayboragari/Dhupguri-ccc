@@ -928,6 +928,7 @@ function closePopup(){
   
 function startLoad(e, el){
   e.preventDefault();
+  updateLastSeen();
   let loader = el.querySelector(".loader");
   let width = 0;
 
@@ -994,7 +995,10 @@ onAuthStateChanged(auth, async (u) => {
 
   if (!u) return;
  user = u;
-  
+
+
+  // 🔥 PAGE OPEN (FIXED)
+setTimeout(() => updateLastSeen(), 200);
 
   
 const admins = [
@@ -1006,9 +1010,9 @@ if (!admins.includes(u.email)) {
   document.getElementById("userDashboard").style.display = "none";
 }
   
-if (!user) return;
 
-  function updateLastSeen(){
+
+  window.updateLastSeen = function(){
   if(!user) return;
 
   set(ref(rtdb, "status/" + user.uid), {
@@ -1022,10 +1026,9 @@ if (!user) return;
 }, 10000); // ✅ 10 sec
 
 
-  window.addEventListener("scroll", updateLastSeen);
-window.addEventListener("mousemove", updateLastSeen);
-window.addEventListener("click", updateLastSeen);
-window.addEventListener("keypress", updateLastSeen);
+  ["scroll","mousemove","click","keypress","touchstart","touchmove"].forEach(event=>{
+  window.addEventListener(event, updateLastSeen);
+});
 
 // 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
 const statusRef = ref(rtdb, "status/" + user.uid);
@@ -1083,45 +1086,6 @@ window.addEventListener("pagehide", setOfflineNow);
 });
 
 
-  
-
-  onValue(connectedRef, async (snap) => {
-
-  if (!snap.val()) return;
-
-  const userRef = doc(db, "users", user.uid);
-
-  // 🔴 OFFLINE (auto when disconnect)
-  onDisconnect(statusRef).set({
-  state: "offline",
-  lastSeen: Date.now()
-});
-
-  onDisconnect(ref(rtdb, "dummy/" + user.uid)).set(true);
-
-  // 🟢 ONLINE
-  await set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
-  await setDoc(userRef, {
-    isOnline: true,
-    lastLogin: serverTimestamp(),
-    lastSeen: serverTimestamp()
-  }, { merge: true });
-
-});
-
-
-
-
-
-
-  
-
-
- 
   
 resetTimer();
   const isLoggedIn = localStorage.getItem("loginSuccess");
