@@ -1034,7 +1034,12 @@ if (!admins.includes(u.email)) {
 
 
 
-  ["scroll","mousemove","click","keypress","touchstart","touchmove","keydown"].forEach(event=>{
+  ["click","keypress","keydown"].forEach(event=>{
+    document.querySelectorAll("a").forEach(link=>{
+  link.addEventListener("click", () => {
+    window.updateLastSeen && window.updateLastSeen();
+  });
+});
   window.addEventListener(event, window.updateLastSeen, { passive:true });
 });
 
