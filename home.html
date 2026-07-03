@@ -999,7 +999,6 @@ onAuthStateChanged(auth, async (u) => {
 
   // 🔥 PAGE OPEN (FIXED)
 setTimeout(() => {   window.updateLastSeen && window.updateLastSeen(); }, 200);
-
   
 const admins = [
   "dhananjayboragari@gmail.com",
@@ -1011,8 +1010,6 @@ if (!admins.includes(u.email)) {
   document.getElementById("userDashboard").style.display = "none";
 }
   
-
-
   window.updateLastSeen = async function () {
   if (!user) return;
 
