@@ -1,102 +1,44 @@
 <script>
-  // ===== FIREBASE CONFIG =====
-const firebaseConfig = {
-  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
-  authDomain: "dhupguri-ccc.firebaseapp.com",
-  databaseURL: "https://dhupguri-ccc-default-rtdb.firebaseio.com",
-  projectId: "dhupguri-ccc",
-  storageBucket: "dhupguri-ccc.appspot.com",
-  messagingSenderId: "278611213070",
-  appId: "1:278611213070:web:f9652c7965f472164c355f"
-};
+import { getDatabase, ref, set, onDisconnect, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ===== INIT SAFE =====
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+import { getAuth, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const auth = firebase.auth();
-const db = firebase.database();
+const db = getDatabase();
+const auth = getAuth();
 
+onAuthStateChanged(auth, (user) => {
+  if(user){
+    const userStatusRef = ref(db, "status/" + user.uid);
 
-// ===== MAIN SYSTEM =====
-auth.onAuthStateChanged((user) => {
-
-  if (!user) return;
-
-  const userRef = db.ref("status/" + user.uid);
-  const connectedRef = db.ref(".info/connected");
-
-  // 🔥 CONNECT DETECT
-  connectedRef.on("value", (snap) => {
-
-    if (snap.val() === true) {
-
-      // 🟢 ONLINE
-      userRef.update({
-        state: "online",
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-      });
-
-      // 🔴 AUTO OFFLINE (tab close / app close / net off)
-      userRef.onDisconnect().update({
-        state: "offline",
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-      });
-
-    }
-
-  });
-
-  // ===== 10 sec LIVE UPDATE (MAIN REQUIREMENT) =====
-  setInterval(() => {
-    userRef.update({
-      lastSeen: firebase.database.ServerValue.TIMESTAMP,
-      state: "online"
+    // online
+    set(userStatusRef, {
+      state: "online",
+      lastSeen: serverTimestamp()
     });
-  }, 10000);
 
-
-  // ===== APP MINIMIZE / BACK / TAB SWITCH =====
-  document.addEventListener("visibilitychange", () => {
-
-    if (document.hidden) {
-      // 🔴 MINIMIZE / BACK
-      userRef.update({
-        state: "offline",
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-      });
-    } else {
-      // 🟢 RETURN BACK
-      userRef.update({
-        state: "online",
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-      });
-    }
-
-  });
-
-
-  // ===== PAGE CLOSE (extra safety) =====
-  window.addEventListener("beforeunload", () => {
-    userRef.update({
+    // auto offline (page close / app close)
+    onDisconnect(userStatusRef).set({
       state: "offline",
-      lastSeen: firebase.database.ServerValue.TIMESTAMP
+      lastSeen: serverTimestamp()
     });
-  });
 
+    // internet off hole
+    window.addEventListener("offline", () => {
+      set(userStatusRef, {
+        state: "offline",
+        lastSeen: serverTimestamp()
+      });
+    });
 
-  // ===== USER ACTIVITY TRACK (scroll, click etc) =====
-  function userActive() {
-    userRef.update({
-      lastSeen: firebase.database.ServerValue.TIMESTAMP,
-      state: "online"
+    // abar online hole
+    window.addEventListener("online", () => {
+      set(userStatusRef, {
+        state: "online",
+        lastSeen: serverTimestamp()
+      });
     });
   }
-
-  ["click","scroll","keypress","touchstart"].forEach(event => {
-    window.addEventListener(event, userActive);
-  });
-
 });
 </script>
