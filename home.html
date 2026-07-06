@@ -1239,6 +1239,12 @@ window.openProfile = async function(force=false, missingFields=[]){
   showPopup(msg);
 }
   checkProfileComplete();
+  document.querySelector(".closeBtn").style.display =
+document.getElementById("name").value.trim() &&
+document.getElementById("phone").value.trim() &&
+document.getElementById("address").value.trim() &&
+document.getElementById("previewImg").style.display === "block"
+? "block" : "none";
 };
 
 window.saveProfile = async function(){
@@ -1310,6 +1316,7 @@ img.style.display = "block";
 };
 
 
+
   function checkProfileComplete(){
 
   const name = document.getElementById("name").value.trim();
@@ -1319,12 +1326,13 @@ img.style.display = "block";
   const hasImage =
       document.getElementById("previewImg").style.display === "block";
 
-  if(name && phone && address && hasImage){
-      document.getElementById("saveBtn").style.display="block";
-  }else{
-      document.getElementById("saveBtn").style.display="none";
-  }
+  const complete = name && phone && address && hasImage;
 
+  document.getElementById("saveBtn").style.display =
+      complete ? "block" : "none";
+
+  document.querySelector(".closeBtn").style.display =
+      complete ? "block" : "none";
 }
   
 
