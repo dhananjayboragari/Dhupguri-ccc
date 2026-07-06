@@ -758,7 +758,7 @@ align-items:center;
     <p id="email"></p>
     <p id="uid"></p>
 
-    <button class="saveBtn" onclick="saveProfile()">Save</button>
+    <button id="saveBtn" class="saveBtn" onclick="saveProfile()" style="display:none;">   Save </button>
     <button class="closeBtn" onclick="closeProfile()">Close</button>
   </div>
 </div>
@@ -1238,6 +1238,7 @@ window.openProfile = async function(force=false, missingFields=[]){
 
   showPopup(msg);
 }
+  checkProfileComplete();
 };
 
 window.saveProfile = async function(){
@@ -1308,6 +1309,24 @@ img.style.display = "block";
   closeProfile();
 };
 
+
+  function checkProfileComplete(){
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+
+  const hasImage =
+      document.getElementById("previewImg").style.display === "block";
+
+  if(name && phone && address && hasImage){
+      document.getElementById("saveBtn").style.display="block";
+  }else{
+      document.getElementById("saveBtn").style.display="none";
+  }
+
+}
+  
 
   window.closeProfile = async function(){
 
@@ -1418,12 +1437,26 @@ document.getElementById("profileImage").addEventListener("change", function(e){
       const img = document.getElementById("previewImg");
       img.src = reader.result;
       img.style.display = "block";
+      
+      checkProfileComplete();
     }
+
+
 
     reader.readAsDataURL(file);
   }
 });
 
+
+  document.getElementById("name").addEventListener("input",checkProfileComplete);
+
+document.getElementById("phone").addEventListener("input",checkProfileComplete);
+
+document.getElementById("address").addEventListener("input",checkProfileComplete);
+
+document.getElementById("profileImage").addEventListener("change",checkProfileComplete);
+
+  
 // ===== AUTO LOGOUT (5 MIN IDLE) =====
 
 let idleTimer;
