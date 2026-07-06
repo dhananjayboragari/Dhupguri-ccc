@@ -745,7 +745,8 @@ align-items:center;
     <img id="previewImg">
     <h3>Profile</h3>
     <label for="profileImage" class="uploadBox">
-  <span>📸 Upload Profile Photo</span>
+  <label for="profileImage" class="uploadBox">
+  <span id="uploadPhotoText">📸 Upload Profile Photo</span>
   <input type="file" id="profileImage" accept="image/*" hidden>
 </label>
 
@@ -1210,11 +1211,18 @@ window.openProfile = async function(force=false, missingFields=[]){
     document.getElementById("address").value = data.address || "";
 
     // ✅ FIX: image load এখানে দিতে হবে
-    if (data.image) {
-      const img = document.getElementById("previewImg");
-      img.src = data.image;
-      img.style.display = "block";
-    }
+    const uploadPhotoText = document.getElementById("uploadPhotoText");
+
+if (data.image && data.image.trim() !== "") {
+  const img = document.getElementById("previewImg");
+  img.src = data.image;
+  img.style.display = "block";
+
+  uploadPhotoText.innerText = "📸 Edit Profile Photo";
+} else {
+  document.getElementById("previewImg").style.display = "none";
+  uploadPhotoText.innerText = "📸 Upload Profile Photo";
+}
   }
 
   document.getElementById("email").innerText = "Email: " + user.email;
