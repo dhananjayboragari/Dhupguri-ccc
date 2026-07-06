@@ -739,7 +739,7 @@ align-items:center;
   
 
 <!-- PROFILE MODAL -->
-<div id="profileModal" onclick="closeProfile()">
+<div id="profileModal">
   <div id="profileBox" onclick="event.stopPropagation()">
 
     <img id="previewImg">
@@ -1227,6 +1227,15 @@ window.openProfile = async function(force=false, missingFields=[]){
     msg += "• " + field + "\n";
   });
 
+
+  document.getElementById("profileModal").addEventListener("click", function(e){
+
+  if(e.target !== this) return;
+
+  closeProfile();
+
+});
+
   showPopup(msg);
 }
 };
@@ -1238,6 +1247,14 @@ window.saveProfile = async function(){
   const phoneVal = document.getElementById("phone").value;
   const addressVal = document.getElementById("address").value;
 
+  if(
+  !nameVal.trim() ||
+  !phoneVal.trim() ||
+  !addressVal.trim()
+){
+  showPopup("⚠️ সব তথ্য পূরণ করুন।","error");
+  return;
+}
 
   // 🔥 OLD IMAGE LOAD
 const snap = await getDoc(doc(db, "users", user.uid));
@@ -1249,6 +1266,11 @@ if (snap.exists()) {
 let imageUrl = oldImage; // 🔥 old image default
 
   const file = document.getElementById("profileImage").files[0];
+
+  if(!oldImage && !file){
+  showPopup("⚠️ Profile Photo Upload করুন।","error");
+  return;
+}
 
   if(file){
   showPopup("⏳ Please wait...", "loading");
@@ -1286,7 +1308,27 @@ img.style.display = "block";
   closeProfile();
 };
 
-window.closeProfile = function(){
+
+  window.closeProfile = async function(){
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+
+  if(snap.exists()){
+
+    const data = snap.data();
+
+    if(
+      !data.name ||
+      !data.phone ||
+      !data.address ||
+      !data.image
+    ){
+      showPopup("⚠️ Please complete all profile details first.","error");
+      return;
+    }
+
+  }
+
   document.getElementById("profileModal").style.display = "none";
   document.body.style.overflow = "auto";
 };
