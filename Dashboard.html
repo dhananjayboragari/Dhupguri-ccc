@@ -106,6 +106,39 @@ tr:hover{
   font-weight:bold;
 }
 
+
+
+
+  /* Account Status */
+.active-account{
+  color:#00ff9d;
+  font-weight:bold;
+}
+
+.deactive-account{
+  color:#ff4d4d;
+  font-weight:bold;
+}
+
+/* Action Button */
+.action-btn{
+  border:none;
+  padding:6px 12px;
+  border-radius:8px;
+  color:#fff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.activate-btn{
+  background:#28a745;
+}
+
+.deactivate-btn{
+  background:#dc3545;
+}
+
+  
 </style>
 </head>
 
@@ -134,6 +167,8 @@ tr:hover{
 <th>Phone</th>
 <th>Address</th>
 <th>Status</th>
+  <th>Account</th>
+<th>Action</th>
 <th>Last Login</th>
 <th>Last Seen</th>
   
@@ -168,7 +203,33 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
+  async function toggleAccount(uid, currentStatus){
 
+  const deactivate = currentStatus === "active";
+
+  const ok = confirm(
+    deactivate
+      ? "Are you sure you want to deactivate this account?"
+      : "Are you sure you want to activate this account?"
+  );
+
+  if(!ok) return;
+
+  await updateDoc(doc(db,"users",uid),{
+    accountStatus: deactivate ? "deactivated" : "active"
+  });
+
+  alert(
+    deactivate
+      ? "✅ Account deactivated successfully."
+      : "✅ Account activated successfully."
+  );
+
+}
+
+
+  window.toggleAccount = toggleAccount;
+  
 
 const rtdb = getDatabase(app);
 
@@ -322,11 +383,25 @@ window.addEventListener("beforeunload", async () => {
         <td>${d.address || "-"}</td>
 
         <td class="${isOnlineNow ? 'online':'offline'}">
-          ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
-        </td>
+  ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
+</td>
 
-        <td>${formatTime(d.lastLogin)}</td>
-        <td>${formatTime(d.lastSeen)}</td>
+<td class="${d.accountStatus === 'active' ? 'active-account':'deactive-account'}">
+  ${d.accountStatus === "deactivated" ? "❌ Deactivated" : "✅ Active"}
+</td>
+
+<td>
+  <button
+    class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
+    onclick="toggleAccount('${docSnap.id}','${d.accountStatus || 'active'}')">
+
+    ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
+
+  </button>
+</td>
+
+<td>${formatTime(d.lastLogin)}</td>
+<td>${formatTime(d.lastSeen)}</td>
       </tr>
       `;
     });
@@ -388,8 +463,21 @@ if(d.lastSeen){
   ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
 </td>
 
+<td class="${d.accountStatus === 'active' ? 'active-account':'deactive-account'}">
+  ${d.accountStatus === "deactivated" ? "❌ Deactivated" : "✅ Active"}
+</td>
 
-        <td>${formatTime(d.lastLogin)}</td>
+<td>
+  <button
+    class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
+    onclick="toggleAccount('${docSnap.id}','${d.accountStatus || 'active'}')">
+
+    ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
+
+  </button>
+</td>
+
+<td>${formatTime(d.lastLogin)}</td>
 <td>${formatTime(d.lastSeen)}</td>
 
 
