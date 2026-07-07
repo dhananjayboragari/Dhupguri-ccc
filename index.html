@@ -526,6 +526,7 @@ import {
   getFirestore,
   doc,
   setDoc,
+  getDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -589,6 +590,25 @@ window.login = async function(){
       resendBtn.style.display="block";
       return;
     }
+
+  const userRef = doc(db, "users", currentUser.uid);
+const userSnap = await getDoc(userRef);
+
+if(userSnap.exists()){
+
+  const userData = userSnap.data();
+
+  if(userData.accountStatus === "deactivated"){
+
+    await auth.signOut();
+
+    msg.innerHTML = "❌ Your account has been deactivated. Please contact the administrator.";
+    msg.style.color = "red";
+
+    return;
+  }
+
+}
 
     // 🔥 remember email only
     if(document.getElementById("remember").checked){
