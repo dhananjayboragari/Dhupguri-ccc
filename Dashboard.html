@@ -138,6 +138,158 @@ tr:hover{
   background:#dc3545;
 }
 
+
+  /* ===== Premium Popup ===== */
+
+.popup-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+  z-index:9999;
+}
+
+.popup-overlay.show{
+  opacity:1;
+  visibility:visible;
+}
+
+.popup-box{
+  width:90%;
+  max-width:360px;
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:22px;
+  padding:25px;
+  text-align:center;
+  animation:popupZoom .3s ease;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+@keyframes popupZoom{
+  from{
+    transform:scale(.8);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.popup-icon{
+  width:70px;
+  height:70px;
+  margin:auto;
+  border-radius:50%;
+  background:#ff9800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  margin-bottom:15px;
+}
+
+.popup-box h2{
+  color:#fff;
+  margin-bottom:10px;
+}
+
+.popup-box p{
+  color:#ddd;
+  margin-bottom:22px;
+  line-height:1.5;
+}
+
+.popup-buttons{
+  display:flex;
+  gap:12px;
+}
+
+.popup-buttons button{
+  flex:1;
+  border:none;
+  border-radius:12px;
+  padding:12px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.cancel-btn{
+  background:#555;
+  color:#fff;
+}
+
+
+  .confirm-btn{
+  background:linear-gradient(135deg,#ff512f,#dd2476);
+  color:#fff;
+  transition:.3s;
+}
+
+
+  .confirm-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(221,36,118,.45);
+}
+
+.cancel-btn:hover{
+  background:#666;
+}
+
+  .popup-box{
+  transition:0.3s;
+}
+
+.popup-overlay{
+  transition:opacity .3s ease, visibility .3s ease;
+}
+
+.popup-overlay.show .popup-box{
+  transform:scale(1);
+}
+
+.popup-overlay .popup-box{
+  transform:scale(.8);
+}
+
+
+
+  .popup-icon{
+  box-shadow:0 0 25px rgba(255,255,255,.35);
+  animation:iconPulse 1.5s infinite;
+}
+
+@keyframes iconPulse{
+  0%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.1);
+  }
+  100%{
+    transform:scale(1);
+  }
+}
+
+  #popupImage{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid rgba(255,255,255,.8);
+  margin:15px auto;
+  display:block;
+  box-shadow:0 8px 20px rgba(0,0,0,.35);
+}
   
 </style>
 </head>
@@ -203,30 +355,117 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-  async function toggleAccount(uid, currentStatus){
 
-  const deactivate = currentStatus === "active";
+  
 
-  const ok = confirm(
-    deactivate
+
+  let selectedUid = "";
+let selectedStatus = "";
+
+function toggleAccount(uid, currentStatus, userName, userImage){
+  selectedUid = uid;
+  selectedStatus = currentStatus;
+  document.getElementById("popupUser").innerHTML =
+  "<b>User:</b> " + userName;
+
+  document.getElementById("popupImage").src =
+userImage || "https://i.imgur.com/HeIi0wU.png";
+
+  document.getElementById("popupTitle").innerText =
+    currentStatus === "active"
+      ? "Deactivate Account"
+      : "Activate Account";
+
+  const icon = document.querySelector(".popup-icon");
+const btn = document.querySelector(".confirm-btn");
+
+if(currentStatus === "active"){
+  icon.innerHTML = "❌";
+  icon.style.background = "#ff3b30";
+  btn.style.background = "#ff3b30";
+}else{
+  icon.innerHTML = "✅";
+  icon.style.background = "#00c853";
+  btn.style.background = "#00c853";
+}
+
+  document.getElementById("popupText").innerText =
+    currentStatus === "active"
       ? "Are you sure you want to deactivate this account?"
-      : "Are you sure you want to activate this account?"
-  );
+      : "Are you sure you want to activate this account?";
 
-  if(!ok) return;
+  document.getElementById("customPopup").classList.add("show");
+}
 
-  await updateDoc(doc(db,"users",uid),{
-    accountStatus: deactivate ? "deactivated" : "active"
-  });
+window.toggleAccount = toggleAccount;
 
-  alert(
-    deactivate
-      ? "✅ Account deactivated successfully."
-      : "✅ Account activated successfully."
-  );
+  
+
+
+  async function confirmAction(){
+
+  const btn = document.querySelector(".confirm-btn");
+
+  btn.disabled = true;
+  btn.innerHTML = "⏳ Processing...";
+
+  try{
+
+    const deactivate = selectedStatus === "active";
+
+    await updateDoc(doc(db,"users",selectedUid),{
+      accountStatus: deactivate ? "deactivated" : "active"
+    });
+
+    btn.innerHTML = "✅ Success";
+
+    setTimeout(()=>{
+      btn.disabled = false;
+      btn.innerHTML = "Confirm";
+      closePopup();
+    },1000);
+
+  }catch(e){
+
+    btn.disabled = false;
+    btn.innerHTML = "Confirm";
+
+    alert("Error : "+e.message);
+
+  }
+
+}
+  
+
+  function closePopup(){
+
+  const popup = document.getElementById("customPopup");
+
+  popup.classList.remove("show");
+
+  setTimeout(()=>{
+
+    const btn = document.querySelector(".confirm-btn");
+    btn.disabled = false;
+    btn.innerHTML = "Confirm";
+
+  },300);
 
 }
 
+  <script>
+
+  // Click outside popup to close
+document.getElementById("customPopup").addEventListener("click",function(e){
+
+  if(e.target === this){
+    closePopup();
+  }
+
+});
+  
+
+</script>
 
   window.toggleAccount = toggleAccount;
   
@@ -393,7 +632,7 @@ window.addEventListener("beforeunload", async () => {
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="toggleAccount('${docSnap.id}','${d.accountStatus || 'active'}')">
+    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}' )">
 
     ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
 
@@ -470,7 +709,7 @@ if(d.lastSeen){
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="toggleAccount('${docSnap.id}','${d.accountStatus || 'active'}')">
+    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}' )">
 
     ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
 
@@ -495,6 +734,35 @@ if(d.lastSeen){
 });
 
 </script>
+
+  <!-- Premium Custom Popup -->
+<div id="customPopup" class="popup-overlay">
+
+  <div class="popup-box">
+
+    <div class="popup-icon">⚠️</div>  <img id="popupImage" src="https://i.imgur.com/HeIi0wU.png">
+
+    <h2 id="popupTitle">Deactivate Account</h2>
+
+    <p id="popupText">
+      Are you sure?
+    </p>
+
+    <p id="popupUser"></p>
+
+    <div class="popup-buttons">
+      <button class="cancel-btn" onclick="closePopup()">
+        Cancel
+      </button>
+
+      <button class="confirm-btn" onclick="confirmAction()">
+        Confirm
+      </button>
+    </div>
+
+  </div>
+
+</div>
 
 </body>
 </html>
