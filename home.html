@@ -1307,20 +1307,39 @@ img.style.display = "block";
   document.getElementById("profileIcon").style.display = "flex";
 }
   
-  await setDoc(doc(db,"users",user.uid),{
+  const docRef = doc(db, "users", user.uid);
+const docSnap = await getDoc(docRef);
+
+if (!docSnap.exists()) {
+
+  // 🆕 First time (accountStatus add হবে)
+  await setDoc(docRef, {
     name: nameVal,
     phone: phoneVal,
     address: addressVal,
     image: imageUrl,
     email: user.email,
-    uid: user.uid
-  },{merge:true});
+    uid: user.uid,
+    accountStatus: "active"
+  });
 
-  document.getElementById("profileName").innerText =
-    nameVal || "Profile";
+} else {
 
-  showPopup("Profile Saved!");
-  closeProfile();
+  // ✏️ Next time edit (accountStatus change হবে না)
+  await updateDoc(docRef, {
+    name: nameVal,
+    phone: phoneVal,
+    address: addressVal,
+    image: imageUrl
+  });
+
+}
+
+document.getElementById("profileName").innerText =
+  nameVal || "Profile";
+
+showPopup("Profile Saved!");
+closeProfile();
 };
 
 
