@@ -11,6 +11,7 @@
 
 body{
   margin:0;
+  visibility: hidden;
 
 margin-top:50px;
   
@@ -716,7 +717,7 @@ align-items:center;
 </style>
 </head>
 
-<body>
+<body style="display:none;">
 
   <!-- Header -->
 <header class="page-header">
@@ -1169,11 +1170,16 @@ resetTimer();
       if (missingFields.length > 0) {
         setTimeout(() => openProfile(true, missingFields), 500);
       }
+      else{
+    document.body.style.visibility = "visible";
+}
 
     } else {
       // নতুন user হলে
       setTimeout(() => openProfile(true), 500);
     }
+
+  document.body.style.display = "block";
 
   } catch (err) {
     console.log("Error:", err);
@@ -1199,6 +1205,7 @@ window.openProfile = async function(force=false, missingFields=[]){
   }
 
   document.getElementById("profileModal").style.display = "flex";
+  document.body.style.visibility = "hidden";
   document.body.style.overflow = "hidden";
 
   const snap = await getDoc(doc(db, "users", user.uid));
@@ -1350,8 +1357,14 @@ if (!docSnap.exists()) {
 document.getElementById("profileName").innerText =
   nameVal || "Profile";
 
-showPopup("Profile Saved!");
-closeProfile();
+
+  showPopup("Profile Saved!", "success", function(){
+
+    document.body.style.visibility = "visible";
+
+    closeProfile();
+
+});
 };
 
 
