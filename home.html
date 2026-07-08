@@ -1334,6 +1334,16 @@ if (!docSnap.exists()) {
     updateData.accountStatus = "active";
   }
 
+  // email না থাকলে add হবে
+  if (!("email" in data)) {
+    updateData.email = user.email;
+  }
+
+  // uid না থাকলে add হবে
+  if (!("uid" in data)) {
+    updateData.uid = user.uid;
+  }
+  
   await updateDoc(docRef, updateData);
 }
 
