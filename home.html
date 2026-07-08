@@ -1205,7 +1205,7 @@ window.openProfile = async function(force=false, missingFields=[]){
   }
 
   document.getElementById("profileModal").style.display = "flex";
-  document.body.style.visibility = "hidden";
+  document.body.style.visibility = "visible";
   document.body.style.overflow = "hidden";
 
   const snap = await getDoc(doc(db, "users", user.uid));
