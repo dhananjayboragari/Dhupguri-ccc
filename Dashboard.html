@@ -290,6 +290,30 @@ tr:hover{
   display:block;
   box-shadow:0 8px 20px rgba(0,0,0,.35);
 }
+
+  @media (max-width:768px){
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.card{
+    min-width:0;
+    padding:15px;
+}
+
+.card p{
+    font-size:14px;
+}
+
+.card h2{
+    font-size:24px;
+}
+
+}
+
   
 </style>
 </head>
@@ -298,17 +322,29 @@ tr:hover{
 
 <h1>🔥 All User Dashboard</h1>
 
-<div class="cards">
+
+  <div class="cards">
   <div class="card">
-    <p>Total Users</p>
+    <p>👨‍👩‍👧‍👦 Total Users</p>
     <h2 id="total">0</h2>
   </div>
 
   <div class="card">
-    <p>Online Users</p>
+    <p>🟢 Online Users</p>
     <h2 id="online">0</h2>
   </div>
+
+  <div class="card">
+    <p>✅ Active Users</p>
+    <h2 id="activeCount">0</h2>
+  </div>
+
+  <div class="card">
+    <p>❌ Deactivated Users</p>
+    <h2 id="deactiveCount">0</h2>
+  </div>
 </div>
+  
 
 <div class="table-container">
 <table>
@@ -583,10 +619,17 @@ window.addEventListener("beforeunload", async () => {
 
     let total = latestSnapshot.size;
     let online = 0;
+    let activeUsers = 0;
+let deactiveUsers = 0;
     let html = "";
 
     latestSnapshot.forEach(docSnap=>{
       let d = docSnap.data();
+      if (d.accountStatus === "deactivated") {
+    deactiveUsers++;
+} else {
+    activeUsers++;
+}
       let isOnlineNow = false;
 
       if(d.lastSeen){
@@ -648,6 +691,8 @@ window.addEventListener("beforeunload", async () => {
 
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
+   document.getElementById("activeCount").innerText = activeUsers;
+document.getElementById("deactiveCount").innerText = deactiveUsers; 
     document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
   }
 },10000);
@@ -659,10 +704,17 @@ window.addEventListener("beforeunload", async () => {
 
     let total = snapshot.size;
     let online = 0;
+    let activeUsers = 0;
+let deactiveUsers = 0;
     let html = "";
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
+      if (d.accountStatus === "deactivated") {
+    deactiveUsers++;
+} else {
+    activeUsers++;
+}
       let isOnlineNow = false;
 
 if(d.lastSeen){
@@ -728,6 +780,8 @@ if(d.lastSeen){
     
     document.getElementById("total").innerText = total;
     document.getElementById("online").innerText = online;
+    document.getElementById("activeCount").innerText = activeUsers;
+document.getElementById("deactiveCount").innerText = deactiveUsers;
     document.getElementById("userTable").innerHTML = html;
 
   });
