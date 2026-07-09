@@ -622,7 +622,8 @@ msg.style.color="green";
 
    await setDoc(doc(db,"users",currentUser.uid),{
   isOnline: true,
-  lastLogin: serverTimestamp()
+  lastLogin: serverTimestamp(),
+     lastSeen: serverTimestamp()
 }, { merge: true });
     
 
