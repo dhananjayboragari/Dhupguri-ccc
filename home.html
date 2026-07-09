@@ -991,9 +991,9 @@ function closePopup(){
   // কিছুই করবে না
 }
   
-function startLoad(e, el){
+async function startLoad(e, el){
   e.preventDefault();
-  window.updateLastSeen && window.updateLastSeen();
+  if(window.updateLastSeen){   await window.updateLastSeen(); }
   let loader = el.querySelector(".loader");
   let width = 0;
 
