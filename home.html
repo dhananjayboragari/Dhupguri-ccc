@@ -993,8 +993,15 @@ function closePopup(){
   
 async function startLoad(e, el){
   e.preventDefault();
-  if(window.updateLastSeen){   await window.updateLastSeen(); }
+  if(window.updateLastSeen){   await window.updateLastSeen(); 
+}
+
+  // ১ সেকেন্ড অপেক্ষা
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  
   let loader = el.querySelector(".loader");
+
+  
   let width = 0;
 
   let iframe = document.createElement("iframe");
