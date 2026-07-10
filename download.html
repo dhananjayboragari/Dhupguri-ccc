@@ -72,12 +72,7 @@ overflow-y:auto;
   }, 120); // slower update interval
 
   // Start actual download
-  let a = document.createElement("a");
-  a.href = link;
-  a.download = "";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  window.location.href = link;
 
   // Complete progress after 4 sec
   setTimeout(()=>{
