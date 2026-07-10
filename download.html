@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{
-  margin:0; font-family:Arial; padding:20px; background:#050510; overflow:hidden;
+  margin:0; font-family:Arial; padding:20px; background:#050510; overflow-x:hidden;
+overflow-y:auto;
 }
 #network{ position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 .container{ max-width:400px; margin:auto; }
@@ -41,8 +42,23 @@ body{
 </div>
 
 <script>
-function download(btn, link){
+
+
+  async function download(btn, link){
+
+  if (!window.currentUser) {
+    alert("Please login first.");
+    return;
+  }
+
+  try {
+    await window.updateLastSeen();
+  } catch (e) {
+    console.error(e);
+  }
+
   let progress = btn.parentElement.nextElementSibling;
+  
   let bar = progress.querySelector('.bar');
   progress.style.display="block"; 
   bar.style.width="0%";
@@ -182,6 +198,62 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+  
+  <!-- Last Seen Update full script -->
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.currentUser = null;
+
+
+    onAuthStateChanged(auth, (user) => {
+  window.currentUser = user;
+});
+
+  // ===============================
+// Last Seen Update Function
+
+    window.updateLastSeen = async function () {
+
+  if (!window.currentUser) return;
+
+  try {
+
+    await updateDoc(doc(db, "users", window.currentUser.uid), {
+      lastSeen: serverTimestamp()
+    });
+
+    console.log("✅ Last Seen Updated");
+
+  } catch (err) {
+    console.error("❌ Last Seen Update Failed:", err);
+  }
+
+};
+
+
+</script>
   
 </body>
 </html>
