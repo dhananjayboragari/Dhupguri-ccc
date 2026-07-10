@@ -273,8 +273,21 @@ function toggleMode(){
   }
 }
 
-function startLoad(e, el){
+
+  async function startLoad(e, el){
   e.preventDefault();
+
+  if (!window.currentUser) {
+    alert("Please login first.");
+    return;
+  }
+
+    try {
+    await window.updateLastSeen();
+} catch (e) {
+    console.error(e);
+}
+    
   let loader = el.querySelector(".loader");
   let width = 0;
 
@@ -443,6 +456,68 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+
+
+
+
+
+
+  <!-- Last Seen Update full script -->
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.currentUser = null;
+
+
+    onAuthStateChanged(auth, (user) => {
+  window.currentUser = user;
+});
+
+  // ===============================
+// Last Seen Update Function
+
+    window.updateLastSeen = async function () {
+
+  if (!window.currentUser) return;
+
+  try {
+
+    await updateDoc(doc(db, "users", window.currentUser.uid), {
+      lastSeen: serverTimestamp()
+    });
+
+    console.log("✅ Last Seen Updated");
+
+  } catch (err) {
+    console.error("❌ Last Seen Update Failed:", err);
+  }
+
+};
+
+
+
+</script>
+  
   
 </body>
 </html>
