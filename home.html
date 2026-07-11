@@ -1178,7 +1178,7 @@ resetTimer();
 
   // 🔴 BLOCK (login ছাড়া ঢুকলে)
   if (!u || !isLoggedIn) {
-
+    document.getElementById("loadingScreen").style.display = "none";
   // 🔥 যদি logout popup show করতে হয়
   if(localStorage.getItem("showLogoutPopup") === "expired"){
     document.getElementById("loadingScreen").style.display = "none";
@@ -1604,6 +1604,7 @@ let idleTimer;
 
     localStorage.setItem("logout_event", Date.now());
 
+    document.getElementById("loadingScreen").style.display = "none";
     showPopup(
       "Session expired! Login again",
       "error",
