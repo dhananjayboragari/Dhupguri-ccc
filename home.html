@@ -1181,6 +1181,7 @@ resetTimer();
 
   // 🔥 যদি logout popup show করতে হয়
   if(localStorage.getItem("showLogoutPopup") === "expired"){
+    document.getElementById("loadingScreen").style.display = "none";
 
   localStorage.removeItem("showLogoutPopup");
 
