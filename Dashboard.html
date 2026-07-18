@@ -342,6 +342,12 @@ background:linear-gradient(135deg,#ffb300,#ff6f00);
 box-shadow:0 0 18px rgba(255,179,0,.45);
 }
 
+  .role-superadmin{
+background:linear-gradient(135deg,#7b1fa2,#d500f9);
+box-shadow:0 0 20px rgba(213,0,249,.6);
+color:#fff;
+}
+
 .role-user{
 background:linear-gradient(135deg,#2196f3,#1565c0);
 box-shadow:0 0 18px rgba(33,150,243,.45);
@@ -478,6 +484,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
+  
+  let isSuperAdmin = false;
 
 
   
@@ -486,7 +494,16 @@ const db = getFirestore();
   let selectedUid = "";
 let selectedStatus = "";
 
-function toggleAccount(uid, currentStatus, userName, userImage){
+function toggleAccount(uid, currentStatus, userName, userImage, targetSuperAdmin){ 
+  
+
+  if(uid === auth.currentUser.uid){
+    showMessage("❌ You cannot modify your own account.");
+    return;
+}
+  
+  if(targetSuperAdmin && !isSuperAdmin){     showMessage("🚫 Super Admin cannot be modified.");     return;   }  
+                                                                      
   selectedUid = uid;
   selectedStatus = currentStatus;
   document.getElementById("popupUser").innerHTML =
@@ -524,9 +541,17 @@ if(currentStatus === "active"){
 window.toggleAccount = toggleAccount;
 
 
+  
+
+
   let selectedRoleUid = "";
 
-function openRolePopup(uid,name,image,currentRole){
+function openRolePopup(uid, name, image, currentRole, targetSuperAdmin){
+
+    if(targetSuperAdmin && !isSuperAdmin){
+        showMessage("🚫 Super Admin cannot be modified.");
+        return;
+    }
 
     selectedRoleUid = uid;
 
@@ -551,6 +576,37 @@ function closeRolePopup(){
 }
 
 window.closeRolePopup = closeRolePopup;
+
+  function showMessage(msg){
+
+const popup=document.createElement("div");
+
+popup.innerHTML=`
+<div style="
+position:fixed;
+top:30px;
+left:50%;
+transform:translateX(-50%);
+background:#d32f2f;
+color:#fff;
+padding:15px 25px;
+border-radius:12px;
+font-weight:bold;
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+z-index:99999;
+animation:fadeIn .3s;">
+${msg}
+</div>`;
+
+document.body.appendChild(popup);
+
+setTimeout(()=>{
+popup.remove();
+},2500);
+
+}
+
+window.showMessage=showMessage;
 
 
   async function saveRole(){
@@ -718,6 +774,9 @@ onAuthStateChanged(auth, async (user) => {
 const userRef = doc(db, "users", user.uid);
 const userSnap = await getDoc(userRef);
 
+  const currentUserData = userSnap.data();
+isSuperAdmin = currentUserData.superAdmin === true;
+
 if (!userSnap.exists() || userSnap.data().role !== "admin") {
   alert("Access Denied ❌");
   window.location.href = "index.html";
@@ -838,21 +897,23 @@ let deactiveUsers = 0;
 
 
 <td>
-<div class="role-badge ${d.role === 'admin' ? 'role-admin' : 'role-user'}"
+<div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
 onclick="openRolePopup(
 '${docSnap.id}',
 '${d.name || "Unknown"}',
 '${d.image || ""}',
-'${d.role || "user"}'
+'${d.role || "user"}',
+  ${d.superAdmin === true}
 )">
-${d.role === "admin" ? "👑 Admin" : "👤 User"}
+${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤 User")}
 </div>
 </td>
 
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}' )">
+    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
+   ${d.superAdmin === true} )">
 
     ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
 
@@ -937,14 +998,15 @@ if(d.lastSeen){
 
 
 <td>
-<div class="role-badge ${d.role === 'admin' ? 'role-admin' : 'role-user'}"
+<div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
 onclick="openRolePopup(
 '${docSnap.id}',
 '${d.name || "Unknown"}',
 '${d.image || ""}',
-'${d.role || "user"}'
+'${d.role || "user"}',
+${d.superAdmin === true}
 )">
-${d.role === "admin" ? "👑 Admin" : "👤 User"}
+${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤 User")}
 </div>
 </td>
 
@@ -952,7 +1014,8 @@ ${d.role === "admin" ? "👑 Admin" : "👤 User"}
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}' )">
+    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
+  ${d.superAdmin === true}  )">
 
     ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
 
