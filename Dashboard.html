@@ -314,6 +314,38 @@ tr:hover{
 
 }
 
+  /* ===== Premium Role Badge ===== */
+
+.role-badge{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+padding:8px 14px;
+border-radius:50px;
+font-size:13px;
+font-weight:700;
+color:#fff;
+letter-spacing:.4px;
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+transition:.3s;
+cursor:pointer;
+user-select:none;
+}
+
+.role-badge:hover{
+transform:translateY(-2px) scale(1.05);
+}
+
+.role-admin{
+background:linear-gradient(135deg,#ffb300,#ff6f00);
+box-shadow:0 0 18px rgba(255,179,0,.45);
+}
+
+.role-user{
+background:linear-gradient(135deg,#2196f3,#1565c0);
+box-shadow:0 0 18px rgba(33,150,243,.45);
+}
   
 </style>
 </head>
@@ -356,6 +388,7 @@ tr:hover{
 <th>Address</th>
 <th>Status</th>
   <th>Account</th>
+  <th>Role</th>
 <th>Action</th>
 <th>Last Login</th>
 <th>Last Seen</th>
@@ -367,11 +400,53 @@ tr:hover{
 </table>
 </div>
 
+
+  <!-- ===== Premium Role Popup ===== -->
+<div id="rolePopup" class="popup-overlay">
+
+  <div class="popup-box">
+
+    <div class="popup-icon" id="roleIcon">👑</div>
+
+    <img id="roleUserImage" src="https://i.imgur.com/HeIi0wU.png">
+
+    <h2>Change User Role</h2>
+
+    <p id="roleUserName"></p>
+
+    <select id="roleSelect" style="
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:12px;
+      margin:18px 0;
+      font-size:15px;
+      font-weight:bold;
+      outline:none;
+    ">
+      <option value="user">👤 User</option>
+      <option value="admin">👑 Admin</option>
+    </select>
+
+    <div class="popup-buttons">
+      <button class="cancel-btn" onclick="closeRolePopup()">
+        Cancel
+      </button>
+
+      <button class="confirm-btn" onclick="saveRole()">
+        Save
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   import { getDatabase, ref, onValue, set, onDisconnect } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -435,12 +510,88 @@ if(currentStatus === "active"){
 
 window.toggleAccount = toggleAccount;
 
-  
 
+  let selectedRoleUid = "";
+
+function openRolePopup(uid,name,image,currentRole){
+
+    selectedRoleUid = uid;
+
+    document.getElementById("roleUserName").innerHTML =
+        "<b>User :</b> " + name;
+
+    document.getElementById("roleUserImage").src =
+        image || "https://i.imgur.com/HeIi0wU.png";
+
+    document.getElementById("roleSelect").value =
+        currentRole || "user";
+
+    document.getElementById("rolePopup").classList.add("show");
+}
+
+window.openRolePopup = openRolePopup;
+
+function closeRolePopup(){
+
+    document.getElementById("rolePopup").classList.remove("show");
+
+}
+
+window.closeRolePopup = closeRolePopup;
+
+
+  async function saveRole(){
+
+    const btn = document.querySelector("#rolePopup .confirm-btn");
+
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Saving...";
+
+    try{
+
+        const role = document.getElementById("roleSelect").value;
+
+        await updateDoc(doc(db,"users",selectedRoleUid),{
+
+            role: role
+
+        });
+
+        btn.innerHTML = "✅ Saved";
+
+        setTimeout(()=>{
+
+            btn.disabled = false;
+            btn.innerHTML = "Save";
+
+            closeRolePopup();
+
+        },1000);
+
+    }catch(e){
+
+        alert(e.message);
+
+        btn.disabled = false;
+        btn.innerHTML = "Save";
+
+    }
+
+}
+
+window.saveRole = saveRole;
+
+  document.getElementById("rolePopup").addEventListener("click", function(e){
+
+    if(e.target === this){
+        closeRolePopup();
+    }
+
+});
 
   async function confirmAction(){
 
-  const btn = document.querySelector(".confirm-btn");
+  const btn = document.querySelector("#customPopup .confirm-btn");
 
   btn.disabled = true;
   btn.innerHTML = "⏳ Processing...";
@@ -481,7 +632,7 @@ window.toggleAccount = toggleAccount;
 
   setTimeout(()=>{
 
-    const btn = document.querySelector(".confirm-btn");
+    const btn = document.querySelector("#customPopup .confirm-btn");
     btn.disabled = false;
     btn.innerHTML = "Confirm";
 
@@ -549,17 +700,16 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   // ✅ Admin check
-  const admins = [
-    "dhananjayboragari@gmail.com",
-    "chakrabortyelectricalsdhup@gmail.com",
-     "jedhupguri.wbsedcl@gmail.com",
-  ];
 
-  if(!admins.includes(user.email)){
-    alert("Access Denied ❌");
-    window.location.href="index.html";
-    return;
-  }
+  // ✅ Role Check
+const userRef = doc(db, "users", user.uid);
+const userSnap = await getDoc(userRef);
+
+if (!userSnap.exists() || userSnap.data().role !== "admin") {
+  alert("Access Denied ❌");
+  window.location.href = "index.html";
+  return;
+}
 
   // ✅ Firestore Online
   // ✅ Firestore Online + Login Time
@@ -673,6 +823,19 @@ let deactiveUsers = 0;
   ${d.accountStatus === "deactivated" ? "❌ Deactivated" : "✅ Active"}
 </td>
 
+
+<td>
+<div class="role-badge ${d.role === 'admin' ? 'role-admin' : 'role-user'}"
+onclick="openRolePopup(
+'${docSnap.id}',
+'${d.name || "Unknown"}',
+'${d.image || ""}',
+'${d.role || "user"}'
+)">
+${d.role === "admin" ? "👑 Admin" : "👤 User"}
+</div>
+</td>
+
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
@@ -759,6 +922,20 @@ if(d.lastSeen){
   ${d.accountStatus === "deactivated" ? "❌ Deactivated" : "✅ Active"}
 </td>
 
+
+<td>
+<div class="role-badge ${d.role === 'admin' ? 'role-admin' : 'role-user'}"
+onclick="openRolePopup(
+'${docSnap.id}',
+'${d.name || "Unknown"}',
+'${d.image || ""}',
+'${d.role || "user"}'
+)">
+${d.role === "admin" ? "👑 Admin" : "👤 User"}
+</div>
+</td>
+
+  
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
