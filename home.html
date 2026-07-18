@@ -1072,13 +1072,18 @@ onAuthStateChanged(auth, async (u) => {
   // 🔥 PAGE OPEN (FIXED)
 setTimeout(() => {   window.updateLastSeen && window.updateLastSeen(); }, 200);
   
-const admins = [
-  "dhananjayboragari@gmail.com",
-  "chakrabortyelectricalsdhup@gmail.com",
-  "jedhupguri.wbsedcl@gmail.com",
-];
 
-if (!admins.includes(u.email)) {
+  const userDoc = await getDoc(doc(db, "users", u.uid));
+
+if (userDoc.exists()) {
+  const userData = userDoc.data();
+
+  if (userData.role === "admin") {
+    document.getElementById("userDashboard").style.display = "block";
+  } else {
+    document.getElementById("userDashboard").style.display = "none";
+  }
+} else {
   document.getElementById("userDashboard").style.display = "none";
 }
   
