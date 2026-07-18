@@ -365,6 +365,146 @@ box-shadow:0 0 18px rgba(33,150,243,.45);
     box-shadow: 0 6px 15px rgba(0,0,0,.3);
 }
 
+
+  /* ===== Premium Loading Skeleton ===== */
+
+.skeleton{
+    animation:skeleton-loading 1.2s linear infinite alternate;
+}
+
+@keyframes skeleton-loading{
+    from{
+        opacity:.55;
+    }
+    to{
+        opacity:1;
+    }
+}
+
+.skeleton td{
+    padding:16px;
+}
+
+.skeleton-box{
+    width:100%;
+    height:15px;
+    border-radius:8px;
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.08) 25%,
+        rgba(255,255,255,.22) 50%,
+        rgba(255,255,255,.08) 75%
+    );
+    background-size:200% 100%;
+    animation:shimmer 1.4s infinite;
+}
+
+@keyframes shimmer{
+    0%{
+        background-position:200% 0;
+    }
+    100%{
+        background-position:-200% 0;
+    }
+}
+
+/* ===== Premium Table Row ===== */
+
+tbody tr{
+    transition:.35s;
+    animation:fadeUp .35s ease;
+}
+
+tbody tr:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+    background:rgba(255,255,255,.09);
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+
+  @media(max-width:768px){
+
+table{
+    border-collapse:separate;
+    border-spacing:0 12px;
+}
+
+tbody tr{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:15px;
+}
+
+td{
+    border-top:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+td:first-child{
+    border-left:1px solid rgba(255,255,255,.08);
+    border-radius:12px 0 0 12px;
+}
+
+td:last-child{
+    border-right:1px solid rgba(255,255,255,.08);
+    border-radius:0 12px 12px 0;
+}
+
+}
+
+
+
+  /* Desktop + Tablet Premium Table */
+
+@media (min-width:768px){
+
+table{
+    border-collapse:separate;
+    border-spacing:0 12px;
+}
+
+tbody tr{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.15);
+    transition:.3s;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,.10);
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+tbody td{
+    border-top:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+tbody td:first-child{
+    border-left:1px solid rgba(255,255,255,.08);
+    border-radius:15px 0 0 15px;
+}
+
+tbody td:last-child{
+    border-right:1px solid rgba(255,255,255,.08);
+    border-radius:0 15px 15px 0;
+}
+
+}
+
+
+
   
 </style>
 </head>
@@ -936,7 +1076,24 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
   }
 },10000);
 
-  
+
+  document.getElementById("userTable").innerHTML = `
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+`;
   
   onSnapshot(collection(db,"users"), (snapshot)=>{
     latestSnapshot = snapshot;
