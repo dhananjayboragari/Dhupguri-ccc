@@ -504,6 +504,107 @@ tbody td:last-child{
 }
 
 
+  /* ===== Premium Header ===== */
+
+.dashboard-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+margin-bottom:20px;
+border-radius:22px;
+background:rgba(255,255,255,.10);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.15);
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+flex-wrap:wrap;
+gap:20px;
+}
+
+.admin-profile{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.admin-profile img{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #fff;
+}
+
+#adminName{
+font-size:24px;
+font-weight:700;
+margin:0;
+}
+
+#adminRole{
+margin-top:5px;
+color:#ffd54f;
+font-weight:600;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.header-box{
+background:rgba(255,255,255,.08);
+padding:12px 18px;
+border-radius:15px;
+text-align:center;
+min-width:130px;
+}
+
+.header-box span{
+display:block;
+font-size:12px;
+opacity:.8;
+}
+
+.header-box strong{
+font-size:18px;
+}
+
+.refresh-btn{
+border:none;
+padding:13px 20px;
+border-radius:15px;
+background:linear-gradient(135deg,#00c853,#009688);
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.refresh-btn:hover{
+transform:translateY(-2px);
+}
+
+@media(max-width:768px){
+
+.dashboard-header{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.header-right{
+width:100%;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+}
+
+.refresh-btn{
+grid-column:span 2;
+}
+
+}
 
   
 </style>
@@ -511,7 +612,39 @@ tbody td:last-child{
 
 <body>
 
-<h1>🔥 All User Dashboard</h1>
+
+  <div class="dashboard-header">
+
+    <div class="admin-profile">
+
+        <img id="adminPhoto" src="https://i.imgur.com/HeIi0wU.png">
+
+        <div>
+            <h2 id="adminName">Welcome...</h2>
+            <p id="adminRole">Loading...</p>
+        </div>
+
+    </div>
+
+    <div class="header-right">
+
+        <div class="header-box">
+            <span>🕒 Time</span>
+            <strong id="liveTime">--:--:--</strong>
+        </div>
+
+        <div class="header-box">
+            <span>📅 Date</span>
+            <strong id="todayDate">--/--/----</strong>
+        </div>
+
+        <button class="refresh-btn" onclick="location.reload()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</div>
 
 
   <div class="cards">
@@ -594,6 +727,35 @@ tbody td:last-child{
 
       <button class="confirm-btn" onclick="saveRole()">
         Save
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- Premium Custom Popup -->
+<div id="customPopup" class="popup-overlay">
+
+  <div class="popup-box">
+
+    <div class="popup-icon">⚠️</div>  <img id="popupImage" src="https://i.imgur.com/HeIi0wU.png">
+
+    <h2 id="popupTitle">Deactivate Account</h2>
+
+    <p id="popupText">
+      Are you sure?
+    </p>
+
+    <p id="popupUser"></p>
+
+    <div class="popup-buttons">
+      <button class="cancel-btn" onclick="closePopup()">
+        Cancel
+      </button>
+
+      <button class="confirm-btn" onclick="confirmAction()">
+        Confirm
       </button>
     </div>
 
@@ -917,6 +1079,20 @@ const userRef = doc(db, "users", user.uid);
 const userSnap = await getDoc(userRef);
 
   const currentUserData = userSnap.data();
+
+  document.getElementById("adminPhoto").src =
+currentUserData.image || "https://i.imgur.com/HeIi0wU.png";
+
+document.getElementById("adminName").innerText =
+"Welcome, " + (currentUserData.name || "Admin");
+
+document.getElementById("adminRole").innerText =
+currentUserData.superAdmin
+? "👑 Super Admin"
+: currentUserData.role=="admin"
+? "👑 Admin"
+: "👤 User";
+  
 isSuperAdmin = currentUserData.superAdmin === true;
 
 if (!userSnap.exists() || userSnap.data().role !== "admin") {
@@ -1200,36 +1376,21 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
 
 });
 
+  setInterval(()=>{
+
+const now=new Date();
+
+document.getElementById("liveTime").innerText=
+now.toLocaleTimeString();
+
+document.getElementById("todayDate").innerText=
+now.toLocaleDateString("en-GB");
+
+},1000);
+
 </script>
 
-  <!-- Premium Custom Popup -->
-<div id="customPopup" class="popup-overlay">
-
-  <div class="popup-box">
-
-    <div class="popup-icon">⚠️</div>  <img id="popupImage" src="https://i.imgur.com/HeIi0wU.png">
-
-    <h2 id="popupTitle">Deactivate Account</h2>
-
-    <p id="popupText">
-      Are you sure?
-    </p>
-
-    <p id="popupUser"></p>
-
-    <div class="popup-buttons">
-      <button class="cancel-btn" onclick="closePopup()">
-        Cancel
-      </button>
-
-      <button class="confirm-btn" onclick="confirmAction()">
-        Confirm
-      </button>
-    </div>
-
-  </div>
-
-</div>
+  
 
 </body>
 </html>
