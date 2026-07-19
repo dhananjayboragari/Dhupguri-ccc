@@ -1437,7 +1437,7 @@ let deactiveUsers = 0;
 
 <td>
 <div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
-onclick="openRolePopup(
+onclick="event.stopPropagation(); openRolePopup(
 '${docSnap.id}',
 '${d.name || "Unknown"}',
 '${d.image || ""}',
@@ -1451,7 +1451,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
+    onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
    ${d.superAdmin === true} )">
 
     ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
@@ -1559,7 +1559,7 @@ if(d.lastSeen){
 
 <td>
 <div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
-onclick="openRolePopup(
+onclick="event.stopPropagation(); openRolePopup(
 '${docSnap.id}',
 '${d.name || "Unknown"}',
 '${d.image || ""}',
@@ -1574,7 +1574,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤
 <td>
   <button
     class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
+    onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
   ${d.superAdmin === true}  )">
 
     ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
