@@ -898,6 +898,44 @@ opacity:0;
 
 </div>
 
+  <div id="userInfoPopup" class="popup-overlay">
+
+<div class="popup-box" style="max-width:450px;">
+
+<img id="infoImage"
+src="https://i.imgur.com/HeIi0wU.png"
+style="
+width:90px;
+height:90px;
+border-radius:50%;
+border:4px solid white;
+object-fit:cover;
+margin:auto;
+display:block;
+">
+
+<h2 id="infoName"></h2>
+
+<div id="infoBody"
+style="
+margin-top:20px;
+text-align:left;
+line-height:1.9;
+font-size:15px;
+">
+</div>
+
+<div class="popup-buttons">
+<button class="confirm-btn"
+onclick="closeInfoPopup()">
+Close
+</button>
+</div>
+
+</div>
+
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -1149,6 +1187,41 @@ window.saveRole = saveRole;
 }
 
   window.closePopup = closePopup;
+
+  function showUserInfo(data){
+
+document.getElementById("infoImage").src =
+data.image || "https://i.imgur.com/HeIi0wU.png";
+
+document.getElementById("infoName").innerHTML =
+data.name || "-";
+
+document.getElementById("infoBody").innerHTML = `
+<b>📧 Email :</b> ${data.email||"-"}<br>
+<b>📱 Phone :</b> ${data.phone||"-"}<br>
+<b>🏠 Address :</b> ${data.address||"-"}<br>
+<b>👤 Role :</b> ${data.role||"User"}<br>
+<b>🟢 Status :</b> ${data.isOnline ? "Online":"Offline"}<br>
+<b>✅ Account :</b> ${data.accountStatus||"-"}<br>
+<b>🕒 Last Login :</b><br>${formatTime(data.lastLogin)}<br><br>
+<b>👁 Last Seen :</b><br>${formatTime(data.lastSeen)}
+`;
+
+document.getElementById("userInfoPopup")
+.classList.add("show");
+
+}
+
+function closeInfoPopup(){
+
+document.getElementById("userInfoPopup")
+.classList.remove("show");
+
+}
+
+window.showUserInfo=showUserInfo;
+window.closeInfoPopup=closeInfoPopup;
+  
 window.confirmAction = confirmAction;
 
 
@@ -1328,7 +1401,7 @@ let deactiveUsers = 0;
       if(isOnlineNow) online++;
 
       html += `
-      <tr>
+      <tr onclick='showUserInfo({ name:${JSON.stringify(d.name||"")}, email:${JSON.stringify(d.email||"")}, phone:${JSON.stringify(d.phone||"")}, address:${JSON.stringify(d.address||"")}, image:${JSON.stringify(d.image||"")}, role:${JSON.stringify(d.role||"user")}, accountStatus:${JSON.stringify(d.accountStatus||"active")}, isOnline:${isOnlineNow}, lastLogin:d.lastLogin, lastSeen:d.lastSeen })'>
         <td>
           <div class="user">
             <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
@@ -1446,7 +1519,7 @@ if(d.lastSeen){
       if(isOnlineNow) online++;
 
       html += `
-      <tr>
+      <tr onclick='showUserInfo({ name:${JSON.stringify(d.name||"")}, email:${JSON.stringify(d.email||"")}, phone:${JSON.stringify(d.phone||"")}, address:${JSON.stringify(d.address||"")}, image:${JSON.stringify(d.image||"")}, role:${JSON.stringify(d.role||"user")}, accountStatus:${JSON.stringify(d.accountStatus||"active")}, isOnline:${isOnlineNow}, lastLogin:d.lastLogin, lastSeen:d.lastSeen })'>
         <td>
           <div class="user">
             <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
