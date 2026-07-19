@@ -936,6 +936,8 @@ Close
 
 </div>
 
+  <button onclick="alert('Working')">Test</button>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -1188,6 +1190,15 @@ window.saveRole = saveRole;
 
   window.closePopup = closePopup;
 
+  async function showUserInfoFromId(uid){
+  const snap = await getDoc(doc(db,"users",uid));
+  if(!snap.exists()) return;
+
+  showUserInfo(snap.data());
+}
+
+window.showUserInfoFromId = showUserInfoFromId;
+
   function showUserInfo(data){
 
 document.getElementById("infoImage").src =
@@ -1401,7 +1412,9 @@ let deactiveUsers = 0;
       if(isOnlineNow) online++;
 
       html += `
-      <tr onclick='showUserInfo({ name:${JSON.stringify(d.name||"")}, email:${JSON.stringify(d.email||"")}, phone:${JSON.stringify(d.phone||"")}, address:${JSON.stringify(d.address||"")}, image:${JSON.stringify(d.image||"")}, role:${JSON.stringify(d.role||"user")}, accountStatus:${JSON.stringify(d.accountStatus||"active")}, isOnline:${isOnlineNow}, lastLogin:d.lastLogin, lastSeen:d.lastSeen })'>
+
+  
+      <tr onclick="showUserInfoFromId('${docSnap.id}')">
         <td>
           <div class="user">
             <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
@@ -1519,7 +1532,11 @@ if(d.lastSeen){
       if(isOnlineNow) online++;
 
       html += `
-      <tr onclick='showUserInfo({ name:${JSON.stringify(d.name||"")}, email:${JSON.stringify(d.email||"")}, phone:${JSON.stringify(d.phone||"")}, address:${JSON.stringify(d.address||"")}, image:${JSON.stringify(d.image||"")}, role:${JSON.stringify(d.role||"user")}, accountStatus:${JSON.stringify(d.accountStatus||"active")}, isOnline:${isOnlineNow}, lastLogin:d.lastLogin, lastSeen:d.lastSeen })'>
+
+
+
+  <tr onclick="showUserInfoFromId('${docSnap.id}')">
+      
         <td>
           <div class="user">
             <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
