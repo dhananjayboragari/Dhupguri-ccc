@@ -325,11 +325,11 @@ tr:hover{
 }
 
 .card p{
-    font-size:12px;
+    font-size:14px;
 }
 
 .card h2{
-    font-size:20px;
+    font-size:24px;
 }
 
 }
@@ -758,7 +758,7 @@ flex:1;
 background:rgba(255,255,255,.08);
 border:1px solid rgba(255,255,255,.12);
 border-radius:15px;
-padding:8px;
+padding:14px;
 text-align:center;
 }
 
@@ -772,10 +772,10 @@ color:#ddd;
 .control-box .role-badge,
 .control-box .action-btn{
 width:100%;
-height:34px;
-font-size:11px;
-padding:4px;
-border-radius:8px;
+justify-content:center;
+height:44px;
+font-size:14px;
+border-radius:12px;
 }
 
 .control-box .action-btn{
@@ -801,16 +801,31 @@ font-size:16px;
 
   /* Premium Divider */
 
-  .control-divider{
+.control-divider{
 width:100%;
-height:2px;
-margin:8px 0 15px;
-background:#00e5ff;
-box-shadow:0 0 15px #00e5ff;
-border-radius:10px;
+height:1px;
+margin:8px 0 18px;
+background:linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,.8),
+transparent
+);
+position:relative;
 }
 
-  
+.control-divider::before{
+content:"";
+position:absolute;
+left:50%;
+top:-4px;
+transform:translateX(-50%);
+width:10px;
+height:10px;
+border-radius:50%;
+background:#00e5ff;
+box-shadow:0 0 12px #00e5ff;
+}
 
 
   .popup-box{
