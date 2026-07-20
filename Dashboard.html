@@ -1194,7 +1194,9 @@ window.saveRole = saveRole;
   const snap = await getDoc(doc(db,"users",uid));
   if(!snap.exists()) return;
 
-  showUserInfo(snap.data());
+  const data = snap.data();
+  data.uid = uid;
+  showUserInfo(data);
 }
 
 window.showUserInfoFromId = showUserInfoFromId;
@@ -1207,7 +1209,8 @@ data.image || "https://i.imgur.com/HeIi0wU.png";
 document.getElementById("infoName").innerHTML =
 data.name || "-";
 
-document.getElementById("infoBody").innerHTML = `
+
+    document.getElementById("infoBody").innerHTML = `
 <b>📧 Email :</b> ${data.email||"-"}<br>
 <b>📱 Phone :</b> ${data.phone||"-"}<br>
 <b>🏠 Address :</b> ${data.address||"-"}<br>
@@ -1216,6 +1219,40 @@ document.getElementById("infoBody").innerHTML = `
 <b>✅ Account :</b> ${data.accountStatus||"-"}<br>
 <b>🕒 Last Login :</b><br>${formatTime(data.lastLogin)}<br><br>
 <b>👁 Last Seen :</b><br>${formatTime(data.lastSeen)}
+
+<hr style="margin:15px 0">
+
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+
+<div class="role-badge ${data.superAdmin ? 'role-superadmin' : (data.role=='admin' ? 'role-admin':'role-user')}"
+onclick="
+closeInfoPopup();
+openRolePopup(
+'${data.uid}',
+'${data.name}',
+'${data.image||''}',
+'${data.role||'user'}',
+${data.superAdmin===true}
+)">
+${data.superAdmin ? "👑 Super Admin" : (data.role=="admin" ? "👑 Admin":"👤 User")}
+</div>
+
+<button
+class="action-btn ${data.accountStatus=='active' ? 'deactivate-btn':'activate-btn'}"
+style="padding:10px 18px"
+onclick="
+closeInfoPopup();
+toggleAccount(
+'${data.uid}',
+'${data.accountStatus}',
+'${data.name}',
+'${data.image||''}',
+${data.superAdmin===true}
+)">
+${data.accountStatus=="active" ? "Deactivate":"Activate"}
+</button>
+
+</div>
 `;
 
 document.getElementById("userInfoPopup")
