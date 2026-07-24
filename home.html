@@ -1099,10 +1099,15 @@ if (userDoc.exists()) {
   });
 
   // Firestore
-  await updateDoc(doc(db, "users", user.uid), {
+  const userRef = doc(db, "users", user.uid);
+const userSnap = await getDoc(userRef);
+
+if (userSnap.exists()) {
+  await updateDoc(userRef, {
     lastSeen: serverTimestamp(),
     isOnline: true
   });
+}
 }
   
   setInterval(() => {
