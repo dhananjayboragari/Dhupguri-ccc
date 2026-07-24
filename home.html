@@ -1481,7 +1481,7 @@ document.getElementById("profileName").innerText =
 
         const data = snap.data();
 
-        if (data.accountStatus !== "approved") {
+        if (data.accountStatus === "pending") {
 
             await signOut(auth);
             localStorage.removeItem("loginSuccess");
