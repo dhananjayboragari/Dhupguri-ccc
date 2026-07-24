@@ -1406,7 +1406,7 @@ if (!docSnap.exists()) {
   // নতুন user
   updateData.email = user.email;
   updateData.uid = user.uid;
-  updateData.accountStatus = "active";
+  updateData.accountStatus = "pending";
 
   await setDoc(docRef, updateData);
 
@@ -1436,10 +1436,42 @@ document.getElementById("profileName").innerText =
   nameVal || "Profile";
 
 
-  showPopup("Profile Saved!", "success", function(){
+  showPopup("Profile Saved!", "success", async function(){
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (snap.exists()) {
+
+        const data = snap.data();
+
+        if (data.accountStatus !== "approved") {
+
+            await signOut(auth);
+            localStorage.removeItem("loginSuccess");
+
+            showPopup(
+`🎉 Profile Updated Successfully!
+
+⏳ Your profile has been sent for Admin verification.
+
+🔒 Your account will remain temporarily unavailable until it is approved by the Admin.
+
+  📞 For urgent approval, please contact the Administrator.
+
+✅ Please login again after your account has been approved.
+
+Thank you for your patience.`,
+"error",
+function () {
+    window.location.href = "index.html";
+}
+);
+
+            return;
+        }
+    }
 
     document.body.style.visibility = "visible";
-
     closeProfile();
 
 });
