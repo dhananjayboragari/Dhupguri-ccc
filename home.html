@@ -775,7 +775,7 @@ align-items:center;
 </style>
 </head>
 
-<body>
+<body style="visibility:hidden;">
 
   <div id="loadingScreen">
   <h2>Please wait...</h2>
@@ -1067,6 +1067,8 @@ onAuthStateChanged(auth, async (u) => {
 
   if (!u) return;
  user = u;
+  
+  document.body.style.visibility = "hidden";
 
 
   // 🔥 PAGE OPEN (FIXED)
@@ -1220,6 +1222,27 @@ resetTimer();
 
       const data = snap.data();
 
+  // Pending account block
+if (data.accountStatus === "pending") {
+
+  await signOut(auth);
+  localStorage.removeItem("loginSuccess");
+
+  showPopup(
+`⏳ Your account is pending for Admin approval.
+
+  📞 If you need urgent approval, please contact the Administrator.
+
+Please wait until the Admin approves your account.`,
+"error",
+function(){
+  window.location.href = "index.html";
+});
+
+  return;
+}
+
+      
       // ✅ NAME SHOW
       document.getElementById("profileName").innerText =
         data.name || "Profile";
@@ -1255,7 +1278,8 @@ resetTimer();
       setTimeout(() => openProfile(true), 500);
     }
 
-  
+
+    document.body.style.visibility = "visible";
    document.querySelector(".container").style.display = "flex";
 document.getElementById("loadingScreen").style.display = "none";
 
@@ -1402,7 +1426,9 @@ let updateData = {
   image: imageUrl
 };
 
-if (!docSnap.exists()) {
+
+
+  if (!docSnap.exists()) {
   // নতুন user
   updateData.email = user.email;
   updateData.uid = user.uid;
@@ -1414,11 +1440,6 @@ if (!docSnap.exists()) {
 
   const data = docSnap.data();
 
-  // accountStatus না থাকলে একবারই add হবে
-  if (!("accountStatus" in data)) {
-    updateData.accountStatus = "active";
-  }
-
   // email না থাকলে add হবে
   if (!("email" in data)) {
     updateData.email = user.email;
@@ -1428,9 +1449,11 @@ if (!docSnap.exists()) {
   if (!("uid" in data)) {
     updateData.uid = user.uid;
   }
-  
+
   await updateDoc(docRef, updateData);
 }
+  
+
 
 document.getElementById("profileName").innerText =
   nameVal || "Profile";
