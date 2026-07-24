@@ -910,7 +910,14 @@ box-shadow:0 0 12px #00e5ff;
     <p>❌ Deactivated Users</p>
     <h2 id="deactiveCount">0</h2>
   </div>
+
+    <div class="card">
+  <p>⏳ Pending Approval</p>
+  <h2 id="pendingCount">0</h2>
 </div>
+    
+</div>
+  
   
 
 <div class="table-container">
@@ -923,6 +930,7 @@ box-shadow:0 0 12px #00e5ff;
 <th>Address</th>
 <th>Status</th>
   <th>Account</th>
+  <th>New Approval</th>
   <th>Role</th>
 <th>Action</th>
 <th>Last Login</th>
@@ -1254,10 +1262,10 @@ window.saveRole = saveRole;
 
   try{
 
-    const deactivate = selectedStatus === "active";
+    let newStatus="active";  if(selectedStatus=="pending"){     newStatus="active"; } else if(selectedStatus=="active"){     newStatus="deactivated"; } else{     newStatus="active"; }
 
     await updateDoc(doc(db,"users",selectedUid),{
-      accountStatus: deactivate ? "deactivated" : "active"
+      accountStatus:newStatus
     });
 
     btn.innerHTML = "✅ Success";
@@ -1563,13 +1571,18 @@ window.addEventListener("beforeunload", async () => {
     let online = 0;
     let activeUsers = 0;
 let deactiveUsers = 0;
+    let pendingUsers = 0;
     let html = "";
 
     latestSnapshot.forEach(docSnap=>{
       let d = docSnap.data();
-      if (d.accountStatus === "deactivated") {
+      if(d.accountStatus=="pending"){
+    pendingUsers++;
+}
+else if(d.accountStatus=="deactivated"){
     deactiveUsers++;
-} else {
+}
+else{
     activeUsers++;
 }
       let isOnlineNow = false;
@@ -1613,10 +1626,31 @@ let deactiveUsers = 0;
   ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
 </td>
 
-<td class="${d.accountStatus === 'active' ? 'active-account':'deactive-account'}">
-  ${d.accountStatus === "deactivated" ? "❌ Deactivated" : "✅ Active"}
+  <td class="${
+d.accountStatus=="active"
+? "active-account"
+: d.accountStatus=="deactivated"
+? "deactive-account"
+: ""
+}">
+${
+d.accountStatus=="pending"
+? "🟡 Pending"
+: d.accountStatus=="active"
+? "✅ Active"
+: "❌ Deactivated"
+}
 </td>
 
+  <td>
+${
+d.accountStatus=="pending"
+?"🟡 Pending"
+:d.accountStatus=="active"
+?"🟢 Approved"
+:"🔴 Rejected"
+}
+</td>
 
 <td>
 <div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
@@ -1637,7 +1671,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤
     onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
    ${d.superAdmin === true} )">
 
-    ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
+    ${ d.accountStatus=="pending" ?"Approve" :d.accountStatus=="active" ?"Deactivate" :"Activate" }
 
   </button>
 </td>
@@ -1652,6 +1686,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤
     document.getElementById("online").innerText = online;
    document.getElementById("activeCount").innerText = activeUsers;
 document.getElementById("deactiveCount").innerText = deactiveUsers; 
+    document.getElementById("pendingCount").innerText = pendingUsers;
     document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
   }
 },10000);
@@ -1682,13 +1717,18 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
     let online = 0;
     let activeUsers = 0;
 let deactiveUsers = 0;
+    let pendingUsers = 0;
     let html = "";
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
-      if (d.accountStatus === "deactivated") {
+      if(d.accountStatus=="pending"){
+    pendingUsers++;
+}
+else if(d.accountStatus=="deactivated"){
     deactiveUsers++;
-} else {
+}
+else{
     activeUsers++;
 }
       let isOnlineNow = false;
@@ -1735,8 +1775,30 @@ if(d.lastSeen){
   ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
 </td>
 
-<td class="${d.accountStatus === 'active' ? 'active-account':'deactive-account'}">
-  ${d.accountStatus === "deactivated" ? "❌ Deactivated" : "✅ Active"}
+  <td class="${
+d.accountStatus=="active"
+? "active-account"
+: d.accountStatus=="deactivated"
+? "deactive-account"
+: ""
+}">
+${
+d.accountStatus=="pending"
+? "🟡 Pending"
+: d.accountStatus=="active"
+? "✅ Active"
+: "❌ Deactivated"
+}
+</td>
+
+  <td>
+${
+d.accountStatus=="pending"
+?"🟡 Pending"
+:d.accountStatus=="active"
+?"🟢 Approved"
+:"🔴 Rejected"
+}
 </td>
 
 
@@ -1760,7 +1822,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤
     onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
   ${d.superAdmin === true}  )">
 
-    ${d.accountStatus === "active" ? "Deactivate" : "Activate"}
+    ${ d.accountStatus=="pending" ?"Approve" :d.accountStatus=="active" ?"Deactivate" :"Activate" }
 
   </button>
 </td>
@@ -1778,6 +1840,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤
     document.getElementById("online").innerText = online;
     document.getElementById("activeCount").innerText = activeUsers;
 document.getElementById("deactiveCount").innerText = deactiveUsers;
+    document.getElementById("pendingCount").innerText = pendingUsers;
     document.getElementById("userTable").innerHTML = html;
 
   });
