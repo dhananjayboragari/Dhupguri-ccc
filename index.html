@@ -621,9 +621,6 @@ if(userSnap.exists()){
     msg.innerHTML="✅ Login Success";
 msg.style.color="green";
 
-   const userRef = doc(db, "users", currentUser.uid);
-const userSnap = await getDoc(userRef);
-
 if (userSnap.exists()) {
   await updateDoc(userRef, {
     isOnline: true,
