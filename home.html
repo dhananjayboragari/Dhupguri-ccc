@@ -1455,6 +1455,10 @@ let updateData = {
     updateData.uid = user.uid;
   }
 
+    if (!("accountStatus" in data)) {
+  updateData.accountStatus = "pending";
+}
+    
   await updateDoc(docRef, updateData);
 }
   
