@@ -527,6 +527,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -620,11 +621,16 @@ if(userSnap.exists()){
     msg.innerHTML="✅ Login Success";
 msg.style.color="green";
 
-   await setDoc(doc(db,"users",currentUser.uid),{
-  isOnline: true,
-  lastLogin: serverTimestamp(),
-     lastSeen: serverTimestamp()
-}, { merge: true });
+   const userRef = doc(db, "users", currentUser.uid);
+const userSnap = await getDoc(userRef);
+
+if (userSnap.exists()) {
+  await updateDoc(userRef, {
+    isOnline: true,
+    lastLogin: serverTimestamp(),
+    lastSeen: serverTimestamp()
+  });
+}
     
 
 // 🔥 IMPORTANT
