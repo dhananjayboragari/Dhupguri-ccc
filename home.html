@@ -1065,7 +1065,7 @@ console.log("JS Loaded ✅");
 
 onAuthStateChanged(auth, async (u) => {
 
-  if (!u) return;
+  if (!u) {   document.getElementById("loadingScreen").style.display = "none";   return; }
  user = u;
   
   document.body.style.visibility = "hidden";
@@ -1223,20 +1223,25 @@ resetTimer();
       const data = snap.data();
 
   // Pending account block
-if (data.accountStatus === "pending") {
 
-  await signOut(auth);
-  localStorage.removeItem("loginSuccess");
+      if (data.accountStatus === "pending") {
+
+  document.getElementById("loadingScreen").style.display = "none";
+  document.body.style.visibility = "visible";
 
   showPopup(
 `⏳ Your account is pending for Admin approval.
 
-  📞 If you need urgent approval, please contact the Administrator.
+📞 If you need urgent approval, please contact the Administrator.
 
 Please wait until the Admin approves your account.`,
 "error",
-function(){
-  window.location.href = "index.html";
+async function(){
+
+    await signOut(auth);
+    localStorage.removeItem("loginSuccess");
+    window.location.href = "index.html";
+
 });
 
   return;
