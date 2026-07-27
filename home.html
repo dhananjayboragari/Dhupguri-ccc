@@ -714,7 +714,7 @@ align-items:center;
 .topText h2{
   margin:0;
   color:#fff;
-  font-size:20px;
+  font-size:18px;
   font-weight:700;
 }
 
@@ -722,6 +722,7 @@ align-items:center;
   margin:3px 0 0;
   color:#EAF4FF;
   font-size:16px;
+  font-weight:600;
 }
 
 
@@ -731,8 +732,8 @@ align-items:center;
   right:12px;
   transform:translateY(-50%);
 
-  width:52px;
-  height:52px;
+  width:54px;
+  height:54px;
 
   border:none;
   background:transparent;
@@ -777,7 +778,17 @@ align-items:center;
 
 
   #profileName{
-  display:none !important;
+  display:block !important;
+  position:absolute;
+  top:58px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:11px;
+  font-weight:600;
+  color:#fff;
+  white-space:nowrap;
+  text-shadow:0 2px 5px rgba(0,0,0,.6);
+  z-index:6;
 }
 
 #profileBtn .icon,
@@ -792,8 +803,8 @@ align-items:center;
 
   z-index:2;
 
-  width:48px !important;
-  height:48px !important;
+  width:50px !important;
+  height:50px !important;
 
   border-radius:50%;
   object-fit:cover;
@@ -845,21 +856,21 @@ align-items:center;
   }
 
   .topText p{
-    font-size:11px;
+    font-size:15px;
   }
 
 }
 
   #liveDateTime{
   margin-top:2px;
-  font-size:11px;
+  font-size:13px;
   color:#EAF4FF;
   font-weight:500;
 }
 
   @media(max-width:480px){
   #liveDateTime{
-    font-size:10px;
+    font-size:12px;
   }
 }
 
@@ -938,7 +949,7 @@ align-items:center;
 
     <div id="editBadge">✏️</div>
 
-    <div id="profileName">Profile</div>
+    <div id="profileName">User Role</div>
 
   </button>
 
