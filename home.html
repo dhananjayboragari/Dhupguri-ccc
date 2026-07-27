@@ -674,7 +674,7 @@ align-items:center;
 
   width:95%;
   max-width:900px;
-  height:80px;
+  height:90px;
 
   display:flex;
   justify-content:space-between;
@@ -747,39 +747,6 @@ align-items:center;
   z-index:10;
 }
 
-/* Animated Ring */
-#profileBtn::before{
-  content:"";
-  position:absolute;
-  width:100%;
-  height:100%;
-  border-radius:50%;
-
-  background:conic-gradient(
-    #00e5ff,
-    #00ff99,
-    #ffd600,
-    #ff4d88,
-    #7b2ff7,
-    #00e5ff
-  );
-
-  animation:ringRotate 2s linear infinite;
-}
-
-/* White Gap */
-
-  #profileBtn::after{
-  content:"";
-  position:absolute;
-  top:1px;
-  left:1px;
-  right:1px;
-  bottom:1px;
-  border-radius:50%;
-  background:#fff;
-}
-
 
   #profileName{
   display:block !important;
@@ -801,14 +768,14 @@ align-items:center;
 
   #profileBtnImg{
   position:absolute;
-  top:3px;
+  top:0px;
   left:50%;
   transform:translateX(-50%);
 
   z-index:2;
 
-  width:48px !important;
-  height:48px !important;
+  width:54px !important;
+  height:54px !important;
 
   border-radius:50%;
   object-fit:cover;
@@ -821,14 +788,14 @@ align-items:center;
 
   #profileBtn .icon{
   position:absolute;
-  top:3px;
+  top:0px;
   left:50%;
   transform:translateX(-50%);
 
   z-index:2;
 
-  width:48px;
-  height:48px;
+  width:54px;
+  height:54px;
 
   border-radius:50%;
 
@@ -846,7 +813,7 @@ align-items:center;
 @media(max-width:480px){
 
   .topCard{
-    height:78px;
+    height:88px;
     padding:10px 14px;
   }
 
