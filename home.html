@@ -721,7 +721,7 @@ align-items:center;
 .topText p{
   margin:3px 0 0;
   color:#EAF4FF;
-  font-size:13px;
+  font-size:16px;
 }
 
 
@@ -777,23 +777,7 @@ align-items:center;
 
 
   #profileName{
-  position:absolute;
-  bottom:-18px;
-
-  left:50%;
-  transform:translateX(-50%);
-
-  width:90px;
-
-  text-align:center;
-
-  color:#fff;
-  font-size:11px;
-  font-weight:600;
-
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  display:none !important;
 }
 
 #profileBtn .icon,
@@ -808,8 +792,8 @@ align-items:center;
 
   z-index:2;
 
-  width:46px !important;
-  height:46px !important;
+  width:48px !important;
+  height:48px !important;
 
   border-radius:50%;
   object-fit:cover;
@@ -895,7 +879,33 @@ align-items:center;
     transform:translateX(-50%) scale(1.08);
   }
 }
-  
+
+  #editBadge{
+  position:absolute;
+  right:2px;
+  bottom:8px;
+
+  width:18px;
+  height:18px;
+
+  border-radius:50%;
+  background:#00C853;
+  color:#fff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:10px;
+  font-weight:bold;
+
+  border:2px solid #fff;
+  box-shadow:0 0 8px rgba(0,200,83,.5);
+
+  z-index:5;
+}
+
+    
 </style>
 </head>
 
@@ -914,7 +924,7 @@ align-items:center;
     <img src="https://i.ibb.co/Hf9m31b1/Dhupguri.png" class="topLogo">
 
     <div class="topText">
-      <h2>Dhupguri CCC</h2>
+      <h2>Welcome to Dhupguri ccc</h2>
       <p id="welcomeText">Welcome</p>
       <div id="liveDateTime"></div>
     </div>
@@ -925,6 +935,8 @@ align-items:center;
     <div class="icon" id="profileIcon">👨‍💼</div>
 
     <img id="profileBtnImg" class="icon-img" style="display:none;">
+
+    <div id="editBadge">✏️</div>
 
     <div id="profileName">Profile</div>
 
@@ -1243,7 +1255,9 @@ if (role === "super admin") {
   name = userData.name || "User";
 }
 
-document.getElementById("welcomeText").innerText = greeting + ", " + name;
+
+  document.getElementById("welcomeText").innerText =
+greeting + " " + (userData.name || "Profile");
 
   if (userData.role === "admin") {
     document.getElementById("userDashboard").style.display = "block";
@@ -1418,9 +1432,17 @@ async function(){
 }
 
       
-      // ✅ NAME SHOW
-      document.getElementById("profileName").innerText =
-        data.name || "Profile";
+      // ✅ Role SHOW
+
+      const role = (data.role || "User").toLowerCase();
+
+if (role === "super admin") {
+  document.getElementById("profileName").innerText = "Super Admin";
+} else if (role === "admin") {
+  document.getElementById("profileName").innerText = "Admin";
+} else {
+  document.getElementById("profileName").innerText = "User";
+}
 
       // ✅ IMAGE SHOW
       if (data.image && data.image !== "") {
@@ -1623,11 +1645,6 @@ let updateData = {
     
   await updateDoc(docRef, updateData);
 }
-  
-
-
-document.getElementById("profileName").innerText =
-  nameVal || "Profile";
 
 
   showPopup("Profile Saved!", "success", async function(){
