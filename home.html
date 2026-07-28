@@ -194,37 +194,6 @@ a{
 }
 
 
-
-
-
-
-
-
-/* ===== PROFILE BUTTON ===== */
-#profileBtn{
-  position:fixed;
-  top:10px;
-  right:10px;
-
-  padding:8px 10px;
-  border:none;
-  border-radius:16px;
-
-  cursor:pointer;
-  z-index:9999;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:2px;
-
-  background:rgba(0, 255, 204, 0.15);
-  backdrop-filter: blur(10px);
-  border:1px solid rgba(0,255,204,0.4);
-  box-shadow:0 0 12px rgba(0,255,204,0.3);
-}
-
 #profileBtn .icon{
   font-size:18px;
   width:34px;
@@ -234,11 +203,6 @@ a{
   justify-content:center;
   border-radius:50%;
   background: linear-gradient(135deg,#00ffcc,#0077ff);
-}
-
-#profileName{
-  font-size:10px;
-  color:white;
 }
 
 /* MODAL */
@@ -433,9 +397,7 @@ align-items:center;
 
 
 
-  #profileBtn{
-  overflow:hidden;
-}
+  
 
 
 
@@ -729,85 +691,6 @@ backdrop-filter:blur(10px);
   font-weight:600;
 }
 
-
-  #profileBtn{
-  position:absolute;
-  top:50%;
-  right:10px;
-  transform:translateY(-50%);
-
-  width:85px;
-  height:95px;
-
-  background:transparent;
-  border:none;
-  box-shadow:none;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-
-  cursor:pointer;
-  overflow:visible;
-  z-index:10;
-}
-
-
-  #profileName{
-  position:absolute;
-  top:70px;
-  left:50%;
-  transform:translateX(-50%);
-
-  padding:3px 10px;
-
-  background:rgba(255,255,255,.18);
-  backdrop-filter:blur(8px);
-
-  border:1px solid rgba(255,255,255,.35);
-  border-radius:20px;
-
-  color:#fff;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.3px;
-
-  white-space:nowrap;
-
-  box-shadow:0 4px 12px rgba(0,0,0,.25);
-  text-shadow:none;
-
-  z-index:15;
-}
-
-#profileBtn .icon,
-
-
-  #profileBtnImg{
-  position:absolute;
-  top:0;
-  left:50%;
-  transform:translateX(-50%);
-
-  width:62px !important;
-  height:62px !important;
-
-  border-radius:50%;
-  object-fit:cover;
-
-  display:none;
-
-  border:3px solid #fff;
-
-  box-shadow:
-      0 8px 20px rgba(0,0,0,.35),
-      0 0 15px rgba(66,165,245,.45);
-
-  animation:avatarPulse 2.5s ease-in-out infinite;
-}
-
-
   #profileBtn .icon{
   position:absolute;
   top:0;
@@ -893,49 +776,103 @@ backdrop-filter:blur(10px);
   }
 }
 
-  #editBadge{
-  position:absolute;
-  top:42px;
-  left:50%;
-  transform:translateX(18px);
-
-  width:22px;
-  height:22px;
-
-  border-radius:50%;
-  background:linear-gradient(135deg,#00E676,#00C853);
-  color:#fff;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:11px;
-  font-weight:bold;
-
-  border:2px solid #fff;
-
-  box-shadow:
-      0 4px 12px rgba(0,0,0,.35),
-      0 0 10px rgba(0,200,83,.6);
-
-  z-index:20;
-}
-
-  #profileBtn{
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-}
-
   #welcomeText{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 280px;
 }
-    
+
+
+/* ===== FINAL PROFILE HEADER FIX ===== */
+
+.topCard{
+  overflow:visible !important;
+}
+
+#profileBtn{
+  position:absolute;
+  top:50%;
+  right:12px;
+  transform:translateY(-50%);
+
+  width:75px;
+  height:85px;
+
+  background:transparent;
+  border:none;
+  box-shadow:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+  z-index:20;
+}
+
+
+#profileBtn .icon,
+#profileBtnImg{
+
+  position:absolute;
+
+  top:0;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:58px !important;
+  height:58px !important;
+
+  border-radius:50%;
+  object-fit:cover;
+
+  border:3px solid white;
+
+}
+
+
+#profileName{
+
+  position:absolute;
+
+  top:62px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  padding:3px 8px;
+
+  font-size:11px;
+  font-weight:bold;
+
+  white-space:nowrap;
+
+  background:rgba(255,255,255,.2);
+
+  border-radius:15px;
+
+  color:white;
+}
+
+
+#editBadge{
+
+  position:absolute;
+
+  top:38px;
+  left:50%;
+
+  transform:translateX(14px);
+
+  width:20px;
+  height:20px;
+
+  font-size:10px;
+
+}
+  
 </style>
 </head>
 
