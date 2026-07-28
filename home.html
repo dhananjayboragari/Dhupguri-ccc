@@ -675,7 +675,7 @@ align-items:center;
 
   width:95%;
   max-width:900px;
-  height:90px;
+  height:110px;
 
   display:flex;
   justify-content:space-between;
@@ -683,11 +683,14 @@ align-items:center;
 
   padding:12px 18px;
 
-  border-radius:22px;
+  border-radius:20px;
 
-  background:linear-gradient(135deg,#1565C0,#42A5F5);
+  background:linear-gradient(135deg,#0D47A1,#1976D2,#42A5F5);
 
-  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  box-shadow:     0 12px 30px rgba(0,0,0,.30),     0 0 20px rgba(66,165,245,.35);
+
+  border:1px solid rgba(255,255,255,.25);
+backdrop-filter:blur(10px);
 
   z-index:9999;
 
@@ -730,75 +733,89 @@ align-items:center;
   #profileBtn{
   position:absolute;
   top:50%;
-  right:12px;
+  right:10px;
   transform:translateY(-50%);
 
-  width:60px;
-  height:60px;
+  width:85px;
+  height:95px;
 
-  border:none;
   background:transparent;
-  cursor:pointer;
+  border:none;
+  box-shadow:none;
 
   display:flex;
-  justify-content:center;
+  flex-direction:column;
   align-items:center;
+  justify-content:flex-start;
 
+  cursor:pointer;
   overflow:visible;
   z-index:10;
 }
 
 
   #profileName{
-  display:block !important;
   position:absolute;
-  top:56px;
+  top:70px;
   left:50%;
   transform:translateX(-50%);
-  font-size:11px;
-  font-weight:600;
+
+  padding:3px 10px;
+
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(8px);
+
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:20px;
+
   color:#fff;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.3px;
+
   white-space:nowrap;
-  text-shadow:0 2px 5px rgba(0,0,0,.6);
-  z-index:6;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+  text-shadow:none;
+
+  z-index:15;
 }
 
 #profileBtn .icon,
 
-  
 
   #profileBtnImg{
   position:absolute;
-  top:0px;
+  top:0;
   left:50%;
   transform:translateX(-50%);
 
-  z-index:2;
-
-  width:54px !important;
-  height:54px !important;
+  width:62px !important;
+  height:62px !important;
 
   border-radius:50%;
   object-fit:cover;
 
   display:none;
 
-    
+  border:3px solid #fff;
 
-  animation:avatarPulse 2s ease-in-out infinite;
+  box-shadow:
+      0 8px 20px rgba(0,0,0,.35),
+      0 0 15px rgba(66,165,245,.45);
+
+  animation:avatarPulse 2.5s ease-in-out infinite;
 }
 
 
   #profileBtn .icon{
   position:absolute;
-  top:0px;
+  top:0;
   left:50%;
   transform:translateX(-50%);
 
-  z-index:2;
-
-  width:54px;
-  height:54px;
+  width:62px;
+  height:62px;
 
   border-radius:50%;
 
@@ -806,23 +823,28 @@ align-items:center;
   justify-content:center;
   align-items:center;
 
-  font-size:24px;
+  font-size:28px;
 
-  background:#fff;
+  background:#ffffff;
+  border:3px solid #fff;
 
-  animation:avatarPulse 2s ease-in-out infinite;
+  box-shadow:
+      0 8px 20px rgba(0,0,0,.35),
+      0 0 15px rgba(66,165,245,.45);
+
+  animation:avatarPulse 2.5s ease-in-out infinite;
 }
 
 @media(max-width:480px){
 
   .topCard{
-    height:88px;
-    padding:10px 14px;
+    height:102px;
+    padding:8px 12px;
   }
 
   .topLogo{
-    width:60px;
-    height:60px;
+    width:70px;
+    height:70px;
   }
 
   .topText h2{
@@ -835,16 +857,19 @@ align-items:center;
     text-align:left;
   }
 
-}
+  #profileBtn{
+    width:85px;
+    height:95px;
+  }
 
   #liveDateTime{
-  margin-top:2px;
+  margin-top:3px;
   font-size:12px;
   color:#EAF4FF;
   font-weight:500;
     text-align:left;
 }
-
+}
   @media(max-width:480px){
   #liveDateTime{
     font-size:11px;
@@ -870,27 +895,31 @@ align-items:center;
 
   #editBadge{
   position:absolute;
-  right:2px;
-  bottom:12px;
+  top:42px;
+  left:50%;
+  transform:translateX(18px);
 
-  width:18px;
-  height:18px;
+  width:22px;
+  height:22px;
 
   border-radius:50%;
-  background:#00C853;
+  background:linear-gradient(135deg,#00E676,#00C853);
   color:#fff;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  font-size:10px;
+  font-size:11px;
   font-weight:bold;
 
   border:2px solid #fff;
-  box-shadow:0 0 8px rgba(0,200,83,.5);
 
-  z-index:5;
+  box-shadow:
+      0 4px 12px rgba(0,0,0,.35),
+      0 0 10px rgba(0,200,83,.6);
+
+  z-index:20;
 }
 
   #profileBtn{
@@ -898,6 +927,13 @@ align-items:center;
     border: none !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
+}
+
+  #welcomeText{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
 }
     
 </style>
