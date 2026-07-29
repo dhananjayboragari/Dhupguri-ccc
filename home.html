@@ -160,8 +160,27 @@ a{
   .card-btn h3{
     font-size:13px;
   }
+
+  .topLeft{
+    flex:1;
+    min-width:0;
+  }
+
+  .topText{
+    flex:1;
+    min-width:0;
+  }
+
+  #welcomeText{
+    max-width:150px;   /* প্রয়োজন হলে 140px বা 130px করো */
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
 }
 
+  
 
 
   /* 🔥 LEFT RIGHT BIG */
@@ -796,7 +815,7 @@ backdrop-filter:blur(10px);
 #profileBtn{
   position:absolute;
   top:50%;
-  right:8px;
+  right:0px;
   transform:translateY(-50%);
 
   width:75px;
