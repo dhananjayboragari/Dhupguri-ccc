@@ -952,7 +952,7 @@ box-shadow:0 0 12px #00e5ff;
       font-weight:bold;
       outline:none;
     ">
-      <option value="user">👤 User</option>
+      <option value="user">👨‍💼 User</option>
       <option value="admin">👑 Admin</option>
     </select>
 
@@ -1315,7 +1315,7 @@ data.name || "-";
 <b>📧 Email :</b> ${data.email||"-"}<br>
 <b>📱 Phone :</b> ${data.phone||"-"}<br>
 <b>🏠 Address :</b> ${data.address||"-"}<br>
-<b>👤 Role :</b> ${data.role||"User"}<br>
+<b>👨‍💼 Role :</b> ${data.role||"User"}<br>
 <b>🟢 Status :</b> ${data.isOnline ? "Online":"Offline"}<br>
 <b>✅ Account :</b> ${data.accountStatus||"-"}<br>
 <b>🕒 Last Login :</b><br>${formatTime(data.lastLogin)}<br><br>
@@ -1337,7 +1337,7 @@ data.name || "-";
 <div class="control-row">
 
 <div class="control-box">
-<div class="label">👤 Role</div>
+<div class="label">👨‍💼 Role</div>
 
 <div class="role-badge ${
 data.superAdmin
@@ -1359,7 +1359,7 @@ ${data.superAdmin
 ? "👑 Super Admin"
 : (data.role=="admin"
 ? "👑 Admin"
-: "👤 User")}
+: "👨‍💼 User")}
 </div>
 
 </div>
@@ -1486,7 +1486,7 @@ currentUserData.superAdmin
 ? "👑 Super Admin"
 : currentUserData.role=="admin"
 ? "👑 Admin"
-: "👤 User";
+: "👨‍💼 User";
   
 isSuperAdmin = currentUserData.superAdmin === true;
 
@@ -1646,7 +1646,7 @@ onclick="event.stopPropagation(); openRolePopup(
 '${d.role || "user"}',
   ${d.superAdmin === true}
 )">
-${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤 User")}
+${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨‍💼 User")}
 </div>
 </td>
 
@@ -1796,7 +1796,7 @@ onclick="event.stopPropagation(); openRolePopup(
 '${d.role || "user"}',
 ${d.superAdmin === true}
 )">
-${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👤 User")}
+${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨‍💼 User")}
 </div>
 </td>
 
