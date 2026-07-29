@@ -169,10 +169,12 @@ a{
   .topText{
     flex:1;
     min-width:0;
+    max-width:calc(100% - 110px);
   }
 
   #welcomeText{
-    max-width:130px;   /* প্রয়োজন হলে 140px বা 130px করো */
+    display:block;
+    max-width:100px;   /* প্রয়োজন হলে 140px বা 130px করো */
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
