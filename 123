@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Dashboard</title>
+  
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI;
+}
+
+
+  body{
+  background: linear-gradient(-45deg,#1d2671,#c33764,#0f2027,#2c5364);
+  background-size:400% 400%;
+  animation:gradientBG 12s ease infinite;
+  color:#fff;
+  padding:20px;
+  min-height:100vh;
+}
+
+
+/* Header */
+h1{
+  margin-bottom:20px;
+}
+
+/* Cards */
+.cards{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.card{
+  flex:1;
+  min-width:220px;
+  padding:20px;
+  border-radius:15px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  text-align:center;
+}
+
+.card h2{
+  font-size:28px;
+}
+
+/* Table */
+.table-container{
+  margin-top:20px;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse: collapse;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+th,td{
+  padding:12px;
+  text-align:left;
+}
+  td{
+  white-space: normal;
+}
+
+th{
+  background:rgba(0,0,0,0.4);
+}
+
+tr{
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+tr:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+/* User Info */
+.user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.user img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #fff;
+}
+
+/* Status */
+.online{
+  color:#00ff9d;
+  font-weight:bold;
+}
+
+.offline{
+  color:#ff4d4d;
+  font-weight:bold;
+}
+
+
+
+
+  /* Account Status */
+.active-account{
+  color:#00ff9d;
+  font-weight:bold;
+}
+
+.deactive-account{
+  color:#ff4d4d;
+  font-weight:bold;
+}
+
+/* Action Button */
+.action-btn{
+  border:none;
+  padding:6px 12px;
+  border-radius:8px;
+  color:#fff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.activate-btn{
+  background:#28a745;
+}
+
+.deactivate-btn{
+  background:#dc3545;
+}
+
+
+  /* ===== Premium Popup ===== */
+
+.popup-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+  z-index:9999;
+}
+
+.popup-overlay.show{
+  opacity:1;
+  visibility:visible;
+}
+
+.popup-box{
+  width:90%;
+  max-width:360px;
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:22px;
+  padding:25px;
+  text-align:center;
+  animation:popupZoom .3s ease;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+@keyframes popupZoom{
+  from{
+    transform:scale(.8);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.popup-icon{
+  width:70px;
+  height:70px;
+  margin:auto;
+  border-radius:50%;
+  background:#ff9800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  margin-bottom:15px;
+}
+
+.popup-box h2{
+  color:#fff;
+  margin-bottom:10px;
+}
+
+.popup-box p{
+  color:#ddd;
+  margin-bottom:22px;
+  line-height:1.5;
+}
+
+.popup-buttons{
+  display:flex;
+  gap:12px;
+}
+
+.popup-buttons button{
+  flex:1;
+  border:none;
+  border-radius:12px;
+  padding:12px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.cancel-btn{
+  background:#555;
+  color:#fff;
+}
+
+
+  .confirm-btn{
+  background:linear-gradient(135deg,#ff512f,#dd2476);
+  color:#fff;
+  transition:.3s;
+}
+
+
+  .confirm-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(221,36,118,.45);
+}
+
+.cancel-btn:hover{
+  background:#666;
+}
+
+  .popup-box{
+  transition:0.3s;
+}
+
+.popup-overlay{
+  transition:opacity .3s ease, visibility .3s ease;
+}
+
+.popup-overlay.show .popup-box{
+  transform:scale(1);
+}
+
+.popup-overlay .popup-box{
+  transform:scale(.8);
+}
+
+
+
+  .popup-icon{
+  box-shadow:0 0 25px rgba(255,255,255,.35);
+  animation:iconPulse 1.5s infinite;
+}
+
+@keyframes iconPulse{
+  0%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.1);
+  }
+  100%{
+    transform:scale(1);
+  }
+}
+
+  #popupImage{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid rgba(255,255,255,.8);
+  margin:15px auto;
+  display:block;
+  box-shadow:0 8px 20px rgba(0,0,0,.35);
+}
+
+  @media (max-width:768px){
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.card{
+    min-width:0;
+    padding:15px;
+}
+
+.card p{
+    font-size:14px;
+}
+
+.card h2{
+    font-size:24px;
+}
+
+}
+
+  /* ===== Premium Role Badge ===== */
+
+.role-badge{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+padding:8px 14px;
+border-radius:50px;
+font-size:13px;
+font-weight:700;
+color:#fff;
+letter-spacing:.4px;
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+transition:.3s;
+cursor:pointer;
+user-select:none;
+}
+
+.role-badge:hover{
+transform:translateY(-2px) scale(1.05);
+}
+
+.role-admin{
+background:linear-gradient(135deg,#ffb300,#ff6f00);
+box-shadow:0 0 18px rgba(255,179,0,.45);
+}
+
+  .role-superadmin{
+background:linear-gradient(135deg,#7b1fa2,#d500f9);
+box-shadow:0 0 20px rgba(213,0,249,.6);
+color:#fff;
+}
+
+.role-user{
+background:linear-gradient(135deg,#2196f3,#1565c0);
+box-shadow:0 0 18px rgba(33,150,243,.45);
+}
+
+
+  #roleUserImage{
+    width: 80px !important;
+    height: 80px !important;
+    display: block !important;
+    margin: 15px auto !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 3px solid #fff !important;
+    box-shadow: 0 6px 15px rgba(0,0,0,.3);
+}
+
+
+  /* ===== Premium Loading Skeleton ===== */
+
+.skeleton{
+    animation:skeleton-loading 1.2s linear infinite alternate;
+}
+
+@keyframes skeleton-loading{
+    from{
+        opacity:.55;
+    }
+    to{
+        opacity:1;
+    }
+}
+
+.skeleton td{
+    padding:16px;
+}
+
+.skeleton-box{
+    width:100%;
+    height:15px;
+    border-radius:8px;
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.08) 25%,
+        rgba(255,255,255,.22) 50%,
+        rgba(255,255,255,.08) 75%
+    );
+    background-size:200% 100%;
+    animation:shimmer 1.4s infinite;
+}
+
+@keyframes shimmer{
+    0%{
+        background-position:200% 0;
+    }
+    100%{
+        background-position:-200% 0;
+    }
+}
+
+/* ===== Premium Table Row ===== */
+
+tbody tr{
+    transition:.35s;
+    animation:fadeUp .35s ease;
+}
+
+tbody tr:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+    background:rgba(255,255,255,.09);
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+
+  @media(max-width:768px){
+
+table{
+    border-collapse:separate;
+    border-spacing:0 12px;
+}
+
+tbody tr{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:15px;
+}
+
+td{
+    border-top:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+td:first-child{
+    border-left:1px solid rgba(255,255,255,.08);
+    border-radius:12px 0 0 12px;
+}
+
+td:last-child{
+    border-right:1px solid rgba(255,255,255,.08);
+    border-radius:0 12px 12px 0;
+}
+
+}
+
+
+
+  /* Desktop + Tablet Premium Table */
+
+@media (min-width:768px){
+
+table{
+    border-collapse:separate;
+    border-spacing:0 12px;
+}
+
+tbody tr{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.15);
+    transition:.3s;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,.10);
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+tbody td{
+    border-top:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+tbody td:first-child{
+    border-left:1px solid rgba(255,255,255,.08);
+    border-radius:15px 0 0 15px;
+}
+
+tbody td:last-child{
+    border-right:1px solid rgba(255,255,255,.08);
+    border-radius:0 15px 15px 0;
+}
+
+}
+
+
+  /* ===== Premium Header ===== */
+
+.dashboard-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+margin-bottom:20px;
+border-radius:22px;
+background:rgba(255,255,255,.10);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.15);
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+flex-wrap:wrap;
+gap:20px;
+}
+
+.admin-profile{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.admin-profile img{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #fff;
+}
+
+#adminName{
+font-size:24px;
+font-weight:700;
+margin:0;
+}
+
+#adminRole{
+margin-top:5px;
+color:#ffd54f;
+font-weight:600;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.header-box{
+background:rgba(255,255,255,.08);
+padding:12px 18px;
+border-radius:15px;
+text-align:center;
+min-width:130px;
+}
+
+.header-box span{
+display:block;
+font-size:12px;
+opacity:.8;
+}
+
+.header-box strong{
+font-size:18px;
+}
+
+.refresh-btn{
+border:none;
+padding:13px 20px;
+border-radius:15px;
+background:linear-gradient(135deg,#00c853,#009688);
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.refresh-btn:hover{
+transform:translateY(-2px);
+}
+
+@media(max-width:768px){
+
+.dashboard-header{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.header-right{
+width:100%;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+}
+
+.refresh-btn{
+grid-column:span 2;
+}
+
+}
+
+  /* ===== Floating Background ===== */
+
+.bg-animation{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+overflow:hidden;
+z-index:-1;
+}
+
+.bg-animation span{
+position:absolute;
+display:block;
+width:22px;
+height:22px;
+border-radius:50%;
+background:rgba(255,255,255,.18);
+box-shadow:0 0 25px rgba(255,255,255,.4);
+animation:floatBall 18s linear infinite;
+bottom:-120px;
+}
+
+.bg-animation span:nth-child(1){
+left:5%;
+animation-duration:14s;
+width:18px;
+height:18px;
+}
+
+.bg-animation span:nth-child(2){
+left:18%;
+animation-duration:20s;
+width:30px;
+height:30px;
+}
+
+.bg-animation span:nth-child(3){
+left:30%;
+animation-duration:16s;
+}
+
+.bg-animation span:nth-child(4){
+left:45%;
+animation-duration:22s;
+width:40px;
+height:40px;
+}
+
+.bg-animation span:nth-child(5){
+left:58%;
+animation-duration:18s;
+}
+
+.bg-animation span:nth-child(6){
+left:70%;
+animation-duration:24s;
+width:35px;
+height:35px;
+}
+
+.bg-animation span:nth-child(7){
+left:82%;
+animation-duration:19s;
+}
+
+.bg-animation span:nth-child(8){
+left:90%;
+animation-duration:17s;
+width:28px;
+height:28px;
+}
+
+.bg-animation span:nth-child(9){
+left:65%;
+animation-duration:15s;
+}
+
+.bg-animation span:nth-child(10){
+left:38%;
+animation-duration:21s;
+width:26px;
+height:26px;
+}
+
+@keyframes floatBall{
+
+0%{
+transform:translateY(0) scale(.5);
+opacity:0;
+}
+
+20%{
+opacity:1;
+}
+
+100%{
+transform:translateY(-110vh) scale(1.3);
+opacity:0;
+}
+
+}
+
+  /* ===== USER CONTROL PANEL ===== */
+
+.control-panel{
+margin-top:18px;
+border-top:1px solid rgba(255,255,255,.15);
+padding-top:18px;
+}
+
+.control-title{
+text-align:center;
+font-size:18px;
+font-weight:700;
+letter-spacing:1px;
+margin-bottom:18px;
+color:#fff;
+}
+
+.control-row{
+display:flex;
+justify-content:space-between;
+gap:15px;
+}
+
+.control-box{
+flex:1;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.12);
+border-radius:15px;
+padding:14px;
+text-align:center;
+}
+
+.control-box .label{
+font-size:13px;
+margin-bottom:12px;
+font-weight:600;
+color:#ddd;
+}
+
+.control-box .role-badge,
+.control-box .action-btn{
+width:100%;
+justify-content:center;
+height:44px;
+font-size:14px;
+border-radius:12px;
+}
+
+.control-box .action-btn{
+font-weight:700;
+}
+
+@media(max-width:480px){
+
+.control-row{
+flex-direction:row;
+gap:10px;
+}
+
+.control-box{
+padding:10px;
+}
+
+.control-title{
+font-size:16px;
+}
+
+}
+
+  /* Premium Divider */
+
+.control-divider{
+width:100%;
+height:1px;
+margin:8px 0 18px;
+background:linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,.8),
+transparent
+);
+position:relative;
+}
+
+.control-divider::before{
+content:"";
+position:absolute;
+left:50%;
+top:-4px;
+transform:translateX(-50%);
+width:10px;
+height:10px;
+border-radius:50%;
+background:#00e5ff;
+box-shadow:0 0 12px #00e5ff;
+}
+
+
+  .popup-box{
+    max-height:90vh;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+}
+  .popup-overlay{
+    padding:15px;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+
+
+  /* ================================
+   MOBILE USER CARD
+================================ */
+
+.mobile-user-list{
+    display:none;
+}
+
+.mobile-user-card{
+    position:relative;
+    padding:16px;
+    margin-bottom:14px;
+    border-radius:20px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(16px);
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    cursor:pointer;
+    transition:.3s;
+}
+
+.mobile-user-card:active{
+    transform:scale(.98);
+}
+
+.mobile-user-top{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.mobile-user-top img{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid rgba(255,255,255,.8);
+}
+
+.mobile-user-name{
+    font-size:17px;
+    font-weight:700;
+}
+
+.mobile-user-email{
+    font-size:12px;
+    opacity:.75;
+    margin-top:4px;
+    word-break:break-all;
+}
+
+.mobile-user-status{
+    margin-left:auto;
+    font-size:11px;
+    font-weight:700;
+    padding:6px 9px;
+    border-radius:20px;
+    white-space:nowrap;
+}
+
+.mobile-online{
+    background:rgba(0,200,83,.18);
+    color:#00ff9d;
+}
+
+.mobile-offline{
+    background:rgba(255,59,48,.18);
+    color:#ff6b61;
+}
+
+.mobile-user-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:14px;
+}
+
+.mobile-info-box{
+    padding:9px 10px;
+    border-radius:12px;
+    background:rgba(0,0,0,.15);
+}
+
+.mobile-info-label{
+    font-size:10px;
+    opacity:.65;
+    margin-bottom:3px;
+}
+
+.mobile-info-value{
+    font-size:12px;
+    font-weight:600;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.mobile-user-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:13px;
+    padding-top:12px;
+    border-top:1px solid rgba(255,255,255,.12);
+}
+
+.mobile-view{
+    font-size:12px;
+    font-weight:700;
+    opacity:.85;
+}
+
+.mobile-role{
+    font-size:11px;
+}
+
+
+/* MOBILE ONLY */
+@media(max-width:767px){
+
+    .table-container{
+        display:none;
+    }
+
+    .mobile-user-list{
+        display:block;
+        margin-top:20px;
+    }
+
+}
+
+
+/* DESKTOP ONLY */
+@media(min-width:768px){
+
+    .mobile-user-list{
+        display:none !important;
+    }
+
+  }
+
+  
+</style>
+</head>
+
+<body>
+
+  <div class="bg-animation">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+  <div class="dashboard-header">
+
+    <div class="admin-profile">
+
+        <img id="adminPhoto" src="https://i.imgur.com/HeIi0wU.png">
+
+        <div>
+            <h2 id="adminName">Welcome...</h2>
+            <p id="adminRole">Loading...</p>
+        </div>
+
+    </div>
+
+    <div class="header-right">
+
+        <div class="header-box">
+            <span>🕒 Time</span>
+            <strong id="liveTime">--:--:--</strong>
+        </div>
+
+        <div class="header-box">
+            <span>📅 Date</span>
+            <strong id="todayDate">--/--/----</strong>
+        </div>
+
+        <button class="refresh-btn" onclick="location.reload()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</div>
+
+
+  <div class="cards">
+  <div class="card">
+    <p>👨‍👩‍👧‍👦 Total Users</p>
+    <h2 id="total">0</h2>
+  </div>
+
+  <div class="card">
+    <p>🟢 Online Users</p>
+    <h2 id="online">0</h2>
+  </div>
+
+  <div class="card">
+    <p>✅ Active Users</p>
+    <h2 id="activeCount">0</h2>
+  </div>
+
+  <div class="card">
+    <p>❌ Deactivated Users</p>
+    <h2 id="deactiveCount">0</h2>
+  </div>
+
+    <div class="card">
+  <p>⏳ Pending Approval</p>
+  <h2 id="pendingCount">0</h2>
+</div>
+    
+</div>
+  
+  
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>User</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Address</th>
+<th>Status</th>
+  <th>Account</th>
+  <th>New Approval</th>
+  <th>Role</th>
+<th>Action</th>
+<th>Last Login</th>
+<th>Last Seen</th>
+  
+</tr>
+</thead>
+
+<tbody id="userTable"></tbody>
+</table>
+</div>
+
+  <!-- MOBILE USER CARDS -->
+<div id="mobileUserList" class="mobile-user-list"></div>
+
+
+  <!-- ===== Premium Role Popup ===== -->
+<div id="rolePopup" class="popup-overlay">
+
+  <div class="popup-box">
+
+    <div class="popup-icon" id="roleIcon">👑</div>
+
+    <img id="roleUserImage" src="https://i.imgur.com/HeIi0wU.png">
+
+    <h2>Change User Role</h2>
+
+    <p id="roleUserName"></p>
+
+    <select id="roleSelect" style="
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:12px;
+      margin:18px 0;
+      font-size:15px;
+      font-weight:bold;
+      outline:none;
+    ">
+      <option value="user">👨‍💼 User</option>
+      <option value="admin">👑 Admin</option>
+    </select>
+
+    <div class="popup-buttons">
+      <button class="cancel-btn" onclick="closeRolePopup()">
+        Cancel
+      </button>
+
+      <button class="confirm-btn" onclick="saveRole()">
+        Save
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- Premium Custom Popup -->
+<div id="customPopup" class="popup-overlay">
+
+  <div class="popup-box">
+
+    <div class="popup-icon">⚠️</div>  <img id="popupImage" src="https://i.imgur.com/HeIi0wU.png">
+
+    <h2 id="popupTitle">Deactivate Account</h2>
+
+    <p id="popupText">
+      Are you sure?
+    </p>
+
+    <p id="popupUser"></p>
+
+    <div class="popup-buttons">
+      <button class="cancel-btn" onclick="closePopup()">
+        Cancel
+      </button>
+
+      <button class="confirm-btn" onclick="confirmAction()">
+        Confirm
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+  <div id="userInfoPopup" class="popup-overlay">
+
+<div class="popup-box" style="max-width:450px;">
+
+<img id="infoImage"
+src="https://i.imgur.com/HeIi0wU.png"
+style="
+width:90px;
+height:90px;
+border-radius:50%;
+border:4px solid white;
+object-fit:cover;
+margin:auto;
+display:block;
+">
+
+<h2 id="infoName"></h2>
+
+<div id="infoBody"
+style="
+margin-top:20px;
+text-align:left;
+line-height:1.9;
+font-size:15px;
+">
+</div>
+
+<div class="popup-buttons">
+<button class="confirm-btn"
+onclick="closeInfoPopup()">
+Close
+</button>
+</div>
+
+</div>
+
+</div>
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  import { getDatabase, ref, onValue, set, onDisconnect } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
+  authDomain: "dhupguri-ccc.firebaseapp.com",
+  projectId: "dhupguri-ccc",
+  storageBucket: "dhupguri-ccc.firebasestorage.app",
+  messagingSenderId: "278611213070",
+  appId: "1:278611213070:web:f9652c7965f472164c355f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
+  
+  let isSuperAdmin = false;
+
+
+  
+
+
+  let selectedUid = "";
+let selectedStatus = "";
+
+function toggleAccount(uid, currentStatus, userName, userImage, targetSuperAdmin){ 
+  
+
+  if(uid === auth.currentUser.uid){
+    showMessage("❌ You cannot modify your own account.");
+    return;
+}
+  
+  if(targetSuperAdmin && !isSuperAdmin){     showMessage("🚫 Super Admin cannot be modified.");     return;   }  
+                                                                      
+  selectedUid = uid;
+  selectedStatus = currentStatus;
+  document.getElementById("popupUser").innerHTML =
+  "<b>User:</b> " + userName;
+
+  document.getElementById("popupImage").src =
+userImage || "https://i.imgur.com/HeIi0wU.png";
+
+  document.getElementById("popupTitle").innerText =
+    currentStatus === "active"
+      ? "Deactivate Account"
+      : "Activate Account";
+
+  const icon = document.querySelector(".popup-icon");
+const btn = document.querySelector(".confirm-btn");
+
+if(currentStatus === "active"){
+  icon.innerHTML = "❌";
+  icon.style.background = "#ff3b30";
+  btn.style.background = "#ff3b30";
+}else{
+  icon.innerHTML = "✅";
+  icon.style.background = "#00c853";
+  btn.style.background = "#00c853";
+}
+
+  document.getElementById("popupText").innerText =
+    currentStatus === "active"
+      ? "Are you sure you want to deactivate this account?"
+      : "Are you sure you want to activate this account?";
+
+  document.getElementById("customPopup").classList.add("show");
+}
+
+window.toggleAccount = toggleAccount;
+
+
+  
+
+
+  let selectedRoleUid = "";
+
+function openRolePopup(uid, name, image, currentRole, targetSuperAdmin){
+
+    if(targetSuperAdmin && !isSuperAdmin){
+        showMessage("🚫 Super Admin cannot be modified.");
+        return;
+    }
+
+    selectedRoleUid = uid;
+
+    document.getElementById("roleUserName").innerHTML =
+        "<b>User :</b> " + name;
+
+    document.getElementById("roleUserImage").src =
+        image || "https://i.imgur.com/HeIi0wU.png";
+
+    document.getElementById("roleSelect").value =
+        currentRole || "user";
+
+    document.getElementById("rolePopup").classList.add("show");
+}
+
+window.openRolePopup = openRolePopup;
+
+function closeRolePopup(){
+
+    document.getElementById("rolePopup").classList.remove("show");
+
+}
+
+window.closeRolePopup = closeRolePopup;
+
+  function showMessage(msg){
+
+const popup=document.createElement("div");
+
+popup.innerHTML=`
+<div style="
+position:fixed;
+top:30px;
+left:50%;
+transform:translateX(-50%);
+background:#FFC107;
+color:#fff;
+padding:15px 25px;
+font-weight:700;
+border:2px solid #FFD54F;
+border-radius:12px;
+font-weight:bold;
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+z-index:99999;
+animation:fadeIn .3s;">
+${msg}
+</div>`;
+
+document.body.appendChild(popup);
+
+setTimeout(()=>{
+popup.remove();
+},2500);
+
+}
+
+window.showMessage=showMessage;
+
+
+  async function saveRole(){
+
+    const btn = document.querySelector("#rolePopup .confirm-btn");
+
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Saving...";
+
+    try{
+
+        const role = document.getElementById("roleSelect").value;
+
+        await updateDoc(doc(db,"users",selectedRoleUid),{
+
+            role: role
+
+        });
+
+        btn.innerHTML = "✅ Saved";
+
+        setTimeout(()=>{
+
+            btn.disabled = false;
+            btn.innerHTML = "Save";
+
+            closeRolePopup();
+
+        },1000);
+
+    }catch(e){
+
+        alert(e.message);
+
+        btn.disabled = false;
+        btn.innerHTML = "Save";
+
+    }
+
+}
+
+window.saveRole = saveRole;
+
+  document.getElementById("rolePopup").addEventListener("click", function(e){
+
+    if(e.target === this){
+        closeRolePopup();
+    }
+
+});
+
+  async function confirmAction(){
+
+  const btn = document.querySelector("#customPopup .confirm-btn");
+
+  btn.disabled = true;
+  btn.innerHTML = "⏳ Processing...";
+
+  try{
+
+    let newStatus="active";  if(selectedStatus=="pending"){     newStatus="active"; } else if(selectedStatus=="active"){     newStatus="deactivated"; } else{     newStatus="active"; }
+
+    await updateDoc(doc(db,"users",selectedUid),{
+      accountStatus:newStatus
+    });
+
+    btn.innerHTML = "✅ Success";
+
+    setTimeout(()=>{
+      btn.disabled = false;
+      btn.innerHTML = "Confirm";
+      closePopup();
+    },1000);
+
+  }catch(e){
+
+    btn.disabled = false;
+    btn.innerHTML = "Confirm";
+
+    alert("Error : "+e.message);
+
+  }
+
+}
+  
+
+  function closePopup(){
+
+  const popup = document.getElementById("customPopup");
+
+  popup.classList.remove("show");
+
+  setTimeout(()=>{
+
+    const btn = document.querySelector("#customPopup .confirm-btn");
+    btn.disabled = false;
+    btn.innerHTML = "Confirm";
+
+  },300);
+
+}
+
+  window.closePopup = closePopup;
+
+  async function showUserInfoFromId(uid){
+  const snap = await getDoc(doc(db,"users",uid));
+  if(!snap.exists()) return;
+
+  const data = snap.data();
+  data.uid = uid;
+  showUserInfo(data);
+}
+
+window.showUserInfoFromId = showUserInfoFromId;
+
+  function showUserInfo(data){
+
+document.getElementById("infoImage").src =
+data.image || "https://i.imgur.com/HeIi0wU.png";
+
+document.getElementById("infoName").innerHTML =
+data.name || "-";
+
+
+    document.getElementById("infoBody").innerHTML = `
+<b>📧 Email :</b> ${data.email||"-"}<br>
+<b>📱 Phone :</b> ${data.phone||"-"}<br>
+<b>🏠 Address :</b> ${data.address||"-"}<br>
+<b>👨‍💼 Role :</b> ${data.role||"User"}<br>
+<b>🟢 Status :</b> ${data.isOnline ? "Online":"Offline"}<br>
+<b>✅ Account :</b> ${data.accountStatus||"-"}<br>
+<b>🕒 Last Login :</b><br>${formatTime(data.lastLogin)}<br><br>
+<b>👁 Last Seen :</b><br>${formatTime(data.lastSeen)}
+
+<hr style="margin:15px 0">
+
+
+
+
+
+  <div class="control-panel">
+  <div class="control-divider"></div>
+
+<div class="control-title">
+⚙️ USER CONTROLS
+</div>
+
+<div class="control-row">
+
+<div class="control-box">
+<div class="label">👨‍💼 Role</div>
+
+<div class="role-badge ${
+data.superAdmin
+? 'role-superadmin'
+: (data.role=="admin"
+? 'role-admin'
+: 'role-user')
+}"
+onclick="
+closeInfoPopup();
+openRolePopup(
+'${data.uid}',
+'${data.name}',
+'${data.image||''}',
+'${data.role||'user'}',
+${data.superAdmin===true}
+)">
+${data.superAdmin
+? "👑 Super Admin"
+: (data.role=="admin"
+? "👑 Admin"
+: "👨‍💼 User")}
+</div>
+
+</div>
+
+<div class="control-box">
+
+<div class="label">🛡️ Account</div>
+
+<button
+class="action-btn ${
+data.accountStatus=="active"
+? "deactivate-btn"
+: "activate-btn"
+}"
+onclick="
+closeInfoPopup();
+toggleAccount(
+'${data.uid}',
+'${data.accountStatus}',
+'${data.name}',
+'${data.image||''}',
+${data.superAdmin===true}
+)">
+${data.accountStatus=="active"
+? "🚫 Deactivate"
+: "✅ Activate"}
+</button>
+
+</div>
+
+</div>
+
+`;
+
+document.getElementById("userInfoPopup")
+.classList.add("show");
+
+}
+
+function closeInfoPopup(){
+
+document.getElementById("userInfoPopup")
+.classList.remove("show");
+
+}
+
+window.showUserInfo=showUserInfo;
+window.closeInfoPopup=closeInfoPopup;
+  
+window.confirmAction = confirmAction;
+
+
+  // Click outside popup to close
+document.getElementById("customPopup").addEventListener("click",function(e){
+
+  if(e.target === this){
+    closePopup();
+  }
+
+});
+  
+
+
+  window.toggleAccount = toggleAccount;
+  
+
+const rtdb = getDatabase(app);
+
+  function formatTime(ts){
+  if(!ts) return "-";
+
+  let date;
+
+  if(ts.toDate){
+    date = ts.toDate();
+  } else if(ts.seconds){
+    date = new Date(ts.seconds * 1000);
+  } else {
+    date = new Date(ts);
+  }
+
+  if(isNaN(date.getTime())) return "-";
+
+  let day = String(date.getDate()).padStart(2,'0');
+  let month = String(date.getMonth()+1).padStart(2,'0');
+  let year = date.getFullYear();
+
+  let hours = date.getHours();
+  let minutes = String(date.getMinutes()).padStart(2,'0');
+  let seconds = String(date.getSeconds()).padStart(2,'0');
+
+  let ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  hours = String(hours).padStart(2,'0');
+
+  return `${day}/${month}/${year}<br>${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
+onAuthStateChanged(auth, async (user) => {
+
+  
+  if(!user){
+    window.location.href="index.html";
+    return;
+  }
+
+  // ✅ Admin check
+
+  // ✅ Role Check
+const userRef = doc(db, "users", user.uid);
+const userSnap = await getDoc(userRef);
+
+  const currentUserData = userSnap.data();
+
+  document.getElementById("adminPhoto").src =
+currentUserData.image || "https://i.imgur.com/HeIi0wU.png";
+
+document.getElementById("adminName").innerText =
+"Welcome, " + (currentUserData.name || "Admin");
+
+document.getElementById("adminRole").innerText =
+currentUserData.superAdmin
+? "👑 Super Admin"
+: currentUserData.role=="admin"
+? "👑 Admin"
+: "👨‍💼 User";
+  
+isSuperAdmin = currentUserData.superAdmin === true;
+
+if (!userSnap.exists() || userSnap.data().role !== "admin") {
+  alert("Access Denied ❌");
+  window.location.href = "index.html";
+  return;
+}
+
+  // ✅ Firestore Online
+  // ✅ Firestore Online + Login Time
+await updateDoc(doc(db,"users",user.uid),{
+  isOnline:true,
+  lastLogin: serverTimestamp()   // ✅ ADD
+});
+
+  // 🔥 Realtime Presence START
+  
+  const statusRef = ref(rtdb, "status/" + user.uid);
+
+  set(statusRef, {
+    state: "online",
+    lastChanged: Date.now()
+  });
+
+  onDisconnect(statusRef).set({
+    state: "offline",
+    lastChanged: Date.now()
+  });
+
+  
+  onValue(statusRef, async (snap) => {
+  const status = snap.val();
+
+  if(status.state === "offline"){
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline:false,
+      lastLogout: serverTimestamp(),   // ✅ logout time
+      lastSeen: serverTimestamp()      // ✅ last seen
+    });
+  } else {
+    await updateDoc(doc(db,"users",user.uid),{
+      isOnline:true,
+      lastSeen: serverTimestamp()      // ✅ active seen
+    });
+  }
+});
+
+  // 🔥 ADD THIS BELOW onValue block
+window.addEventListener("beforeunload", async () => {
+  if(auth.currentUser){
+    await updateDoc(doc(db,"users",auth.currentUser.uid),{
+      isOnline:false,
+      lastLogout: serverTimestamp(),
+      lastSeen: serverTimestamp()
+    });
+  }
+});
+
+  // 🔥 LIVE DATA
+  let latestSnapshot = null;
+
+  setInterval(()=>{
+  if(latestSnapshot){
+
+    let total = latestSnapshot.size;
+    let online = 0;
+    let activeUsers = 0;
+let deactiveUsers = 0;
+    let pendingUsers = 0;
+    let html = "";
+    let mobileHtml = "";
+
+    latestSnapshot.forEach(docSnap=>{
+      let d = docSnap.data();
+      if(d.accountStatus=="pending"){
+    pendingUsers++;
+}
+else if(d.accountStatus=="deactivated"){
+    deactiveUsers++;
+}
+else{
+    activeUsers++;
+}
+      let isOnlineNow = false;
+
+      if(d.lastSeen){
+        let time;
+
+        if(d.lastSeen.toDate){
+          time = d.lastSeen.toDate().getTime();
+        } else if(d.lastSeen.seconds){
+          time = d.lastSeen.seconds * 1000;
+        } else {
+          time = new Date(d.lastSeen).getTime();
+        }
+
+        let diff = Date.now() - time;
+
+        if(diff <= 120000){
+          isOnlineNow = true;
+        }
+      }
+
+      if(isOnlineNow) online++;
+
+  mobileHtml += `
+<div class="mobile-user-card"
+     onclick="showUserInfoFromId('${docSnap.id}')">
+
+    <div class="mobile-user-top">
+
+        <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+
+        <div style="min-width:0;">
+            <div class="mobile-user-name">
+                ${d.name || "-"}
+            </div>
+
+            <div class="mobile-user-email">
+                ${d.email || "-"}
+            </div>
+        </div>
+
+        <div class="mobile-user-status ${
+            isOnlineNow ? "mobile-online" : "mobile-offline"
+        }">
+            ${isOnlineNow ? "🟢 Online" : "🔴 Offline"}
+        </div>
+
+    </div>
+
+
+    <div class="mobile-user-info">
+
+        <div class="mobile-info-box">
+            <div class="mobile-info-label">📱 PHONE</div>
+            <div class="mobile-info-value">
+                ${d.phone || "-"}
+            </div>
+        </div>
+
+        <div class="mobile-info-box">
+            <div class="mobile-info-label">📍 ADDRESS</div>
+            <div class="mobile-info-value">
+                ${d.address || "-"}
+            </div>
+        </div>
+
+        <div class="mobile-info-box">
+            <div class="mobile-info-label">🛡️ ACCOUNT</div>
+            <div class="mobile-info-value">
+                ${
+                    d.accountStatus=="pending"
+                    ? "🟡 Pending"
+                    : d.accountStatus=="active"
+                    ? "✅ Active"
+                    : "❌ Deactivated"
+                }
+            </div>
+        </div>
+
+        <div class="mobile-info-box">
+            <div class="mobile-info-label">👑 ROLE</div>
+            <div class="mobile-info-value mobile-role">
+                ${
+                    d.superAdmin
+                    ? "👑 Super Admin"
+                    : d.role=="admin"
+                    ? "👑 Admin"
+                    : "👨‍💼 User"
+                }
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="mobile-user-bottom">
+
+        <span class="mobile-view">
+            👁️ View Full Details
+        </span>
+
+        <span>
+            →
+        </span>
+
+    </div>
+
+</div>
+`;
+
+      html += `
+
+  
+      <tr onclick="showUserInfoFromId('${docSnap.id}')">
+        <td>
+          <div class="user">
+            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+            <span>${d.name || "-"}</span>
+          </div>
+        </td>
+
+        <td>${d.email || "-"}</td>
+        <td>${d.phone || "-"}</td>
+        <td>${d.address || "-"}</td>
+
+        <td class="${isOnlineNow ? 'online':'offline'}">
+  ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
+</td>
+
+  <td class="${
+d.accountStatus=="active"
+? "active-account"
+: d.accountStatus=="deactivated"
+? "deactive-account"
+: ""
+}">
+${
+d.accountStatus=="pending"
+? "🟡 Pending"
+: d.accountStatus=="active"
+? "✅ Active"
+: "❌ Deactivated"
+}
+</td>
+
+  <td>
+${
+d.accountStatus=="pending"
+?"🟡 Pending"
+:d.accountStatus=="active"
+?"🟢 Approved"
+:"🔴 Rejected"
+}
+</td>
+
+<td>
+<div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
+onclick="event.stopPropagation(); openRolePopup(
+'${docSnap.id}',
+'${d.name || "Unknown"}',
+'${d.image || ""}',
+'${d.role || "user"}',
+  ${d.superAdmin === true}
+)">
+${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨‍💼 User")}
+</div>
+</td>
+
+<td>
+  <button
+    class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
+    onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
+   ${d.superAdmin === true} )">
+
+    ${ d.accountStatus=="pending" ?"Approve" :d.accountStatus=="active" ?"Deactivate" :"Activate" }
+
+  </button>
+</td>
+
+<td>${formatTime(d.lastLogin)}</td>
+<td>${formatTime(d.lastSeen)}</td>
+      </tr>
+      `;
+    });
+
+    document.getElementById("total").innerText = total;
+    document.getElementById("online").innerText = online;
+   document.getElementById("activeCount").innerText = activeUsers;
+document.getElementById("deactiveCount").innerText = deactiveUsers; 
+    document.getElementById("pendingCount").innerText = pendingUsers;
+    document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
+  }
+    document.getElementById("mobileUserList").innerHTML = mobileHtml;
+},10000);
+
+
+  document.getElementById("userTable").innerHTML = `
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+<tr class="skeleton">
+<td colspan="10"><div class="skeleton-box"></div></td>
+</tr>
+`;
+  
+  onSnapshot(collection(db,"users"), (snapshot)=>{
+    latestSnapshot = snapshot;
+
+    let total = snapshot.size;
+    let online = 0;
+    let activeUsers = 0;
+let deactiveUsers = 0;
+    let pendingUsers = 0;
+    let html = "";
+
+    snapshot.forEach(docSnap=>{
+      let d = docSnap.data();
+      if(d.accountStatus=="pending"){
+    pendingUsers++;
+}
+else if(d.accountStatus=="deactivated"){
+    deactiveUsers++;
+}
+else{
+    activeUsers++;
+}
+      let isOnlineNow = false;
+
+if(d.lastSeen){
+  let time;
+
+  if(d.lastSeen.toDate){
+    time = d.lastSeen.toDate().getTime();
+  } else if(d.lastSeen.seconds){
+    time = d.lastSeen.seconds * 1000;
+  } else {
+    time = new Date(d.lastSeen).getTime();
+  }
+
+  let diff = Date.now() - time;
+
+  // ✅ 2 মিনিট = 120000 ms
+  if(diff <= 120000){
+    isOnlineNow = true;
+  }
+}
+
+      if(isOnlineNow) online++;
+
+      html += `
+
+
+
+  <tr onclick="showUserInfoFromId('${docSnap.id}')">
+      
+        <td>
+          <div class="user">
+            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+            <span>${d.name || "-"}</span>
+          </div>
+        </td>
+
+        <td>${d.email || "-"}</td>
+        <td>${d.phone || "-"}</td>
+        <td>${d.address || "-"}</td>
+
+        <td class="${isOnlineNow ? 'online':'offline'}">
+  ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
+</td>
+
+  <td class="${
+d.accountStatus=="active"
+? "active-account"
+: d.accountStatus=="deactivated"
+? "deactive-account"
+: ""
+}">
+${
+d.accountStatus=="pending"
+? "🟡 Pending"
+: d.accountStatus=="active"
+? "✅ Active"
+: "❌ Deactivated"
+}
+</td>
+
+  <td>
+${
+d.accountStatus=="pending"
+?"🟡 Pending"
+:d.accountStatus=="active"
+?"🟢 Approved"
+:"🔴 Rejected"
+}
+</td>
+
+
+<td>
+<div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
+onclick="event.stopPropagation(); openRolePopup(
+'${docSnap.id}',
+'${d.name || "Unknown"}',
+'${d.image || ""}',
+'${d.role || "user"}',
+${d.superAdmin === true}
+)">
+${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨‍💼 User")}
+</div>
+</td>
+
+  
+<td>
+  <button
+    class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
+    onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
+  ${d.superAdmin === true}  )">
+
+    ${ d.accountStatus=="pending" ?"Approve" :d.accountStatus=="active" ?"Deactivate" :"Activate" }
+
+  </button>
+</td>
+
+<td>${formatTime(d.lastLogin)}</td>
+<td>${formatTime(d.lastSeen)}</td>
+
+
+      </tr>
+      `;
+    });
+
+    
+    document.getElementById("total").innerText = total;
+    document.getElementById("online").innerText = online;
+    document.getElementById("activeCount").innerText = activeUsers;
+document.getElementById("deactiveCount").innerText = deactiveUsers;
+    document.getElementById("pendingCount").innerText = pendingUsers;
+    document.getElementById("userTable").innerHTML = html;
+
+  });
+
+});
+
+  setInterval(()=>{
+
+const now=new Date();
+
+document.getElementById("liveTime").innerText=
+now.toLocaleTimeString();
+
+document.getElementById("todayDate").innerText=
+now.toLocaleDateString("en-GB");
+
+},1000);
+
+</script>
+
+  
+
+</body>
+</html>
