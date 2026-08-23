@@ -824,133 +824,123 @@ box-shadow:0 0 12px #00e5ff;
     overflow-y:auto;
 }
 
-
-
-  /* ================================
+  /* =========================================
    MOBILE USER CARD
-================================ */
+   ========================================= */
 
-.mobile-user-list{
+#mobileUserCards{
     display:none;
 }
 
 .mobile-user-card{
     position:relative;
+    display:flex;
+    align-items:center;
+    gap:14px;
     padding:16px;
-    margin-bottom:14px;
-    border-radius:20px;
+    margin-bottom:12px;
+
     background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.18);
-    backdrop-filter:blur(16px);
-    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.20);
+
     cursor:pointer;
-    transition:.3s;
+
+    transition:.25s;
 }
 
 .mobile-user-card:active{
     transform:scale(.98);
 }
 
-.mobile-user-top{
-    display:flex;
-    align-items:center;
-    gap:13px;
-}
-
-.mobile-user-top img{
+.mobile-user-card img{
     width:58px;
     height:58px;
+
+    flex-shrink:0;
+
     border-radius:50%;
     object-fit:cover;
-    border:3px solid rgba(255,255,255,.8);
+
+    border:2px solid rgba(255,255,255,.8);
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+}
+
+.mobile-user-info{
+    min-width:0;
+    flex:1;
 }
 
 .mobile-user-name{
     font-size:17px;
     font-weight:700;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .mobile-user-email{
-    font-size:12px;
-    opacity:.75;
-    margin-top:4px;
-    word-break:break-all;
-}
+    margin-top:3px;
 
-.mobile-user-status{
-    margin-left:auto;
-    font-size:11px;
-    font-weight:700;
-    padding:6px 9px;
-    border-radius:20px;
+    font-size:12px;
+    color:#ddd;
+
     white-space:nowrap;
-}
-
-.mobile-online{
-    background:rgba(0,200,83,.18);
-    color:#00ff9d;
-}
-
-.mobile-offline{
-    background:rgba(255,59,48,.18);
-    color:#ff6b61;
-}
-
-.mobile-user-info{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:14px;
-}
-
-.mobile-info-box{
-    padding:9px 10px;
-    border-radius:12px;
-    background:rgba(0,0,0,.15);
-}
-
-.mobile-info-label{
-    font-size:10px;
-    opacity:.65;
-    margin-bottom:3px;
-}
-
-.mobile-info-value{
-    font-size:12px;
-    font-weight:600;
     overflow:hidden;
     text-overflow:ellipsis;
-    white-space:nowrap;
 }
 
 .mobile-user-bottom{
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    margin-top:13px;
-    padding-top:12px;
-    border-top:1px solid rgba(255,255,255,.12);
+    gap:8px;
+
+    margin-top:8px;
+
+    flex-wrap:wrap;
 }
 
-.mobile-view{
-    font-size:12px;
+.mobile-status{
+    font-size:11px;
     font-weight:700;
-    opacity:.85;
+
+    padding:4px 8px;
+
+    border-radius:20px;
+
+    background:rgba(0,0,0,.20);
 }
 
 .mobile-role{
     font-size:11px;
+    font-weight:700;
+
+    padding:4px 8px;
+
+    border-radius:20px;
+}
+
+.mobile-arrow{
+    font-size:22px;
+    opacity:.7;
 }
 
 
-/* MOBILE ONLY */
+/* ===== ONLY MOBILE ===== */
+
 @media(max-width:767px){
 
     .table-container{
-        display:none;
+        display:none !important;
     }
 
-    .mobile-user-list{
+    #mobileUserCards{
         display:block;
         margin-top:20px;
     }
@@ -958,15 +948,15 @@ box-shadow:0 0 12px #00e5ff;
 }
 
 
-/* DESKTOP ONLY */
+/* ===== DESKTOP HIDE MOBILE CARDS ===== */
+
 @media(min-width:768px){
 
-    .mobile-user-list{
+    #mobileUserCards{
         display:none !important;
     }
 
   }
-
   
 </style>
 </head>
@@ -1073,8 +1063,8 @@ box-shadow:0 0 12px #00e5ff;
 </table>
 </div>
 
-  <!-- MOBILE USER CARDS -->
-<div id="mobileUserList" class="mobile-user-list"></div>
+  <!-- ===== MOBILE USER CARDS ===== -->
+<div id="mobileUserCards"></div>
 
 
   <!-- ===== Premium Role Popup ===== -->
@@ -1745,84 +1735,46 @@ else{
 <div class="mobile-user-card"
      onclick="showUserInfoFromId('${docSnap.id}')">
 
-    <div class="mobile-user-top">
-
-        <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
-
-        <div style="min-width:0;">
-            <div class="mobile-user-name">
-                ${d.name || "-"}
-            </div>
-
-            <div class="mobile-user-email">
-                ${d.email || "-"}
-            </div>
-        </div>
-
-        <div class="mobile-user-status ${
-            isOnlineNow ? "mobile-online" : "mobile-offline"
-        }">
-            ${isOnlineNow ? "🟢 Online" : "🔴 Offline"}
-        </div>
-
-    </div>
-
+    <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
 
     <div class="mobile-user-info">
 
-        <div class="mobile-info-box">
-            <div class="mobile-info-label">📱 PHONE</div>
-            <div class="mobile-info-value">
-                ${d.phone || "-"}
-            </div>
+        <div class="mobile-user-name">
+            ${d.name || "-"}
         </div>
 
-        <div class="mobile-info-box">
-            <div class="mobile-info-label">📍 ADDRESS</div>
-            <div class="mobile-info-value">
-                ${d.address || "-"}
-            </div>
+        <div class="mobile-user-email">
+            ${d.email || "-"}
         </div>
 
-        <div class="mobile-info-box">
-            <div class="mobile-info-label">🛡️ ACCOUNT</div>
-            <div class="mobile-info-value">
-                ${
-                    d.accountStatus=="pending"
-                    ? "🟡 Pending"
-                    : d.accountStatus=="active"
-                    ? "✅ Active"
-                    : "❌ Deactivated"
-                }
-            </div>
-        </div>
+        <div class="mobile-user-bottom">
 
-        <div class="mobile-info-box">
-            <div class="mobile-info-label">👑 ROLE</div>
-            <div class="mobile-info-value mobile-role">
+            <span class="mobile-status">
+                ${isOnlineNow ? "🟢 Online" : "🔴 Offline"}
+            </span>
+
+            <span class="mobile-role ${
+                d.superAdmin
+                ? "role-superadmin"
+                : (d.role === "admin"
+                    ? "role-admin"
+                    : "role-user")
+            }">
                 ${
                     d.superAdmin
                     ? "👑 Super Admin"
-                    : d.role=="admin"
-                    ? "👑 Admin"
-                    : "👨‍💼 User"
+                    : (d.role === "admin"
+                        ? "👑 Admin"
+                        : "👨‍💼 User")
                 }
-            </div>
+            </span>
+
         </div>
 
     </div>
 
-
-    <div class="mobile-user-bottom">
-
-        <span class="mobile-view">
-            👁️ View Full Details
-        </span>
-
-        <span>
-            →
-        </span>
-
+    <div class="mobile-arrow">
+        ›
     </div>
 
 </div>
@@ -1909,8 +1861,8 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨
 document.getElementById("deactiveCount").innerText = deactiveUsers; 
     document.getElementById("pendingCount").innerText = pendingUsers;
     document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
+    document.getElementById("mobileUserCards").innerHTML = mobileHtml;
   }
-    document.getElementById("mobileUserList").innerHTML = mobileHtml;
 },10000);
 
 
