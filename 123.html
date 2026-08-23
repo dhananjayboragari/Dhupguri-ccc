@@ -1893,6 +1893,7 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
 let deactiveUsers = 0;
     let pendingUsers = 0;
     let html = "";
+    let mobileHtml = "";
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
@@ -1927,6 +1928,53 @@ if(d.lastSeen){
 }
 
       if(isOnlineNow) online++;
+
+      mobileHtml += `
+<div class="mobile-user-card"
+     onclick="showUserInfoFromId('${docSnap.id}')">
+
+    <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
+
+    <div class="mobile-user-info">
+
+        <div class="mobile-user-name">
+            ${d.name || "-"}
+        </div>
+
+        <div class="mobile-user-email">
+            ${d.email || "-"}
+        </div>
+
+        <div class="mobile-user-bottom">
+
+            <span class="mobile-status">
+                ${isOnlineNow ? "🟢 Online" : "🔴 Offline"}
+            </span>
+
+            <span class="mobile-role ${
+                d.superAdmin
+                ? "role-superadmin"
+                : (d.role === "admin"
+                    ? "role-admin"
+                    : "role-user")
+            }">
+                ${
+                    d.superAdmin
+                    ? "👑 Super Admin"
+                    : (d.role === "admin"
+                        ? "👑 Admin"
+                        : "👨‍💼 User")
+                }
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="mobile-arrow">›</div>
+
+</div>
+`;
 
       html += `
 
@@ -2016,6 +2064,7 @@ ${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨
 document.getElementById("deactiveCount").innerText = deactiveUsers;
     document.getElementById("pendingCount").innerText = pendingUsers;
     document.getElementById("userTable").innerHTML = html;
+    document.getElementById("mobileUserCards").innerHTML = mobileHtml;
 
   });
 
