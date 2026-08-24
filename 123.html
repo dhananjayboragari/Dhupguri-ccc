@@ -50,6 +50,19 @@ h1{
 .card h2{
   font-size:28px;
 }
+  .filter-card{
+  cursor:pointer;
+  transition:.25s;
+}
+
+.filter-card:hover{
+  transform:translateY(-4px);
+  background:rgba(255,255,255,.16);
+}
+
+.filter-card:active{
+  transform:scale(.97);
+}
 
 /* Table */
 .table-container{
@@ -1012,30 +1025,30 @@ box-shadow:0 0 12px #00e5ff;
 
 
   <div class="cards">
-  <div class="card">
-    <p>👨‍👩‍👧‍👦 Total Users</p>
-    <h2 id="total">0</h2>
+  <div class="card filter-card" onclick="filterUsers('all')">
+  <p>👨‍👩‍👧‍👦 Total Users</p>
+  <h2 id="total">0</h2>
   </div>
 
-  <div class="card">
-    <p>🟢 Online Users</p>
-    <h2 id="online">0</h2>
+  <div class="card filter-card" onclick="filterUsers('online')">
+  <p>🟢 Online Users</p>
+  <h2 id="online">0</h2>
   </div>
 
-  <div class="card">
-    <p>✅ Active Users</p>
-    <h2 id="activeCount">0</h2>
+  <div class="card filter-card" onclick="filterUsers('active')">
+  <p>✅ Active Users</p>
+  <h2 id="activeCount">0</h2>
   </div>
 
-  <div class="card">
-    <p>❌ Deactivated Users</p>
-    <h2 id="deactiveCount">0</h2>
+  <div class="card filter-card" onclick="filterUsers('deactivated')">
+  <p>❌ Deactivated Users</p>
+  <h2 id="deactiveCount">0</h2>
   </div>
 
-    <div class="card">
+    <div class="card filter-card" onclick="filterUsers('pending')">
   <p>⏳ Pending Approval</p>
   <h2 id="pendingCount">0</h2>
-</div>
+    </div>
     
 </div>
   
@@ -1203,6 +1216,84 @@ const auth = getAuth();
 const db = getFirestore();
   
   let isSuperAdmin = false;
+  let currentUsersSnapshot = null;
+
+
+  let currentFilter = "all";
+
+function filterUsers(filter){
+
+  currentFilter = filter;
+
+  const rows = document.querySelectorAll("#userTable tr");
+  const cards = document.querySelectorAll("#mobileUserCards .mobile-user-card");
+
+  rows.forEach(row => {
+
+    const online = row.dataset.online === "true";
+    const account = row.dataset.account;
+
+    let show = false;
+
+    if(filter === "all"){
+      show = true;
+    }
+
+    else if(filter === "online"){
+      show = online;
+    }
+
+    else if(filter === "active"){
+      show = account === "active";
+    }
+
+    else if(filter === "deactivated"){
+      show = account === "deactivated";
+    }
+
+    else if(filter === "pending"){
+      show = account === "pending";
+    }
+
+    row.style.display = show ? "" : "none";
+
+  });
+
+
+  cards.forEach(card => {
+
+    const online = card.dataset.online === "true";
+    const account = card.dataset.account;
+
+    let show = false;
+
+    if(filter === "all"){
+      show = true;
+    }
+
+    else if(filter === "online"){
+      show = online;
+    }
+
+    else if(filter === "active"){
+      show = account === "active";
+    }
+
+    else if(filter === "deactivated"){
+      show = account === "deactivated";
+    }
+
+    else if(filter === "pending"){
+      show = account === "pending";
+    }
+
+    card.style.display = show ? "" : "none";
+
+  });
+
+}
+
+window.filterUsers = filterUsers;
 
 
   
@@ -1461,6 +1552,13 @@ data.name || "-";
 <b>👨‍💼 Role :</b> ${data.role||"User"}<br>
 <b>🟢 Status :</b> ${data.isOnline ? "Online":"Offline"}<br>
 <b>✅ Account :</b> ${data.accountStatus||"-"}<br>
+<b>🆕 New Approval :</b> ${
+data.accountStatus=="pending"
+? "🟡 Pending"
+: data.accountStatus=="active"
+? "🟢 Approved"
+: "🔴 Rejected"
+}<br>
 <b>🕒 Last Login :</b><br>${formatTime(data.lastLogin)}<br><br>
 <b>👁 Last Seen :</b><br>${formatTime(data.lastSeen)}
 
@@ -1736,8 +1834,12 @@ else{
 
       if(isOnlineNow) online++;
 
-  mobileHtml += `
+
+
+        mobileHtml += `
 <div class="mobile-user-card"
+     data-online="${isOnlineNow}"
+     data-account="${d.accountStatus || ''}"
      onclick="showUserInfoFromId('${docSnap.id}')">
 
     <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
@@ -1867,30 +1969,33 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
     document.getElementById("pendingCount").innerText = pendingUsers;
     document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
     document.getElementById("mobileUserCards").innerHTML = mobileHtml;
+
+    filterUsers(currentFilter);
   }
 },60000);
 
 
   document.getElementById("userTable").innerHTML = `
 <tr class="skeleton">
-<td colspan="10"><div class="skeleton-box"></div></td>
+<td colspan="11"><div class="skeleton-box"></div></td>
 </tr>
 <tr class="skeleton">
-<td colspan="10"><div class="skeleton-box"></div></td>
+<td colspan="11"><div class="skeleton-box"></div></td>
 </tr>
 <tr class="skeleton">
-<td colspan="10"><div class="skeleton-box"></div></td>
+<td colspan="11"><div class="skeleton-box"></div></td>
 </tr>
 <tr class="skeleton">
-<td colspan="10"><div class="skeleton-box"></div></td>
+<td colspan="11"><div class="skeleton-box"></div></td>
 </tr>
 <tr class="skeleton">
-<td colspan="10"><div class="skeleton-box"></div></td>
+<td colspan="11"><div class="skeleton-box"></div></td>
 </tr>
 `;
   
   onSnapshot(collection(db,"users"), (snapshot)=>{
     latestSnapshot = snapshot;
+    currentUsersSnapshot = snapshot;
 
     let total = snapshot.size;
     let online = 0;
@@ -1939,7 +2044,10 @@ if(d.lastSeen){
       if(isOnlineNow) online++;
 
       mobileHtml += `
+
 <div class="mobile-user-card"
+     data-online="${isOnlineNow}"
+     data-account="${d.accountStatus || ''}"
      onclick="showUserInfoFromId('${docSnap.id}')">
 
     <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
@@ -1989,7 +2097,7 @@ if(d.lastSeen){
 
 
 
-  <tr onclick="showUserInfoFromId('${docSnap.id}')">
+  <tr   data-online="${isOnlineNow}"   data-account="${d.accountStatus || ''}"   onclick="showUserInfoFromId('${docSnap.id}')">
       
         <td>
           <div class="user">
@@ -2074,6 +2182,8 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
     document.getElementById("pendingCount").innerText = pendingUsers;
     document.getElementById("userTable").innerHTML = html;
     document.getElementById("mobileUserCards").innerHTML = mobileHtml;
+
+    filterUsers(currentFilter);
 
   });
 
