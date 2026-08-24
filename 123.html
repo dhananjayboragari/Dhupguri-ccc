@@ -1430,14 +1430,18 @@ window.saveRole = saveRole;
 
   window.closePopup = closePopup;
 
-  async function showUserInfoFromId(uid){
-  const snap = await getDoc(doc(db,"users",uid));
-  if(!snap.exists()) return;
+  const userCache = {};
 
-  const data = snap.data();
-  data.uid = uid;
+function showUserInfoFromId(uid){
+
+  const data = userCache[uid];
+
+  if(!data) return;
+
   showUserInfo(data);
 }
+
+window.showUserInfoFromId = showUserInfoFromId;
 
 window.showUserInfoFromId = showUserInfoFromId;
 
@@ -1864,7 +1868,7 @@ document.getElementById("deactiveCount").innerText = deactiveUsers;
     document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
     document.getElementById("mobileUserCards").innerHTML = mobileHtml;
   }
-},10000);
+},60000);
 
 
   document.getElementById("userTable").innerHTML = `
@@ -1898,6 +1902,10 @@ let deactiveUsers = 0;
 
     snapshot.forEach(docSnap=>{
       let d = docSnap.data();
+      userCache[docSnap.id] = {
+  ...d,
+  uid: docSnap.id
+};
       if(d.accountStatus=="pending"){
     pendingUsers++;
 }
