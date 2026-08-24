@@ -1522,22 +1522,131 @@ box-shadow:0 0 12px #00e5ff;
         0 12px 28px rgba(0,0,0,.35);
 }
 
+/* =====================================
+   ADVANCED PREMIUM USER NAME
+===================================== */
+
 #userInfoPopup #infoName{
-    margin-top:10px;
+    position:relative;
 
-    font-size:23px;
+    display:table;
+    margin:14px auto 0;
 
-    font-weight:800;
+    max-width:100%;
 
-    letter-spacing:.3px;
+    padding:4px 14px 9px;
 
     text-align:center;
 
-    color:#fff;
+    font-size:24px;
+    font-weight:900;
 
-    text-shadow:
-        0 3px 12px rgba(0,0,0,.35);
+    line-height:1.25;
+
+    letter-spacing:.4px;
+
+    /* Premium gradient text */
+    background:linear-gradient(
+        90deg,
+        #ffffff 0%,
+        #8be9ff 45%,
+        #ffffff 100%
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    /* Glow */
+    filter:drop-shadow(
+        0 4px 10px rgba(0,229,255,.25)
+    );
+
+    animation:userNameAppear .6s
+        cubic-bezier(.22,1,.36,1);
 }
+
+/* Decorative line under name */
+
+#userInfoPopup #infoName::after{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:0;
+
+    transform:translateX(-50%);
+
+    width:55px;
+    height:3px;
+
+    border-radius:10px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        #00e5ff,
+        #7c4dff,
+        transparent
+    );
+
+    box-shadow:
+        0 0 10px rgba(0,229,255,.55);
+
+    animation:nameLineAppear .7s
+        .15s both
+        cubic-bezier(.22,1,.36,1);
+}
+
+
+/* Name animation */
+
+@keyframes userNameAppear{
+
+    0%{
+        opacity:0;
+        transform:
+            translateY(10px)
+            scale(.92);
+        filter:
+            blur(5px)
+            drop-shadow(0 0 0 transparent);
+    }
+
+    100%{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+        filter:
+            blur(0)
+            drop-shadow(
+                0 4px 10px rgba(0,229,255,.25)
+            );
+    }
+
+}
+
+
+/* Line animation */
+
+@keyframes nameLineAppear{
+
+    0%{
+        width:0;
+        opacity:0;
+    }
+
+    100%{
+        width:55px;
+        opacity:1;
+    }
+
+}
+
+ 
   
 </style>
 </head>
