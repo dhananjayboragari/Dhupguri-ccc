@@ -1483,6 +1483,61 @@ box-shadow:0 0 12px #00e5ff;
     transform:translateY(0) scale(1);
     filter:blur(0);
 }
+
+  /* =====================================
+   PREMIUM PROFILE HEADER
+===================================== */
+
+#userInfoPopup #infoImage{
+    position:relative;
+
+    width:92px !important;
+    height:92px !important;
+
+    border-radius:50% !important;
+
+    border:3px solid rgba(255,255,255,.9) !important;
+
+    padding:3px;
+
+    background:linear-gradient(
+        135deg,
+        #00e5ff,
+        #2979ff,
+        #d500f9
+    );
+
+    box-shadow:
+        0 0 0 4px rgba(255,255,255,.08),
+        0 10px 25px rgba(0,0,0,.30);
+
+    transition:.3s;
+}
+
+#userInfoPopup #infoImage:hover{
+    transform:scale(1.06);
+
+    box-shadow:
+        0 0 20px rgba(0,229,255,.45),
+        0 12px 28px rgba(0,0,0,.35);
+}
+
+#userInfoPopup #infoName{
+    margin-top:10px;
+
+    font-size:23px;
+
+    font-weight:800;
+
+    letter-spacing:.3px;
+
+    text-align:center;
+
+    color:#fff;
+
+    text-shadow:
+        0 3px 12px rgba(0,0,0,.35);
+}
   
 </style>
 </head>
