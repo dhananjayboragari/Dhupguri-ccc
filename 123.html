@@ -1878,6 +1878,119 @@ box-shadow:0 0 12px #00e5ff;
     }
 
 }
+
+  /* =========================================
+   FINAL MOBILE USER POPUP DESIGN
+========================================= */
+
+@media (max-width:767px){
+
+    #userInfoPopup{
+        padding:14px !important;
+    }
+
+    #userInfoPopup .popup-box{
+        width:calc(100% - 20px) !important;
+        max-width:420px !important;
+        max-height:88vh !important;
+
+        padding:16px 12px !important;
+
+        border-radius:22px !important;
+
+        overflow-y:auto !important;
+        overflow-x:hidden !important;
+
+        margin:auto !important;
+    }
+
+    #userInfoPopup #infoImage{
+        width:74px !important;
+        height:74px !important;
+        margin-bottom:4px !important;
+    }
+
+    #userInfoPopup #infoName{
+        font-size:20px !important;
+        margin-top:5px !important;
+        margin-bottom:4px !important;
+    }
+
+    #userInfoPopup #infoBody{
+        display:grid !important;
+        grid-template-columns:1fr 1fr !important;
+        gap:8px !important;
+
+        margin-top:12px !important;
+    }
+
+    #userInfoPopup .info-card{
+        min-height:45px !important;
+        padding:8px !important;
+
+        border-radius:12px !important;
+    }
+
+    #userInfoPopup .info-icon{
+        width:29px !important;
+        min-width:29px !important;
+        height:29px !important;
+
+        font-size:14px !important;
+    }
+
+    #userInfoPopup .info-card span{
+        font-size:7px !important;
+    }
+
+    #userInfoPopup .info-card strong{
+        font-size:11px !important;
+        line-height:1.25 !important;
+    }
+
+    /* Address full width */
+    #userInfoPopup .info-card:nth-child(3){
+        grid-column:1 / -1 !important;
+    }
+
+    /* USER CONTROLS */
+    #userInfoPopup .control-panel{
+        margin-top:12px !important;
+        padding-top:12px !important;
+    }
+
+    #userInfoPopup .control-row{
+        display:flex !important;
+        gap:8px !important;
+    }
+
+    #userInfoPopup .control-box{
+        flex:1 !important;
+        padding:8px 6px !important;
+        border-radius:12px !important;
+    }
+
+    #userInfoPopup .control-title{
+        font-size:11px !important;
+        margin-bottom:8px !important;
+    }
+
+    #userInfoPopup .control-box .role-badge,
+    #userInfoPopup .control-box .action-btn{
+        min-height:42px !important;
+        font-size:12px !important;
+    }
+
+    #userInfoPopup .popup-buttons{
+        margin-top:16px !important;
+    }
+
+    #userInfoPopup .popup-buttons .confirm-btn{
+        min-height:44px !important;
+        border-radius:13px !important;
+        font-size:14px !important;
+    }
+}
   
 </style>
 </head>
