@@ -1991,6 +1991,71 @@ box-shadow:0 0 12px #00e5ff;
         font-size:14px !important;
     }
 }
+
+  /* =====================================
+   SUPER ADMIN DELETE BUTTON
+===================================== */
+
+.superadmin-delete-btn{
+    width:100%;
+    min-height:42px;
+
+    border:none;
+    border-radius:12px;
+
+    background:linear-gradient(
+        135deg,
+        #ff5252,
+        #b71c1c
+    );
+
+    color:#fff;
+
+    font-size:13px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 7px 18px rgba(255,0,0,.25),
+        inset 0 1px 0 rgba(255,255,255,.2);
+
+    transition:.25s;
+}
+
+.superadmin-delete-btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.1);
+
+    box-shadow:
+        0 10px 25px rgba(255,0,0,.35);
+}
+
+.superadmin-delete-btn:active{
+    transform:scale(.96);
+}
+
+
+/* Delete button area */
+
+#userInfoPopup .delete-control{
+    margin-top:10px;
+}
+
+
+/* Mobile */
+
+@media(max-width:767px){
+
+    .superadmin-delete-btn{
+        min-height:40px;
+        font-size:12px;
+        border-radius:10px;
+    }
+
+  }
+
+  
   
 </style>
 </head>
@@ -2198,6 +2263,58 @@ font-size:15px;
 ">
 </div>
 
+  <!-- ===== SUPER ADMIN DELETE USER POPUP ===== -->
+
+<div id="deleteUserPopup" class="popup-overlay">
+
+  <div class="popup-box">
+
+    <div class="popup-icon"
+         style="background:linear-gradient(135deg,#ff5252,#b71c1c);">
+      🗑️
+    </div>
+
+    <img id="deleteUserImage"
+         src="https://i.imgur.com/HeIi0wU.png"
+         style="
+         width:75px;
+         height:75px;
+         border-radius:50%;
+         object-fit:cover;
+         border:3px solid #fff;
+         margin:10px auto;
+         display:block;
+         ">
+
+    <h2>Delete User</h2>
+
+    <p id="deleteUserText">
+      Are you sure you want to permanently delete this user?
+    </p>
+
+    <div class="popup-buttons">
+
+      <button
+        class="cancel-btn"
+        onclick="closeDeletePopup()">
+        Cancel
+      </button>
+
+      <button
+        class="confirm-btn"
+        onclick="confirmDeleteUser()"
+        style="
+        background:linear-gradient(135deg,#ff5252,#d50000);
+        ">
+        🗑️ Delete
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
 <div class="popup-buttons">
 <button class="confirm-btn"
 onclick="closeInfoPopup()">
@@ -2215,7 +2332,7 @@ Close
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   import { getDatabase, ref, onValue, set, onDisconnect } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -2373,6 +2490,7 @@ window.toggleAccount = toggleAccount;
 
 
   let selectedRoleUid = "";
+  let selectedDeleteUid = "";
 
 function openRolePopup(uid, name, image, currentRole, targetSuperAdmin){
 
@@ -2718,6 +2836,30 @@ ${data.accountStatus=="active"
 
 </div>
 
+  ${
+isSuperAdmin && data.uid !== auth.currentUser.uid
+?
+`
+<div class="delete-control">
+
+<button
+class="superadmin-delete-btn"
+onclick="
+closeInfoPopup();
+openDeletePopup(
+'${data.uid}',
+'${data.name || "Unknown"}',
+'${data.image || ""}'
+)">
+🗑️ Delete User Permanently
+</button>
+
+</div>
+`
+:
+""
+}
+
 `;
 
 document.getElementById("userInfoPopup")
@@ -2734,6 +2876,139 @@ document.getElementById("userInfoPopup")
 
 window.showUserInfo=showUserInfo;
 window.closeInfoPopup=closeInfoPopup;
+
+  // =========================================
+// SUPER ADMIN DELETE USER
+// =========================================
+
+function openDeletePopup(uid, name, image){
+
+    // Extra security check
+    if(!isSuperAdmin){
+
+        showMessage("🚫 Only Super Admin can delete users.");
+
+        return;
+    }
+
+    // Prevent deleting yourself
+    if(auth.currentUser && uid === auth.currentUser.uid){
+
+        showMessage("❌ You cannot delete your own account.");
+
+        return;
+    }
+
+    selectedDeleteUid = uid;
+
+    document.getElementById("deleteUserImage").src =
+        image || "https://i.imgur.com/HeIi0wU.png";
+
+    document.getElementById("deleteUserText").innerHTML =
+        "Are you sure you want to permanently delete <b>" +
+        (name || "this user") +
+        "</b>?<br><br>This action cannot be undone.";
+
+    document
+        .getElementById("deleteUserPopup")
+        .classList.add("show");
+}
+
+window.openDeletePopup = openDeletePopup;
+
+
+// =========================================
+// CLOSE DELETE POPUP
+// =========================================
+
+function closeDeletePopup(){
+
+    document
+        .getElementById("deleteUserPopup")
+        .classList.remove("show");
+
+    selectedDeleteUid = "";
+}
+
+window.closeDeletePopup = closeDeletePopup;
+
+
+// =========================================
+// CONFIRM DELETE
+// =========================================
+
+async function confirmDeleteUser(){
+
+    if(!isSuperAdmin){
+
+        showMessage("🚫 Only Super Admin can delete users.");
+
+        return;
+    }
+
+    if(!selectedDeleteUid){
+
+        showMessage("❌ No user selected.");
+
+        return;
+    }
+
+    // Prevent deleting own account
+    if(
+        auth.currentUser &&
+        selectedDeleteUid === auth.currentUser.uid
+    ){
+
+        showMessage("❌ You cannot delete your own account.");
+
+        closeDeletePopup();
+
+        return;
+    }
+
+    const btn =
+        document.querySelector(
+            "#deleteUserPopup .confirm-btn"
+        );
+
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Deleting...";
+
+    try{
+
+        await deleteDoc(
+            doc(db, "users", selectedDeleteUid)
+        );
+
+        btn.innerHTML = "✅ Deleted";
+
+        setTimeout(()=>{
+
+            btn.disabled = false;
+            btn.innerHTML = "🗑️ Delete";
+
+            closeDeletePopup();
+
+            // Close user information popup also
+            closeInfoPopup();
+
+        },800);
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        btn.disabled = false;
+        btn.innerHTML = "🗑️ Delete";
+
+        showMessage(
+            "❌ Delete failed: " + error.message
+        );
+    }
+}
+
+window.confirmDeleteUser = confirmDeleteUser;
   
 window.confirmAction = confirmAction;
 
