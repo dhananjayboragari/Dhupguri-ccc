@@ -2600,10 +2600,57 @@ document.getElementById("infoBody").innerHTML = `
 </div>
 
 <div class="info-card">
-    <div class="info-icon">🟢</div>
+    <div class="info-icon">${(() => {
+        let online = false;
+
+        if(data.lastSeen){
+            let time;
+
+            if(data.lastSeen.toDate){
+                time = data.lastSeen.toDate().getTime();
+            } 
+            else if(data.lastSeen.seconds){
+                time = data.lastSeen.seconds * 1000;
+            } 
+            else {
+                time = new Date(data.lastSeen).getTime();
+            }
+
+            const diff = Date.now() - time;
+
+            // 2 minutes পর্যন্ত Online
+            online = diff <= 120000;
+        }
+
+        return online ? "🟢" : "🔴";
+    })()}</div>
+
     <div>
         <span>Status</span>
-        <strong>${data.isOnline ? "Online" : "Offline"}</strong>
+        <strong>${(() => {
+            let online = false;
+
+            if(data.lastSeen){
+                let time;
+
+                if(data.lastSeen.toDate){
+                    time = data.lastSeen.toDate().getTime();
+                } 
+                else if(data.lastSeen.seconds){
+                    time = data.lastSeen.seconds * 1000;
+                } 
+                else {
+                    time = new Date(data.lastSeen).getTime();
+                }
+
+                const diff = Date.now() - time;
+
+                // 2 minutes পর্যন্ত Online
+                online = diff <= 120000;
+            }
+
+            return online ? "Online" : "Offline";
+        })()}</strong>
     </div>
 </div>
 
