@@ -611,12 +611,18 @@ if(userSnap.exists()){
 
 }
 
-    // 🔥 remember email only
-    if(document.getElementById("remember").checked){
-      localStorage.setItem("rememberEmail", email);
-    }else{
-      localStorage.removeItem("rememberEmail");
-    }
+// 🔥 Remember Me - Save Email + Password
+if(document.getElementById("remember").checked){
+
+  localStorage.setItem("rememberEmail", email);
+  localStorage.setItem("rememberPassword", password);
+
+}else{
+
+  localStorage.removeItem("rememberEmail");
+  localStorage.removeItem("rememberPassword");
+
+  }
 
     msg.innerHTML="✅ Login Success";
 msg.style.color="green";
@@ -850,14 +856,24 @@ let isActive = false;
 
   <script>
 window.addEventListener("load", () => {
+
   const savedEmail = localStorage.getItem("rememberEmail");
+  const savedPassword = localStorage.getItem("rememberPassword");
 
   if(savedEmail){
     document.getElementById("email").value = savedEmail;
+  }
+
+  if(savedPassword){
+    document.getElementById("password").value = savedPassword;
+  }
+
+  if(savedEmail && savedPassword){
     document.getElementById("remember").checked = true;
   }
+
 });
-</script>
+  </script>
   
   
 <script>
@@ -936,6 +952,33 @@ passwordInput.addEventListener("keydown", function(e){
 
   
 </script>
+
+
+  <script>
+
+const remember = document.getElementById("remember");
+
+remember.addEventListener("change", function(){
+
+  if(!this.checked){
+
+    // 🔥 Local Storage থেকে Email + Password delete
+    localStorage.removeItem("rememberEmail");
+    localStorage.removeItem("rememberPassword");
+
+    // 🔥 Input box দুটো সঙ্গে সঙ্গে clear
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+
+    // 🔥 Input-এর yellow typing background-ও remove
+    document.getElementById("email").classList.remove("typing");
+    document.getElementById("password").classList.remove("typing");
+
+  }
+
+});
+
+  </script>
 
 
 </body>
