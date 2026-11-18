@@ -1,2343 +1,524 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Dashboard</title>
-  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meter Replacement Submission Page</title>
 
 <style>
-*{
+body{
   margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Segoe UI;
-}
-
-
-  body{
-  background: linear-gradient(-45deg,#1d2671,#c33764,#0f2027,#2c5364);
-  background-size:400% 400%;
-  animation:gradientBG 12s ease infinite;
-  color:#fff;
-  padding:20px;
+  font-family:Arial;
   min-height:100vh;
+  overflow-y:auto;
+  background:#0f2027;
+  color:white;
+  transition: background 0.5s, color 0.5s;
 }
 
-
-/* Header */
-h1{
-  margin-bottom:20px;
+body.light-mode{
+  background:#f0f0f0;
+  color:#000;
 }
 
-/* Cards */
-.cards{
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.card{
-  flex:1;
-  min-width:220px;
-  padding:20px;
-  border-radius:15px;
-  background:rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  text-align:center;
-}
-
-.card h2{
-  font-size:28px;
-}
-  .filter-card{
-  cursor:pointer;
-  transition:.25s;
-}
-
-.filter-card:hover{
-  transform:translateY(-4px);
-  background:rgba(255,255,255,.16);
-}
-
-.filter-card:active{
-  transform:scale(.97);
-}
-
-/* Table */
-.table-container{
-  margin-top:20px;
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse: collapse;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  border-radius:10px;
-  overflow:hidden;
-}
-
-th,td{
-  padding:12px;
-  text-align:left;
-}
-  td{
-  white-space: normal;
-}
-
-th{
-  background:rgba(0,0,0,0.4);
-}
-
-tr{
-  border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-tr:hover{
-  background:rgba(255,255,255,0.08);
-}
-
-/* User Info */
-.user{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.user img{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid #fff;
-}
-
-/* Status */
-.online{
-  color:#00ff9d;
-  font-weight:bold;
-}
-
-.offline{
-  color:#ff4d4d;
-  font-weight:bold;
-}
-
-
-
-
-  /* Account Status */
-.active-account{
-  color:#00ff9d;
-  font-weight:bold;
-}
-
-.deactive-account{
-  color:#ff4d4d;
-  font-weight:bold;
-}
-
-/* Action Button */
-.action-btn{
-  border:none;
-  padding:6px 12px;
-  border-radius:8px;
-  color:#fff;
-  cursor:pointer;
-  font-size:13px;
-}
-
-.activate-btn{
-  background:#28a745;
-}
-
-.deactivate-btn{
-  background:#dc3545;
-}
-
-
-  /* ===== Premium Popup ===== */
-
-.popup-overlay{
+#network{
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(8px);
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+
+/* HEADER */
+.header{
+  width:100%;
+  padding:10px 0;
+  font-weight:bold;
+  background:rgba(0,0,0,0.7);
+  letter-spacing:1px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:20;
   display:flex;
-  justify-content:center;
   align-items:center;
-  opacity:0;
-  visibility:hidden;
-  transition:.3s;
-  z-index:9999;
+  justify-content:flex-start;
+  padding-left:20px;
+  box-sizing:border-box;
 }
 
-.popup-overlay.show{
-  opacity:1;
-  visibility:visible;
+.header-text{
+  font-size:18px;
+  transition: all 0.5s;
 }
 
-.popup-box{
-  width:90%;
-  max-width:360px;
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:22px;
-  padding:25px;
-  text-align:center;
-  animation:popupZoom .3s ease;
-  box-shadow:0 15px 40px rgba(0,0,0,.35);
+body.dark-mode .header-text{
+  color:white;
 }
 
-@keyframes popupZoom{
-  from{
-    transform:scale(.8);
-    opacity:0;
-  }
-  to{
-    transform:scale(1);
-    opacity:1;
-  }
+body.light-mode .header-text{
+  background:linear-gradient(270deg,red,orange,yellow,green,cyan,blue,violet);
+  background-size:400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation:borderMove 12s linear infinite;
 }
 
-.popup-icon{
-  width:70px;
-  height:70px;
+.dark-btn{
+  position:absolute;
+  top:50%;
+  right:20px;
+  transform:translateY(-50%);
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:white;
+  font-size:16px;
+  padding:4px 8px;
+  border-radius:6px;
+  cursor:pointer;
+  backdrop-filter:blur(5px);
+  z-index:25;
+}
+
+body.light-mode .dark-btn{
+  background:rgba(0,0,0,0.2);
+  color:black;
+}
+
+.top-img{
+  width:100%;
+  max-width:800px;
+  margin:60px auto 0;
+  padding:3px;
+  background:linear-gradient(45deg,red,orange,yellow,green,cyan,blue,violet);
+  box-sizing:border-box;
+  border-radius:16px;
+}
+
+.top-img img{
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  display:block;
+  border-radius:14px;
+}
+
+.container{
+  padding:20px;
+  max-width:340px;
   margin:auto;
-  border-radius:50%;
-  background:#ff9800;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:34px;
-  margin-bottom:15px;
 }
 
-.popup-box h2{
-  color:#fff;
+.card-box{
+  margin-bottom:22px;
+}
+
+.card-border{
+  padding:1.5px;
+  border-radius:20px;
+  background:linear-gradient(270deg,red,orange,yellow,green,cyan,blue,violet);
+  background-size:400% 400%;
+  animation:borderMove 12s linear infinite;
+}
+
+body.light-mode .card-border{
+  background:linear-gradient(270deg,#ff6a00,#ffb347,#00ffcc,#00bfff,#ff00ff,#ff0000);
+  background-size:400% 400%;
+}
+
+@keyframes borderMove{
+  0%{background-position:0%}
+  100%{background-position:400%}
+}
+
+.card-btn{
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-btn:active{
+  transform: scale(0.90);
+  box-shadow:0 2px 6px rgba(0,0,0,0.5);
+}
+
+.card-btn img{
+  width:55px;
+  height:55px;
+  object-fit:contain;
   margin-bottom:10px;
 }
 
-.popup-box p{
-  color:#ddd;
-  margin-bottom:22px;
-  line-height:1.5;
-}
-
-.popup-buttons{
-  display:flex;
-  gap:12px;
-}
-
-.popup-buttons button{
-  flex:1;
-  border:none;
-  border-radius:12px;
-  padding:12px;
+.card-btn h3{
+  margin:0;
   font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
 }
 
-.cancel-btn{
-  background:#555;
-  color:#fff;
+.loader{
+  width:0%;
+  height:5px;
+  border-radius:5px;
+  margin-top:10px;
+  background:linear-gradient(90deg,#00ffcc,#ff00ff,#00ffcc);
+  background-size:200% 100%;
+  box-shadow:0 0 5px #00ffcc,0 0 10px #ff00ff;
+  animation:loaderFlash 1.2s linear infinite;
+  transition: width 0.1s linear, box-shadow 0.2s linear;
+  position:relative;
+  overflow:hidden;
 }
 
-
-  .confirm-btn{
-  background:linear-gradient(135deg,#ff512f,#dd2476);
-  color:#fff;
-  transition:.3s;
-}
-
-
-  .confirm-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(221,36,118,.45);
-}
-
-.cancel-btn:hover{
-  background:#666;
-}
-
-  .popup-box{
-  transition:0.3s;
-}
-
-.popup-overlay{
-  transition:opacity .3s ease, visibility .3s ease;
-}
-
-.popup-overlay.show .popup-box{
-  transform:scale(1);
-}
-
-.popup-overlay .popup-box{
-  transform:scale(.8);
-}
-
-
-
-  .popup-icon{
-  box-shadow:0 0 25px rgba(255,255,255,.35);
-  animation:iconPulse 1.5s infinite;
-}
-
-@keyframes iconPulse{
-  0%{
-    transform:scale(1);
-  }
-  50%{
-    transform:scale(1.1);
-  }
-  100%{
-    transform:scale(1);
-  }
-}
-
-  #popupImage{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  object-fit:cover;
-  border:4px solid rgba(255,255,255,.8);
-  margin:15px auto;
-  display:block;
-  box-shadow:0 8px 20px rgba(0,0,0,.35);
-}
-
-  @media (max-width:768px){
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-}
-
-.card{
-    min-width:0;
-    padding:15px;
-}
-
-.card p{
-    font-size:14px;
-}
-
-.card h2{
-    font-size:24px;
-}
-
-}
-
-  /* ===== Premium Role Badge ===== */
-
-.role-badge{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:6px;
-padding:8px 14px;
-border-radius:50px;
-font-size:13px;
-font-weight:700;
-color:#fff;
-letter-spacing:.4px;
-box-shadow:0 8px 20px rgba(0,0,0,.25);
-transition:.3s;
-cursor:pointer;
-user-select:none;
-}
-
-.role-badge:hover{
-transform:translateY(-2px) scale(1.05);
-}
-
-.role-admin{
-background:linear-gradient(135deg,#ffb300,#ff6f00);
-box-shadow:0 0 18px rgba(255,179,0,.45);
-}
-
-  .role-superadmin{
-background:linear-gradient(135deg,#7b1fa2,#d500f9);
-box-shadow:0 0 20px rgba(213,0,249,.6);
-color:#fff;
-}
-
-.role-user{
-background:linear-gradient(135deg,#2196f3,#1565c0);
-box-shadow:0 0 18px rgba(33,150,243,.45);
-}
-
-
-  #roleUserImage{
-    width: 80px !important;
-    height: 80px !important;
-    display: block !important;
-    margin: 15px auto !important;
-    border-radius: 50% !important;
-    object-fit: cover !important;
-    border: 3px solid #fff !important;
-    box-shadow: 0 6px 15px rgba(0,0,0,.3);
-}
-
-
-  /* ===== Premium Loading Skeleton ===== */
-
-.skeleton{
-    animation:skeleton-loading 1.2s linear infinite alternate;
-}
-
-@keyframes skeleton-loading{
-    from{
-        opacity:.55;
-    }
-    to{
-        opacity:1;
-    }
-}
-
-.skeleton td{
-    padding:16px;
-}
-
-.skeleton-box{
-    width:100%;
-    height:15px;
-    border-radius:8px;
-    background:linear-gradient(
-        90deg,
-        rgba(255,255,255,.08) 25%,
-        rgba(255,255,255,.22) 50%,
-        rgba(255,255,255,.08) 75%
-    );
-    background-size:200% 100%;
-    animation:shimmer 1.4s infinite;
-}
-
-@keyframes shimmer{
-    0%{
-        background-position:200% 0;
-    }
-    100%{
-        background-position:-200% 0;
-    }
-}
-
-/* ===== Premium Table Row ===== */
-
-tbody tr{
-    transition:.35s;
-    animation:fadeUp .35s ease;
-}
-
-tbody tr:hover{
-    transform:translateY(-2px);
-    box-shadow:0 10px 25px rgba(0,0,0,.25);
-    background:rgba(255,255,255,.09);
-}
-
-@keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(15px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-
-  @media(max-width:768px){
-
-table{
-    border-collapse:separate;
-    border-spacing:0 12px;
-}
-
-tbody tr{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:15px;
-}
-
-td{
-    border-top:1px solid rgba(255,255,255,.08);
-    border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-td:first-child{
-    border-left:1px solid rgba(255,255,255,.08);
-    border-radius:12px 0 0 12px;
-}
-
-td:last-child{
-    border-right:1px solid rgba(255,255,255,.08);
-    border-radius:0 12px 12px 0;
-}
-
-}
-
-
-
-  /* Desktop + Tablet Premium Table */
-
-@media (min-width:768px){
-
-table{
-    border-collapse:separate;
-    border-spacing:0 12px;
-}
-
-tbody tr{
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.15);
-    transition:.3s;
-}
-
-tbody tr:hover{
-    background:rgba(255,255,255,.10);
-    transform:translateY(-2px);
-    box-shadow:0 10px 25px rgba(0,0,0,.25);
-}
-
-tbody td{
-    border-top:1px solid rgba(255,255,255,.08);
-    border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-tbody td:first-child{
-    border-left:1px solid rgba(255,255,255,.08);
-    border-radius:15px 0 0 15px;
-}
-
-tbody td:last-child{
-    border-right:1px solid rgba(255,255,255,.08);
-    border-radius:0 15px 15px 0;
-}
-
-}
-
-
-  /* ===== Premium Header ===== */
-
-.dashboard-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px;
-margin-bottom:20px;
-border-radius:22px;
-background:rgba(255,255,255,.10);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.15);
-box-shadow:0 10px 25px rgba(0,0,0,.25);
-flex-wrap:wrap;
-gap:20px;
-}
-
-.admin-profile{
-display:flex;
-align-items:center;
-gap:15px;
-}
-
-.admin-profile img{
-width:70px;
-height:70px;
-border-radius:50%;
-object-fit:cover;
-border:3px solid #fff;
-}
-
-#adminName{
-font-size:24px;
-font-weight:700;
-margin:0;
-}
-
-#adminRole{
-margin-top:5px;
-color:#ffd54f;
-font-weight:600;
-}
-
-.header-right{
-display:flex;
-align-items:center;
-gap:15px;
-flex-wrap:wrap;
-}
-
-.header-box{
-background:rgba(255,255,255,.08);
-padding:12px 18px;
-border-radius:15px;
-text-align:center;
-min-width:130px;
-}
-
-.header-box span{
-display:block;
-font-size:12px;
-opacity:.8;
-}
-
-.header-box strong{
-font-size:18px;
-}
-
-.refresh-btn{
-border:none;
-padding:13px 20px;
-border-radius:15px;
-background:linear-gradient(135deg,#00c853,#009688);
-color:#fff;
-font-weight:bold;
-cursor:pointer;
-transition:.3s;
-}
-
-.refresh-btn:hover{
-transform:translateY(-2px);
-}
-
-@media(max-width:768px){
-
-.dashboard-header{
-flex-direction:column;
-align-items:flex-start;
-}
-
-.header-right{
-width:100%;
-display:grid;
-grid-template-columns:repeat(2,1fr);
-}
-
-.refresh-btn{
-grid-column:span 2;
-}
-
-}
-
-  /* ===== Floating Background ===== */
-
-.bg-animation{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-overflow:hidden;
-z-index:-1;
-}
-
-.bg-animation span{
-position:absolute;
-display:block;
-width:22px;
-height:22px;
-border-radius:50%;
-background:rgba(255,255,255,.18);
-box-shadow:0 0 25px rgba(255,255,255,.4);
-animation:floatBall 18s linear infinite;
-bottom:-120px;
-}
-
-.bg-animation span:nth-child(1){
-left:5%;
-animation-duration:14s;
-width:18px;
-height:18px;
-}
-
-.bg-animation span:nth-child(2){
-left:18%;
-animation-duration:20s;
-width:30px;
-height:30px;
-}
-
-.bg-animation span:nth-child(3){
-left:30%;
-animation-duration:16s;
-}
-
-.bg-animation span:nth-child(4){
-left:45%;
-animation-duration:22s;
-width:40px;
-height:40px;
-}
-
-.bg-animation span:nth-child(5){
-left:58%;
-animation-duration:18s;
-}
-
-.bg-animation span:nth-child(6){
-left:70%;
-animation-duration:24s;
-width:35px;
-height:35px;
-}
-
-.bg-animation span:nth-child(7){
-left:82%;
-animation-duration:19s;
-}
-
-.bg-animation span:nth-child(8){
-left:90%;
-animation-duration:17s;
-width:28px;
-height:28px;
-}
-
-.bg-animation span:nth-child(9){
-left:65%;
-animation-duration:15s;
-}
-
-.bg-animation span:nth-child(10){
-left:38%;
-animation-duration:21s;
-width:26px;
-height:26px;
-}
-
-@keyframes floatBall{
-
-0%{
-transform:translateY(0) scale(.5);
-opacity:0;
-}
-
-20%{
-opacity:1;
-}
-
-100%{
-transform:translateY(-110vh) scale(1.3);
-opacity:0;
-}
-
-}
-
-  /* ===== USER CONTROL PANEL ===== */
-
-.control-panel{
-margin-top:18px;
-border-top:1px solid rgba(255,255,255,.15);
-padding-top:18px;
-}
-
-.control-title{
-text-align:center;
-font-size:18px;
-font-weight:700;
-letter-spacing:1px;
-margin-bottom:18px;
-color:#fff;
-}
-
-.control-row{
-display:flex;
-justify-content:space-between;
-gap:15px;
-}
-
-.control-box{
-flex:1;
-background:rgba(255,255,255,.08);
-border:1px solid rgba(255,255,255,.12);
-border-radius:15px;
-padding:14px;
-text-align:center;
-}
-
-.control-box .label{
-font-size:13px;
-margin-bottom:12px;
-font-weight:600;
-color:#ddd;
-}
-
-.control-box .role-badge,
-.control-box .action-btn{
-width:100%;
-justify-content:center;
-height:44px;
-font-size:14px;
-border-radius:12px;
-}
-
-.control-box .action-btn{
-font-weight:700;
-}
-  /* Close button একটু নিচে নামানোর জন্য */
-#userInfoPopup .popup-buttons{
-    margin-top:25px;
-                  }
-
-@media(max-width:480px){
-
-.control-row{
-flex-direction:row;
-gap:10px;
-}
-
-.control-box{
-padding:10px;
-}
-
-.control-title{
-font-size:16px;
-}
-  /* Close button একটু নিচে নামানোর জন্য */
-#userInfoPopup .popup-buttons{
-    margin-top:25px;
-  }
-
-}
-
-  /* Premium Divider */
-
-.control-divider{
-width:100%;
-height:1px;
-margin:8px 0 18px;
-background:linear-gradient(
-90deg,
-transparent,
-rgba(255,255,255,.8),
-transparent
-);
-position:relative;
-}
-
-.control-divider::before{
-content:"";
-position:absolute;
-left:50%;
-top:-4px;
-transform:translateX(-50%);
-width:10px;
-height:10px;
-border-radius:50%;
-background:#00e5ff;
-box-shadow:0 0 12px #00e5ff;
-}
-
-
-  .popup-box{
-    max-height:90vh;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-}
-  .popup-overlay{
-    padding:15px;
-    align-items:flex-start;
-    overflow-y:auto;
-}
-
-  /* =========================================
-   MOBILE USER CARD
-   ========================================= */
-
-#mobileUserCards{
-    display:none;
-}
-
-.mobile-user-card{
-    position:relative;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:16px;
-    margin-bottom:12px;
-
-    background:rgba(255,255,255,.10);
-    backdrop-filter:blur(15px);
-
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:18px;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.20);
-
-    cursor:pointer;
-
-    transition:.25s;
-}
-
-.mobile-user-card:active{
-    transform:scale(.98);
-}
-
-.mobile-user-card img{
-    width:58px;
-    height:58px;
-
-    flex-shrink:0;
-
-    border-radius:50%;
-    object-fit:cover;
-
-    border:2px solid rgba(255,255,255,.8);
-
-    box-shadow:0 5px 15px rgba(0,0,0,.25);
-}
-
-.mobile-user-info{
-    min-width:0;
-    flex:1;
+.loader::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+  animation:smoke 1.5s linear infinite;
 }
 
-.mobile-user-name{
-    font-size:17px;
-    font-weight:700;
-
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.mobile-user-email{
-    margin-top:3px;
-
-    font-size:12px;
-    color:#ddd;
-
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.mobile-user-bottom{
-    display:flex;
-    align-items:center;
-    gap:8px;
-
-    margin-top:8px;
-
-    flex-wrap:wrap;
-}
-
-.mobile-status{
-    font-size:11px;
-    font-weight:700;
-
-    padding:4px 8px;
-
-    border-radius:20px;
-
-    background:rgba(0,0,0,.20);
-}
-
-.mobile-role{
-    font-size:11px;
-    font-weight:700;
-
-    padding:4px 8px;
-
-    border-radius:20px;
-}
-
-.mobile-arrow{
-    font-size:22px;
-    opacity:.7;
-}
-
-
-/* ===== ONLY MOBILE ===== */
-
-@media(max-width:767px){
-
-    .table-container{
-        display:none !important;
-    }
-
-    #mobileUserCards{
-        display:block;
-        margin-top:20px;
-    }
-
-}
-
-
-/* ===== DESKTOP HIDE MOBILE CARDS ===== */
-
-@media(min-width:768px){
-
-    #mobileUserCards{
-        display:none !important;
-    }
-
-  }
-
-                    /* ===== INFORMATION CARDS ===== */
-
-#userInfoPopup .info-card{
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:12px 14px;
-    margin-bottom:10px;
-
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.14);
-
-    border-radius:14px;
-
-    box-shadow:
-        0 6px 15px rgba(0,0,0,.12);
-
-    backdrop-filter:blur(10px);
-
-    transition:.25s;
-}
-
-#userInfoPopup .info-card:hover{
-    background:rgba(255,255,255,.13);
-    transform:translateX(3px);
-}
-
-#userInfoPopup .info-icon{
-    width:38px;
-    height:38px;
-
-    flex-shrink:0;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:11px;
-
-    background:rgba(255,255,255,.12);
-
-    font-size:20px;
-}
-
-#userInfoPopup .info-card span{
-    display:block;
-
-    font-size:11px;
-    color:#aaa;
-
-    margin-bottom:3px;
-
-    text-transform:uppercase;
-    letter-spacing:.5px;
-}
-
-#userInfoPopup .info-card strong{
-    display:block;
-
-    font-size:14px;
-    color:#fff;
-
-    font-weight:600;
-
-    word-break:break-word;
-}
-
-#userInfoPopup .time-card{
-    align-items:flex-start;
-}
-
-#userInfoPopup .time-card strong{
-    line-height:1.6;
-}
-
-  /* =====================================
-   PREMIUM USER CONTROLS
-===================================== */
-
-#userInfoPopup .control-panel{
-    margin-top:22px;
-    padding-top:20px;
-
-    border-top:none;
-
-    position:relative;
-}
-
-#userInfoPopup .control-panel::before{
-    content:"";
-    position:absolute;
-
-    top:0;
-    left:8%;
-    width:84%;
-    height:1px;
-
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.65),
-        transparent
-    );
-}
-
-#userInfoPopup .control-title{
-    font-size:15px;
-    font-weight:800;
-
-    letter-spacing:1.5px;
-
-    margin-bottom:15px;
-
-    color:#fff;
-
-    text-shadow:0 2px 10px rgba(0,0,0,.3);
-}
-
-/* Control boxes */
-
-#userInfoPopup .control-row{
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:12px;
-}
-
-#userInfoPopup .control-box{
-    padding:13px 10px;
-
-    background:rgba(255,255,255,.07);
-
-    border:1px solid rgba(255,255,255,.15);
-
-    border-radius:16px;
-
-    box-shadow:
-        0 8px 20px rgba(0,0,0,.15);
-
-    backdrop-filter:blur(12px);
-
-    transition:.25s;
-}
-
-#userInfoPopup .control-box:hover{
-    transform:translateY(-3px);
-
-    background:rgba(255,255,255,.11);
-
-    box-shadow:
-        0 12px 25px rgba(0,0,0,.22);
-}
-
-#userInfoPopup .control-box .label{
-    font-size:11px;
-
-    color:#bbb;
-
-    margin-bottom:9px;
-
-    letter-spacing:.5px;
-
-    font-weight:700;
-}
-
-/* Control buttons */
-
-#userInfoPopup .control-box .role-badge,
-#userInfoPopup .control-box .action-btn{
-
-    width:100%;
-
-    min-height:42px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border-radius:12px;
-
-    font-size:13px;
-
-    font-weight:700;
-  }
-
-  /* =====================================
-   PREMIUM ROLE & ACCOUNT BUTTONS
-===================================== */
-
-#userInfoPopup .control-box .role-badge,
-#userInfoPopup .control-box .action-btn{
-    position:relative;
-    overflow:hidden;
-
-    border:1px solid rgba(255,255,255,.18);
-
-    box-shadow:
-        0 6px 15px rgba(0,0,0,.20),
-        inset 0 1px 0 rgba(255,255,255,.18);
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        filter .25s ease;
-}
-
-/* Light shine effect */
-
-#userInfoPopup .control-box .role-badge::before,
-#userInfoPopup .control-box .action-btn::before{
-    content:"";
-
-    position:absolute;
-    top:0;
-    left:-120%;
-
-    width:70%;
-    height:100%;
-
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.25),
-        transparent
-    );
-
-    transform:skewX(-20deg);
-
-    transition:.6s;
-}
-
-#userInfoPopup .control-box .role-badge:hover::before,
-#userInfoPopup .control-box .action-btn:hover::before{
-    left:130%;
-}
-
-/* Hover */
-
-#userInfoPopup .control-box .role-badge:hover,
-#userInfoPopup .control-box .action-btn:hover{
-    transform:translateY(-2px) scale(1.02);
-
-    filter:brightness(1.12);
-
-    box-shadow:
-        0 10px 22px rgba(0,0,0,.30),
-        0 0 15px rgba(255,255,255,.12);
-}
-
-/* Click */
-
-#userInfoPopup .control-box .role-badge:active,
-#userInfoPopup .control-box .action-btn:active{
-    transform:scale(.96);
-}
-
-/* Admin */
-
-#userInfoPopup .role-admin{
-    background:linear-gradient(
-        135deg,
-        #ffb300,
-        #ff6f00
-    );
-
-    box-shadow:
-        0 6px 18px rgba(255,111,0,.30);
-}
-
-/* Super Admin */
-
-#userInfoPopup .role-superadmin{
-    background:linear-gradient(
-        135deg,
-        #7b1fa2,
-        #d500f9
-    );
-
-    box-shadow:
-        0 6px 20px rgba(213,0,249,.35);
-}
-
-/* Normal User */
-
-#userInfoPopup .role-user{
-    background:linear-gradient(
-        135deg,
-        #2196f3,
-        #1565c0
-    );
-
-    box-shadow:
-        0 6px 18px rgba(33,150,243,.30);
-}
-
-/* Deactivate */
-
-#userInfoPopup .deactivate-btn{
-    background:linear-gradient(
-        135deg,
-        #ff5252,
-        #d50000
-    );
-
-    box-shadow:
-        0 6px 18px rgba(255,0,0,.25);
-}
-
-/* Activate */
-
-#userInfoPopup .activate-btn{
-    background:linear-gradient(
-        135deg,
-        #00c853,
-        #008f39
-    );
-
-    box-shadow:
-        0 6px 18px rgba(0,200,83,.25);
-  }
-
-  /* =====================================
-   PREMIUM CLOSE BUTTON
-===================================== */
-
-#userInfoPopup .popup-buttons{
-    margin-top:25px;
-    padding-top:4px;
-}
-
-#userInfoPopup .popup-buttons .confirm-btn{
-    width:100%;
-    min-height:48px;
-
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.18);
-
-    background:linear-gradient(
-        135deg,
-        #00c6ff,
-        #0072ff
-    );
-
-    color:#fff;
-
-    font-size:15px;
-    font-weight:800;
-
-    letter-spacing:.4px;
-
-    box-shadow:
-        0 8px 22px rgba(0,114,255,.30),
-        inset 0 1px 0 rgba(255,255,255,.25);
-
-    transition:.25s;
-}
-
-#userInfoPopup .popup-buttons .confirm-btn:hover{
-    transform:translateY(-2px);
-
-    filter:brightness(1.1);
-
-    box-shadow:
-        0 12px 28px rgba(0,114,255,.40),
-        inset 0 1px 0 rgba(255,255,255,.3);
-}
-
-#userInfoPopup .popup-buttons .confirm-btn:active{
-    transform:scale(.97);
-  }
-
-  /* =====================================
-   MOBILE USER INFO POPUP
-===================================== */
-
-@media (max-width:767px){
-
-    #userInfoPopup{
-        padding:12px;
-        align-items:center;
-        justify-content:center;
-    }
-
-    #userInfoPopup .popup-box{
-        width:100%;
-        max-width:430px;
-
-        max-height:88vh;
-
-        padding:20px 16px;
-
-        border-radius:20px;
-
-        overflow-y:auto;
-
-        margin:auto;
-    }
-
-    #userInfoPopup #infoImage{
-        width:78px !important;
-        height:78px !important;
-        margin-bottom:8px !important;
-    }
-
-    #userInfoPopup #infoName{
-        font-size:21px;
-        margin-bottom:4px;
-    }
-
-    #userInfoPopup #infoBody{
-        margin-top:15px !important;
-        font-size:14px !important;
-    }
-
-    #userInfoPopup .info-card{
-        padding:10px 11px;
-        margin-bottom:8px;
-        border-radius:13px;
-    }
-
-    #userInfoPopup .info-icon{
-        width:34px;
-        height:34px;
-        font-size:17px;
-        border-radius:9px;
-    }
-
-    #userInfoPopup .info-card strong{
-        font-size:13px;
-    }
-
-    #userInfoPopup .control-panel{
-        margin-top:16px;
-    }
-
-    #userInfoPopup .control-row{
-        gap:8px;
-    }
-
-    #userInfoPopup .control-box{
-        padding:10px 7px;
-        border-radius:13px;
-    }
-
-    #userInfoPopup .control-box .role-badge,
-    #userInfoPopup .control-box .action-btn{
-        min-height:40px;
-        font-size:12px;
-    }
-
-    #userInfoPopup .popup-buttons{
-        margin-top:22px;
-    }
-
-    #userInfoPopup .popup-buttons .confirm-btn{
-        min-height:45px;
-        border-radius:13px;
-        font-size:14px;
-    }
-}
-
-  /* =====================================
-   PREMIUM POPUP OPEN / CLOSE ANIMATION
-===================================== */
-
-#userInfoPopup{
-    opacity:0;
-    visibility:hidden;
-    transition:
-        opacity .35s ease,
-        visibility .35s ease;
-}
-
-/* Popup background open */
-
-#userInfoPopup.show{
-    opacity:1;
-    visibility:visible;
-}
-
-/* Popup box initial position */
-
-#userInfoPopup .popup-box{
-    opacity:0;
-    transform:translateY(35px) scale(.92);
-    filter:blur(4px);
-
-    transition:
-        opacity .35s ease,
-        transform .45s cubic-bezier(.22,1,.36,1),
-        filter .35s ease;
-}
-
-/* Popup box open */
-
-#userInfoPopup.show .popup-box{
-    opacity:1;
-    transform:translateY(0) scale(1);
-    filter:blur(0);
+@keyframes loaderFlash{
+  0%{background-position:0%}
+  100%{background-position:200%}
 }
-
-  /* =====================================
-   PREMIUM PROFILE HEADER
-===================================== */
-
-#userInfoPopup #infoImage{
-    position:relative;
-
-    width:92px !important;
-    height:92px !important;
-
-    border-radius:50% !important;
-
-    border:3px solid rgba(255,255,255,.9) !important;
 
-    padding:3px;
-
-    background:linear-gradient(
-        135deg,
-        #00e5ff,
-        #2979ff,
-        #d500f9
-    );
-
-    box-shadow:
-        0 0 0 4px rgba(255,255,255,.08),
-        0 10px 25px rgba(0,0,0,.30);
-
-    transition:.3s;
+@keyframes smoke{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
 }
 
-#userInfoPopup #infoImage:hover{
-    transform:scale(1.06);
-
-    box-shadow:
-        0 0 20px rgba(0,229,255,.45),
-        0 12px 28px rgba(0,0,0,.35);
+a{
+  text-decoration:none;
+  color:black;
 }
-
-/* =====================================
-   ADVANCED PREMIUM USER NAME
-===================================== */
-
-#userInfoPopup #infoName{
-    position:relative;
-
-    display:table;
-    margin:14px auto 0;
 
+@media(max-width:600px){
+  .top-img{
     max-width:100%;
-
-    padding:4px 14px 9px;
-
-    text-align:center;
-
-    font-size:24px;
-    font-weight:900;
-
-    line-height:1.25;
-
-    letter-spacing:.4px;
-
-    /* Premium gradient text */
-    background:linear-gradient(
-        90deg,
-        #ffffff 0%,
-        #8be9ff 45%,
-        #ffffff 100%
-    );
-
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-
-    /* Glow */
-    filter:drop-shadow(
-        0 4px 10px rgba(0,229,255,.25)
-    );
-
-    animation:userNameAppear .6s
-        cubic-bezier(.22,1,.36,1);
-}
-
-/* Decorative line under name */
-
-#userInfoPopup #infoName::after{
-    content:"";
-
-    position:absolute;
-
-    left:50%;
-
-    bottom:0;
-
-    transform:translateX(-50%);
-
-    width:55px;
-    height:3px;
-
-    border-radius:10px;
-
-    background:linear-gradient(
-        90deg,
-        transparent,
-        #00e5ff,
-        #7c4dff,
-        transparent
-    );
-
-    box-shadow:
-        0 0 10px rgba(0,229,255,.55);
-
-    animation:nameLineAppear .7s
-        .15s both
-        cubic-bezier(.22,1,.36,1);
-}
-
-
-/* Name animation */
-
-@keyframes userNameAppear{
-
-    0%{
-        opacity:0;
-        transform:
-            translateY(10px)
-            scale(.92);
-        filter:
-            blur(5px)
-            drop-shadow(0 0 0 transparent);
-    }
-
-    100%{
-        opacity:1;
-        transform:
-            translateY(0)
-            scale(1);
-        filter:
-            blur(0)
-            drop-shadow(
-                0 4px 10px rgba(0,229,255,.25)
-            );
-    }
-
-}
-
-
-/* Line animation */
-
-@keyframes nameLineAppear{
-
-    0%{
-        width:0;
-        opacity:0;
-    }
-
-    100%{
-        width:55px;
-        opacity:1;
-    }
-
-}
-
- /* =========================================
-   COMPACT USER INFO POPUP
-========================================= */
-
-#userInfoPopup .popup-box{
-    width:95%;
-    max-width:520px;
-    max-height:88vh;
-    padding:18px;
-}
-
-/* Information area */
-#userInfoPopup #infoBody{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-    margin-top:14px !important;
-    line-height:1.4 !important;
-}
-
-/* Information cards */
-#userInfoPopup .info-card{
-    min-width:0;
-    margin:0 !important;
-    padding:9px 10px;
-
-    display:flex;
-    align-items:center;
-    gap:9px;
-
-    min-height:46px;
-    border-radius:12px;
-}
-
-/* Icon */
-#userInfoPopup .info-icon{
-    width:31px;
-    min-width:31px;
-    height:31px;
-
-    font-size:15px;
-    border-radius:8px;
-}
-
-/* Label */
-#userInfoPopup .info-card span{
-    font-size:8px;
-    margin-bottom:2px;
-}
-
-/* Value */
-#userInfoPopup .info-card strong{
-    font-size:11px;
-    line-height:1.25;
-    word-break:break-word;
-    overflow-wrap:anywhere;
-}
-
-/* Address full width */
-#userInfoPopup .info-card:nth-child(3){
-    grid-column:1 / -1;
-}
-
-/* USER CONTROLS full width */
-#userInfoPopup .control-panel{
-    grid-column:1 / -1;
-    margin-top:12px;
-    padding-top:12px;
-}
-
-/* Divider compact */
-#userInfoPopup .control-panel::before{
-    left:5%;
-    width:90%;
-}
-
-/* Control title */
-#userInfoPopup .control-title{
-    font-size:12px;
-    margin-bottom:9px;
-}
-
-/* Control boxes */
-#userInfoPopup .control-row{
-    gap:8px;
-}
-
-#userInfoPopup .control-box{
-    padding:8px 6px;
-    border-radius:12px;
-}
-
-#userInfoPopup .control-box .label{
-    font-size:9px;
-    margin-bottom:6px;
-}
-
-#userInfoPopup .control-box .role-badge,
-#userInfoPopup .control-box .action-btn{
-    min-height:36px;
-    font-size:11px;
-    border-radius:10px;
-}
-
-/* Close button */
-#userInfoPopup .popup-buttons{
-    margin-top:13px;
-    padding-top:0;
-}
-
-#userInfoPopup .popup-buttons .confirm-btn{
-    min-height:40px;
-    font-size:13px;
-    border-radius:11px;
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media(max-width:767px){
-
-    #userInfoPopup{
-        padding:8px;
-        align-items:center;
-        justify-content:center;
-    }
-
-    #userInfoPopup .popup-box{
-        width:100%;
-        max-width:410px;
-
-        max-height:86vh;
-
-        padding:15px 11px;
-
-        border-radius:18px;
-    }
-
-    /* Profile image */
-    #userInfoPopup #infoImage{
-        width:68px !important;
-        height:68px !important;
-
-        margin-bottom:2px !important;
-    }
-
-    /* Name */
-    #userInfoPopup #infoName{
-        font-size:19px;
-        margin-top:7px;
-        padding-bottom:6px;
-    }
-
-    /* Information grid */
-    #userInfoPopup #infoBody{
-        grid-template-columns:1fr 1fr;
-        gap:7px;
-
-        margin-top:10px !important;
-    }
-
-    /* Cards */
-    #userInfoPopup .info-card{
-        padding:7px 7px;
-        min-height:42px;
-
-        gap:6px;
-        border-radius:10px;
-    }
-
-    /* Icons */
-    #userInfoPopup .info-icon{
-        width:27px;
-        min-width:27px;
-        height:27px;
-
-        font-size:13px;
-        border-radius:7px;
-    }
-
-    /* Text */
-    #userInfoPopup .info-card span{
-        font-size:7px;
-    }
-
-    #userInfoPopup .info-card strong{
-        font-size:10px;
-        line-height:1.2;
-    }
-
-    /* Controls */
-    #userInfoPopup .control-panel{
-        margin-top:10px;
-        padding-top:11px;
-    }
-
-    #userInfoPopup .control-title{
-        font-size:11px;
-        margin-bottom:8px;
-    }
-
-    #userInfoPopup .control-box{
-        padding:7px 5px;
-        border-radius:11px;
-    }
-
-    #userInfoPopup .control-box .label{
-        font-size:8px;
-        margin-bottom:5px;
-    }
-
-    #userInfoPopup .control-box .role-badge,
-    #userInfoPopup .control-box .action-btn{
-        min-height:34px;
-        font-size:10px;
-        border-radius:9px;
-    }
-
-    /* Close */
-    #userInfoPopup .popup-buttons{
-        margin-top:11px;
-    }
-
-    #userInfoPopup .popup-buttons .confirm-btn{
-        min-height:38px;
-        font-size:12px;
-        border-radius:10px;
-    }
-
-}
-
-  /* =========================================
-   FINAL MOBILE USER POPUP DESIGN
-========================================= */
-
-@media (max-width:767px){
-
-    #userInfoPopup{
-        padding:14px !important;
-    }
-
-    #userInfoPopup .popup-box{
-        width:calc(100% - 20px) !important;
-        max-width:420px !important;
-        max-height:88vh !important;
-
-        padding:16px 12px !important;
-
-        border-radius:22px !important;
-
-        overflow-y:auto !important;
-        overflow-x:hidden !important;
-
-        margin:auto !important;
-    }
-
-    #userInfoPopup #infoImage{
-        width:74px !important;
-        height:74px !important;
-        margin-bottom:4px !important;
-    }
-
-    #userInfoPopup #infoName{
-        font-size:20px !important;
-        margin-top:5px !important;
-        margin-bottom:4px !important;
-    }
-
-    #userInfoPopup #infoBody{
-        display:grid !important;
-        grid-template-columns:1fr 1fr !important;
-        gap:8px !important;
-
-        margin-top:12px !important;
-    }
-
-    #userInfoPopup .info-card{
-        min-height:45px !important;
-        padding:8px !important;
-
-        border-radius:12px !important;
-    }
-
-    #userInfoPopup .info-icon{
-        width:29px !important;
-        min-width:29px !important;
-        height:29px !important;
-
-        font-size:14px !important;
-    }
-
-    #userInfoPopup .info-card span{
-        font-size:7px !important;
-    }
-
-    #userInfoPopup .info-card strong{
-        font-size:11px !important;
-        line-height:1.25 !important;
-    }
-
-    /* Address full width */
-    #userInfoPopup .info-card:nth-child(3){
-        grid-column:1 / -1 !important;
-    }
-
-    /* USER CONTROLS */
-    #userInfoPopup .control-panel{
-        margin-top:12px !important;
-        padding-top:12px !important;
-    }
-
-    #userInfoPopup .control-row{
-        display:flex !important;
-        gap:8px !important;
-    }
-
-    #userInfoPopup .control-box{
-        flex:1 !important;
-        padding:8px 6px !important;
-        border-radius:12px !important;
-    }
-
-    #userInfoPopup .control-title{
-        font-size:11px !important;
-        margin-bottom:8px !important;
-    }
-
-    #userInfoPopup .control-box .role-badge,
-    #userInfoPopup .control-box .action-btn{
-        min-height:42px !important;
-        font-size:12px !important;
-    }
-
-    #userInfoPopup .popup-buttons{
-        margin-top:16px !important;
-    }
-
-    #userInfoPopup .popup-buttons .confirm-btn{
-        min-height:44px !important;
-        border-radius:13px !important;
-        font-size:14px !important;
-    }
-}
-
-  /* =====================================
-   SUPER ADMIN DELETE BUTTON
-===================================== */
-
-.superadmin-delete-btn{
-    width:100%;
-    min-height:42px;
-
-    border:none;
-    border-radius:12px;
-
-    background:linear-gradient(
-        135deg,
-        #ff5252,
-        #b71c1c
-    );
-
-    color:#fff;
-
-    font-size:13px;
-    font-weight:800;
-
-    cursor:pointer;
-
-    box-shadow:
-        0 7px 18px rgba(255,0,0,.25),
-        inset 0 1px 0 rgba(255,255,255,.2);
-
-    transition:.25s;
-}
-
-.superadmin-delete-btn:hover{
-    transform:translateY(-2px);
-    filter:brightness(1.1);
-
-    box-shadow:
-        0 10px 25px rgba(255,0,0,.35);
-}
-
-.superadmin-delete-btn:active{
-    transform:scale(.96);
-}
-
-
-/* Delete button area */
-
-#userInfoPopup .delete-control{
-    margin-top:10px;
-}
-
-
-/* Mobile */
-
-@media(max-width:767px){
-
-    .superadmin-delete-btn{
-        min-height:40px;
-        font-size:12px;
-        border-radius:10px;
-    }
-
+    margin:50px 0 0;
+    border-radius:0;
   }
-
-  
-  
+}
 </style>
 </head>
 
-<body>
+<body class="dark-mode">
 
-  <div class="bg-animation">
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
+<canvas id="network"></canvas>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-text">METER REPLACEMENT</div>
+  <button class="dark-btn" onclick="toggleMode()">🌙</button>
 </div>
 
-  <div class="dashboard-header">
-
-    <div class="admin-profile">
-
-        <img id="adminPhoto" src="https://i.imgur.com/HeIi0wU.png">
-
-        <div>
-            <h2 id="adminName">Welcome...</h2>
-            <p id="adminRole">Loading...</p>
-        </div>
-
-    </div>
-
-    <div class="header-right">
-
-        <div class="header-box">
-            <span>🕒 Time</span>
-            <strong id="liveTime">--:--:--</strong>
-        </div>
-
-        <div class="header-box">
-            <span>📅 Date</span>
-            <strong id="todayDate">--/--/----</strong>
-        </div>
-
-        <button class="refresh-btn" onclick="location.reload()">
-            🔄 Refresh
-        </button>
-
-    </div>
-
-</div>
-
-
-  <div class="cards">
-  <div class="card filter-card" onclick="filterUsers('all')">
-  <p>👨‍👩‍👧‍👦 Total Users</p>
-  <h2 id="total">0</h2>
-  </div>
-
-  <div class="card filter-card" onclick="filterUsers('online')">
-  <p>🟢 Online Users</p>
-  <h2 id="online">0</h2>
-  </div>
-
-  <div class="card filter-card" onclick="filterUsers('active')">
-  <p>✅ Active Users</p>
-  <h2 id="activeCount">0</h2>
-  </div>
-
-  <div class="card filter-card" onclick="filterUsers('deactivated')">
-  <p>❌ Deactivated Users</p>
-  <h2 id="deactiveCount">0</h2>
-  </div>
-
-    <div class="card filter-card" onclick="filterUsers('pending')">
-  <p>⏳ Pending Approval</p>
-  <h2 id="pendingCount">0</h2>
-    </div>
-    
-</div>
-  
-  
-
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>User</th>
-<th>Email</th>
-<th>Phone</th>
-<th>Address</th>
-<th>Status</th>
-  <th>Account</th>
-  <th>New Approval</th>
-  <th>Role</th>
-<th>Action</th>
-<th>Last Login</th>
-<th>Last Seen</th>
-  
-</tr>
-</thead>
-
-<tbody id="userTable"></tbody>
-</table>
-</div>
-
-  <!-- ===== MOBILE USER CARDS ===== -->
-<div id="mobileUserCards"></div>
-
-
-  <!-- ===== Premium Role Popup ===== -->
-<div id="rolePopup" class="popup-overlay">
-
-  <div class="popup-box">
-
-    <div class="popup-icon" id="roleIcon">👑</div>
-
-    <img id="roleUserImage" src="https://i.imgur.com/HeIi0wU.png">
-
-    <h2>Change User Role</h2>
-
-    <p id="roleUserName"></p>
-
-    <select id="roleSelect" style="
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:12px;
-      margin:18px 0;
-      font-size:15px;
-      font-weight:bold;
-      outline:none;
-    ">
-      <option value="user">👨‍💼 User</option>
-      <option value="admin">👑 Admin</option>
-    </select>
-
-    <div class="popup-buttons">
-      <button class="cancel-btn" onclick="closeRolePopup()">
-        Cancel
-      </button>
-
-      <button class="confirm-btn" onclick="saveRole()">
-        Save
-      </button>
-    </div>
-
-  </div>
-
-</div>
-
-  <!-- Premium Custom Popup -->
-<div id="customPopup" class="popup-overlay">
-
-  <div class="popup-box">
-
-    <div class="popup-icon">⚠️</div>  <img id="popupImage" src="https://i.imgur.com/HeIi0wU.png">
-
-    <h2 id="popupTitle">Deactivate Account</h2>
-
-    <p id="popupText">
-      Are you sure?
-    </p>
-
-    <p id="popupUser"></p>
-
-    <div class="popup-buttons">
-      <button class="cancel-btn" onclick="closePopup()">
-        Cancel
-      </button>
-
-      <button class="confirm-btn" onclick="confirmAction()">
-        Confirm
-      </button>
-    </div>
-
-  </div>
-
-</div>
-
-  <div id="userInfoPopup" class="popup-overlay">
-
-<div class="popup-box" style="max-width:450px;">
-
-<img id="infoImage"
-src="https://i.imgur.com/HeIi0wU.png"
-style="
-width:90px;
-height:90px;
-border-radius:50%;
-border:4px solid white;
-object-fit:cover;
-margin:auto;
-display:block;
-">
-
-<h2 id="infoName"></h2>
-
-<div id="infoBody"
-style="
-margin-top:20px;
-text-align:left;
-line-height:1.9;
-font-size:15px;
+<!-- TOP IMAGE -->
+<div class="top-img">
+<img id="mainImage"
+src="https://i.ibb.co/Hf9m31b1/Dhupguri.png"
+onerror="
+this.onerror=null;
+this.src='https://iili.io/qwEUc3g.png';
+this.onerror=function(){
+this.onerror=null;
+this.src='https://drive.google.com/uc?export=view&id=1XsVuqlZrX11ZwU5uoVThdwjj7a_gxT3Q';
+this.onerror=function(){
+this.onerror=null;
+let cached=localStorage.getItem('savedImage');
+if(cached){
+this.src=cached;
+}else{
+this.src='data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27300%27><rect width=%27100%25%27 height=%27100%25%27 fill=%27black%27></rect><text x=%2750%25%27 y=%2750%25%27 fill=%27white%27 font-size=%2720%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27>Servers not available, please refresh this page</text></svg>';
+}
+};
+};
 ">
 </div>
 
-  <!-- ===== SUPER ADMIN DELETE USER POPUP ===== -->
+<!-- BUTTON CONTAINER -->
+<div class="container">
 
-<div id="deleteUserPopup" class="popup-overlay">
+  <!-- METER REPLACEMENT SUBMISSION -->
+  <div class="card-box">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LFVQDjqmYPp3t3UnfAw_MWIDhTMXPA5MoslFTlDSof3oAA/viewform?usp=dialog"
+       onclick="startLoad(event,this)">
 
-  <div class="popup-box">
+      <div class="card-border">
+        <div class="card-btn">
 
-    <div class="popup-icon"
-         style="background:linear-gradient(135deg,#ff5252,#b71c1c);">
-      🗑️
-    </div>
+          <img src="https://i.ibb.co/F46ZQhBF/3d-electric-meter-icon-suitable-for-technology-electricity-power-and-innovation-concepts-energize-yo.png">
 
-    <img id="deleteUserImage"
-         src="https://i.imgur.com/HeIi0wU.png"
-         style="
-         width:75px;
-         height:75px;
-         border-radius:50%;
-         object-fit:cover;
-         border:3px solid #fff;
-         margin:10px auto;
-         display:block;
-         ">
+          <h3>METER REPLACEMENT SUBMISSION</h3>
 
-    <h2>Delete User</h2>
+        </div>
+      </div>
 
-    <p id="deleteUserText">
-      Are you sure you want to permanently delete this user?
-    </p>
+      <div class="loader"></div>
+    </a>
+  </div>
 
-    <div class="popup-buttons">
 
-      <button
-        class="cancel-btn"
-        onclick="closeDeletePopup()">
-        Cancel
-      </button>
+  <!-- SOLAR METER INSTALLATION -->
+  <div class="card-box">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSec0PVN2LXLp6bRNE2PqXZd2Tdpkm_U9X1MWx_AKFeY8ZcqZg/viewform?usp=publish-editor"
+       onclick="startLoad(event,this)">
 
-      <button
-        class="confirm-btn"
-        onclick="confirmDeleteUser()"
-        style="
-        background:linear-gradient(135deg,#ff5252,#d50000);
-        ">
-        🗑️ Delete
-      </button>
+      <div class="card-border">
+        <div class="card-btn">
 
-    </div>
+          <img src="https://img.icons8.com/fluency/96/solar-panel.png"
+               alt="Solar Meter Installation">
 
+          <h3>SOLAR METER INSTALLATION</h3>
+
+        </div>
+      </div>
+
+      <div class="loader"></div>
+    </a>
   </div>
 
 </div>
 
-<div class="popup-buttons">
-<button class="confirm-btn"
-onclick="closeInfoPopup()">
-Close
-</button>
-</div>
 
-</div>
+<script>
+const img=document.getElementById("mainImage");
 
-</div>
+img.onload=function(){
+  try{
+    localStorage.setItem("savedImage",img.src);
+  }catch(e){}
+};
+
+function toggleMode(){
+  const body=document.body;
+  const btn=document.querySelector('.dark-btn');
+
+  if(body.classList.contains('dark-mode')){
+    body.classList.replace('dark-mode','light-mode');
+    btn.innerHTML="☀️";
+  }else{
+    body.classList.replace('light-mode','dark-mode');
+    btn.innerHTML="🌙";
+  }
+}
 
 
+// ===== FORM LOADING SYSTEM =====
+async function startLoad(e, el){
 
+  e.preventDefault();
+
+  if (!window.currentUser) {
+    alert("Please login first.");
+    return;
+  }
+
+  try {
+    await window.updateLastSeen();
+  } catch (e) {
+    console.error(e);
+  }
+
+  let loader = el.querySelector(".loader");
+  let width = 0;
+
+  let iframe = document.createElement("iframe");
+  iframe.src = el.href;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  let run = setInterval(()=>{
+    if(width < 60) width += 0.8;
+    else if(width < 85) width += 0.3;
+    else if(width < 90) width += 0.15;
+    else if(width < 95) width += 0.05;
+
+    loader.style.width = width + "%";
+  },120);
+
+  iframe.onload = function(){
+    clearInterval(run);
+    loader.style.width = "100%";
+    window.location.href = el.href;
+    iframe.remove();
+  };
+
+  iframe.onerror = function(){
+    clearInterval(run);
+    iframe.remove();
+    loader.style.width = "0%";
+    alert("Unable to open form. Please try again.");
+  };
+}
+
+
+// ===== NETWORK ANIMATION =====
+const canvas=document.getElementById("network");
+const ctx=canvas.getContext("2d");
+
+function resizeCanvas(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+}
+
+let particles=[];
+
+function createParticles(){
+  particles=[];
+
+  for(let i=0;i<50;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      vx:(Math.random()-0.5)*0.5,
+      vy:(Math.random()-0.5)*0.5
+    });
+  }
+}
+
+function draw(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const isLight=document.body.classList.contains("light-mode");
+
+  for(let i=0;i<particles.length;i++){
+
+    let p=particles[i];
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,2,0,Math.PI*2);
+
+    if(isLight){
+      let g=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+      g.addColorStop(0,"red");
+      g.addColorStop(0.5,"cyan");
+      g.addColorStop(1,"magenta");
+      ctx.fillStyle=g;
+    }else{
+      ctx.fillStyle="#fff";
+    }
+
+    ctx.fill();
+
+    for(let j=i+1;j<particles.length;j++){
+
+      let p2=particles[j];
+      let d=Math.hypot(p.x-p2.x,p.y-p2.y);
+
+      if(d<120){
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(p2.x,p2.y);
+        ctx.strokeStyle=isLight
+          ?"rgba(0,0,0,0.2)"
+          :"rgba(255,255,255,0.15)";
+        ctx.stroke();
+      }
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+resizeCanvas();
+createParticles();
+draw();
+
+window.addEventListener("pageshow",function(){
+  resizeCanvas();
+  createParticles();
+});
+
+window.addEventListener("visibilitychange",function(){
+  if(!document.hidden){
+    resizeCanvas();
+    createParticles();
+  }
+});
+
+window.addEventListener("resize",resizeCanvas);
+
+</script>
+
+
+<!-- ===== LOGIN CHECK & AUTO LOGOUT ===== -->
+<script>
+
+// LOGIN CHECK
+if (!localStorage.getItem("loginSuccess")) {
+  window.location.href = "index.html";
+}
+
+// AUTO LOGOUT SYSTEM
+let inactivityTime = 180000;
+let timeout;
+
+function logoutUser(){
+
+  clearTimeout(timeout);
+
+  window.removeEventListener("mousemove", resetTimer);
+  window.removeEventListener("keypress", resetTimer);
+  window.removeEventListener("click", resetTimer);
+  window.removeEventListener("scroll", resetTimer);
+
+  localStorage.setItem("showLogoutPopup", "expired");
+  localStorage.removeItem("loginSuccess");
+
+  window.location.replace("home.html");
+}
+
+function resetTimer(){
+  clearTimeout(timeout);
+  timeout = setTimeout(logoutUser, inactivityTime);
+}
+
+// ACTIVITY DETECT
+window.addEventListener("mousemove", resetTimer);
+window.addEventListener("keypress", resetTimer);
+window.addEventListener("click", resetTimer);
+window.addEventListener("scroll", resetTimer);
+
+// PAGE LOAD
+document.addEventListener("DOMContentLoaded", function () {
+  resetTimer();
+});
+
+</script>
+
+
+<!-- ===== FIREBASE LAST SEEN UPDATE ===== -->
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-  import { getDatabase, ref, onValue, set, onDisconnect } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
@@ -2349,1221 +530,36 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore();
-  
-  let isSuperAdmin = false;
-  let currentUsersSnapshot = null;
+const auth = getAuth(app);
+const db = getFirestore(app);
 
+window.currentUser = null;
 
-  let currentFilter = "all";
-
-function filterUsers(filter){
-
-  currentFilter = filter;
-
-  const rows = document.querySelectorAll("#userTable tr");
-  const cards = document.querySelectorAll("#mobileUserCards .mobile-user-card");
-
-  rows.forEach(row => {
-
-    const online = row.dataset.online === "true";
-    const account = row.dataset.account;
-
-    let show = false;
-
-    if(filter === "all"){
-      show = true;
-    }
-
-    else if(filter === "online"){
-      show = online;
-    }
-
-    else if(filter === "active"){
-      show = account === "active";
-    }
-
-    else if(filter === "deactivated"){
-      show = account === "deactivated";
-    }
-
-    else if(filter === "pending"){
-      show = account === "pending";
-    }
-
-    row.style.display = show ? "" : "none";
-
-  });
-
-
-  cards.forEach(card => {
-
-    const online = card.dataset.online === "true";
-    const account = card.dataset.account;
-
-    let show = false;
-
-    if(filter === "all"){
-      show = true;
-    }
-
-    else if(filter === "online"){
-      show = online;
-    }
-
-    else if(filter === "active"){
-      show = account === "active";
-    }
-
-    else if(filter === "deactivated"){
-      show = account === "deactivated";
-    }
-
-    else if(filter === "pending"){
-      show = account === "pending";
-    }
-
-    card.style.display = show ? "" : "none";
-
-  });
-
-}
-
-window.filterUsers = filterUsers;
-
-
-  
-
-
-  let selectedUid = "";
-let selectedStatus = "";
-
-function toggleAccount(uid, currentStatus, userName, userImage, targetSuperAdmin){ 
-  
-
-  if(uid === auth.currentUser.uid){
-    showMessage("❌ You cannot modify your own account.");
-    return;
-}
-  
-  if(targetSuperAdmin && !isSuperAdmin){     showMessage("🚫 Super Admin cannot be modified.");     return;   }  
-                                                                      
-  selectedUid = uid;
-  selectedStatus = currentStatus;
-  document.getElementById("popupUser").innerHTML =
-  "<b>User:</b> " + userName;
-
-  document.getElementById("popupImage").src =
-userImage || "https://i.imgur.com/HeIi0wU.png";
-
-  document.getElementById("popupTitle").innerText =
-    currentStatus === "active"
-      ? "Deactivate Account"
-      : "Activate Account";
-
-  const icon = document.querySelector(".popup-icon");
-const btn = document.querySelector(".confirm-btn");
-
-if(currentStatus === "active"){
-  icon.innerHTML = "❌";
-  icon.style.background = "#ff3b30";
-  btn.style.background = "#ff3b30";
-}else{
-  icon.innerHTML = "✅";
-  icon.style.background = "#00c853";
-  btn.style.background = "#00c853";
-}
-
-  document.getElementById("popupText").innerText =
-    currentStatus === "active"
-      ? "Are you sure you want to deactivate this account?"
-      : "Are you sure you want to activate this account?";
-
-  document.getElementById("customPopup").classList.add("show");
-}
-
-window.toggleAccount = toggleAccount;
-
-
-  
-
-
-  let selectedRoleUid = "";
-  let selectedDeleteUid = "";
-
-function openRolePopup(uid, name, image, currentRole, targetSuperAdmin){
-
-    if(targetSuperAdmin && !isSuperAdmin){
-        showMessage("🚫 Super Admin cannot be modified.");
-        return;
-    }
-
-    selectedRoleUid = uid;
-
-    document.getElementById("roleUserName").innerHTML =
-        "<b>User :</b> " + name;
-
-    document.getElementById("roleUserImage").src =
-        image || "https://i.imgur.com/HeIi0wU.png";
-
-    document.getElementById("roleSelect").value =
-        currentRole || "user";
-
-    document.getElementById("rolePopup").classList.add("show");
-}
-
-window.openRolePopup = openRolePopup;
-
-function closeRolePopup(){
-
-    document.getElementById("rolePopup").classList.remove("show");
-
-}
-
-window.closeRolePopup = closeRolePopup;
-
-  function showMessage(msg){
-
-const popup=document.createElement("div");
-
-popup.innerHTML=`
-<div style="
-position:fixed;
-top:30px;
-left:50%;
-transform:translateX(-50%);
-background:#FFC107;
-color:#fff;
-padding:15px 25px;
-font-weight:700;
-border:2px solid #FFD54F;
-border-radius:12px;
-font-weight:bold;
-box-shadow:0 10px 25px rgba(0,0,0,.3);
-z-index:99999;
-animation:fadeIn .3s;">
-${msg}
-</div>`;
-
-document.body.appendChild(popup);
-
-setTimeout(()=>{
-popup.remove();
-},2500);
-
-}
-
-window.showMessage=showMessage;
-
-
-  async function saveRole(){
-
-    const btn = document.querySelector("#rolePopup .confirm-btn");
-
-    btn.disabled = true;
-    btn.innerHTML = "⏳ Saving...";
-
-    try{
-
-        const role = document.getElementById("roleSelect").value;
-
-        await updateDoc(doc(db,"users",selectedRoleUid),{
-
-            role: role
-
-        });
-
-        btn.innerHTML = "✅ Saved";
-
-        setTimeout(()=>{
-
-            btn.disabled = false;
-            btn.innerHTML = "Save";
-
-            closeRolePopup();
-
-        },1000);
-
-    }catch(e){
-
-        alert(e.message);
-
-        btn.disabled = false;
-        btn.innerHTML = "Save";
-
-    }
-
-}
-
-window.saveRole = saveRole;
-
-  document.getElementById("rolePopup").addEventListener("click", function(e){
-
-    if(e.target === this){
-        closeRolePopup();
-    }
-
+onAuthStateChanged(auth, (user) => {
+  window.currentUser = user;
 });
 
-  async function confirmAction(){
 
-  const btn = document.querySelector("#customPopup .confirm-btn");
+// LAST SEEN UPDATE FUNCTION
+window.updateLastSeen = async function () {
 
-  btn.disabled = true;
-  btn.innerHTML = "⏳ Processing...";
+  if (!window.currentUser) return;
 
-  try{
+  try {
 
-    let newStatus="active";  if(selectedStatus=="pending"){     newStatus="active"; } else if(selectedStatus=="active"){     newStatus="deactivated"; } else{     newStatus="active"; }
-
-    await updateDoc(doc(db,"users",selectedUid),{
-      accountStatus:newStatus
-    });
-
-    btn.innerHTML = "✅ Success";
-
-    setTimeout(()=>{
-      btn.disabled = false;
-      btn.innerHTML = "Confirm";
-      closePopup();
-    },1000);
-
-  }catch(e){
-
-    btn.disabled = false;
-    btn.innerHTML = "Confirm";
-
-    alert("Error : "+e.message);
-
-  }
-
-}
-  
-
-  function closePopup(){
-
-  const popup = document.getElementById("customPopup");
-
-  popup.classList.remove("show");
-
-  setTimeout(()=>{
-
-    const btn = document.querySelector("#customPopup .confirm-btn");
-    btn.disabled = false;
-    btn.innerHTML = "Confirm";
-
-  },300);
-
-}
-
-  window.closePopup = closePopup;
-
-  const userCache = {};
-
-function showUserInfoFromId(uid){
-
-  const data = userCache[uid];
-
-  if(!data) return;
-
-  showUserInfo(data);
-}
-
-window.showUserInfoFromId = showUserInfoFromId;
-
-window.showUserInfoFromId = showUserInfoFromId;
-
-  function showUserInfo(data){
-
-document.getElementById("infoImage").src =
-data.image || "https://i.imgur.com/HeIi0wU.png";
-
-document.getElementById("infoName").innerHTML =
-data.name || "-";
-
-
-document.getElementById("infoBody").innerHTML = `
-
-<div class="info-card">
-    <div class="info-icon">📧</div>
-    <div>
-        <span>Email</span>
-        <strong>${data.email || "-"}</strong>
-    </div>
-</div>
-
-<div class="info-card">
-    <div class="info-icon">📱</div>
-    <div>
-        <span>Phone</span>
-        <strong>${data.phone || "-"}</strong>
-    </div>
-</div>
-
-<div class="info-card">
-    <div class="info-icon">🏠</div>
-    <div>
-        <span>Address</span>
-        <strong>${data.address || "-"}</strong>
-    </div>
-</div>
-
-<div class="info-card">
-    <div class="info-icon">👨‍💼</div>
-    <div>
-        <span>Role</span>
-        <strong>${data.role || "User"}</strong>
-    </div>
-</div>
-
-<div class="info-card">
-    <div class="info-icon">🟢</div>
-    <div>
-        <span>Status</span>
-        <strong>${data.isOnline ? "Online" : "Offline"}</strong>
-    </div>
-</div>
-
-<div class="info-card">
-    <div class="info-icon">✅</div>
-    <div>
-        <span>Account</span>
-        <strong>${data.accountStatus || "-"}</strong>
-    </div>
-</div>
-
-<div class="info-card">
-    <div class="info-icon">🆕</div>
-    <div>
-        <span>New Approval</span>
-        <strong>
-        ${
-          data.accountStatus=="pending"
-          ? "🟡 Pending"
-          : data.accountStatus=="active"
-          ? "🟢 Approved"
-          : "🔴 Rejected"
-        }
-        </strong>
-    </div>
-</div>
-
-<div class="info-card time-card">
-    <div class="info-icon">🕒</div>
-    <div>
-        <span>Last Login</span>
-        <strong>${formatTime(data.lastLogin)}</strong>
-    </div>
-</div>
-
-<div class="info-card time-card">
-    <div class="info-icon">👁</div>
-    <div>
-        <span>Last Seen</span>
-        <strong>${formatTime(data.lastSeen)}</strong>
-    </div>
-</div>
-
-
-
-
-
-
-
-  <div class="control-panel">
-  <div class="control-divider"></div>
-
-<div class="control-title">
-⚙️ USER CONTROLS
-</div>
-
-<div class="control-row">
-
-<div class="control-box">
-<div class="label">👨‍💼 Role</div>
-
-<div class="role-badge ${
-data.superAdmin
-? 'role-superadmin'
-: (data.role=="admin"
-? 'role-admin'
-: 'role-user')
-}"
-onclick="
-closeInfoPopup();
-openRolePopup(
-'${data.uid}',
-'${data.name}',
-'${data.image||''}',
-'${data.role||'user'}',
-${data.superAdmin===true}
-)">
-${data.superAdmin
-? "👑 Super Admin"
-: (data.role=="admin"
-? "👑 Admin"
-: "👨‍💼 User")}
-</div>
-
-</div>
-
-<div class="control-box">
-
-<div class="label">🛡️ Account</div>
-
-<button
-class="action-btn ${
-data.accountStatus=="active"
-? "deactivate-btn"
-: "activate-btn"
-}"
-onclick="
-closeInfoPopup();
-toggleAccount(
-'${data.uid}',
-'${data.accountStatus}',
-'${data.name}',
-'${data.image||''}',
-${data.superAdmin===true}
-)">
-${data.accountStatus=="active"
-? "🚫 Deactivate"
-: "✅ Activate"}
-</button>
-
-</div>
-
-</div>
-
-  ${
-isSuperAdmin && data.uid !== auth.currentUser.uid
-?
-`
-<div class="delete-control">
-
-<button
-class="superadmin-delete-btn"
-onclick="
-closeInfoPopup();
-openDeletePopup(
-'${data.uid}',
-'${data.name || "Unknown"}',
-'${data.image || ""}'
-)">
-🗑️ Delete User Permanently
-</button>
-
-</div>
-`
-:
-""
-}
-
-`;
-
-document.getElementById("userInfoPopup")
-.classList.add("show");
-
-}
-
-function closeInfoPopup(){
-
-document.getElementById("userInfoPopup")
-.classList.remove("show");
-
-}
-
-window.showUserInfo=showUserInfo;
-window.closeInfoPopup=closeInfoPopup;
-
-  // =========================================
-// SUPER ADMIN DELETE USER
-// =========================================
-
-function openDeletePopup(uid, name, image){
-
-    // Extra security check
-    if(!isSuperAdmin){
-
-        showMessage("🚫 Only Super Admin can delete users.");
-
-        return;
-    }
-
-    // Prevent deleting yourself
-    if(auth.currentUser && uid === auth.currentUser.uid){
-
-        showMessage("❌ You cannot delete your own account.");
-
-        return;
-    }
-
-    selectedDeleteUid = uid;
-
-    document.getElementById("deleteUserImage").src =
-        image || "https://i.imgur.com/HeIi0wU.png";
-
-    document.getElementById("deleteUserText").innerHTML =
-        "Are you sure you want to permanently delete <b>" +
-        (name || "this user") +
-        "</b>?<br><br>This action cannot be undone.";
-
-    document
-        .getElementById("deleteUserPopup")
-        .classList.add("show");
-}
-
-window.openDeletePopup = openDeletePopup;
-
-
-// =========================================
-// CLOSE DELETE POPUP
-// =========================================
-
-function closeDeletePopup(){
-
-    document
-        .getElementById("deleteUserPopup")
-        .classList.remove("show");
-
-    selectedDeleteUid = "";
-}
-
-window.closeDeletePopup = closeDeletePopup;
-
-
-// =========================================
-// CONFIRM DELETE
-// =========================================
-
-async function confirmDeleteUser(){
-
-    if(!isSuperAdmin){
-
-        showMessage("🚫 Only Super Admin can delete users.");
-
-        return;
-    }
-
-    if(!selectedDeleteUid){
-
-        showMessage("❌ No user selected.");
-
-        return;
-    }
-
-    // Prevent deleting own account
-    if(
-        auth.currentUser &&
-        selectedDeleteUid === auth.currentUser.uid
-    ){
-
-        showMessage("❌ You cannot delete your own account.");
-
-        closeDeletePopup();
-
-        return;
-    }
-
-    const btn =
-        document.querySelector(
-            "#deleteUserPopup .confirm-btn"
-        );
-
-    btn.disabled = true;
-    btn.innerHTML = "⏳ Deleting...";
-
-    try{
-
-        await deleteDoc(
-            doc(db, "users", selectedDeleteUid)
-        );
-
-        btn.innerHTML = "✅ Deleted";
-
-        setTimeout(()=>{
-
-            btn.disabled = false;
-            btn.innerHTML = "🗑️ Delete";
-
-            closeDeletePopup();
-
-            // Close user information popup also
-            closeInfoPopup();
-
-        },800);
-
-    }
-    catch(error){
-
-        console.error(error);
-
-        btn.disabled = false;
-        btn.innerHTML = "🗑️ Delete";
-
-        showMessage(
-            "❌ Delete failed: " + error.message
-        );
-    }
-}
-
-window.confirmDeleteUser = confirmDeleteUser;
-  
-window.confirmAction = confirmAction;
-
-
-  // Click outside popup to close
-document.getElementById("customPopup").addEventListener("click",function(e){
-
-  if(e.target === this){
-    closePopup();
-  }
-
-});
-  
-
-
-  window.toggleAccount = toggleAccount;
-  
-
-const rtdb = getDatabase(app);
-
-  function formatTime(ts){
-  if(!ts) return "-";
-
-  let date;
-
-  if(ts.toDate){
-    date = ts.toDate();
-  } else if(ts.seconds){
-    date = new Date(ts.seconds * 1000);
-  } else {
-    date = new Date(ts);
-  }
-
-  if(isNaN(date.getTime())) return "-";
-
-  let day = String(date.getDate()).padStart(2,'0');
-  let month = String(date.getMonth()+1).padStart(2,'0');
-  let year = date.getFullYear();
-
-  let hours = date.getHours();
-  let minutes = String(date.getMinutes()).padStart(2,'0');
-  let seconds = String(date.getSeconds()).padStart(2,'0');
-
-  let ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12 || 12;
-
-  hours = String(hours).padStart(2,'0');
-
-  return `${day}/${month}/${year}<br>${hours}:${minutes}:${seconds} ${ampm}`;
-}
-
-onAuthStateChanged(auth, async (user) => {
-
-  
-  if(!user){
-    window.location.href="index.html";
-    return;
-  }
-
-  // ✅ Admin check
-
-  // ✅ Role Check
-const userRef = doc(db, "users", user.uid);
-const userSnap = await getDoc(userRef);
-
-  const currentUserData = userSnap.data();
-
-  document.getElementById("adminPhoto").src =
-currentUserData.image || "https://i.imgur.com/HeIi0wU.png";
-
-document.getElementById("adminName").innerText =
-"Welcome, " + (currentUserData.name || "Admin");
-
-document.getElementById("adminRole").innerText =
-currentUserData.superAdmin
-? "👑 Super Admin"
-: currentUserData.role=="admin"
-? "👑 Admin"
-: "👨‍💼 User";
-  
-isSuperAdmin = currentUserData.superAdmin === true;
-
-if (!userSnap.exists() || userSnap.data().role !== "admin") {
-  alert("Access Denied ❌");
-  window.location.href = "index.html";
-  return;
-}
-
-  // ✅ Firestore Online
-  // ✅ Firestore Online + Login Time
-await updateDoc(doc(db,"users",user.uid),{
-  isOnline:true,
-  lastLogin: serverTimestamp()   // ✅ ADD
-});
-
-  // 🔥 Realtime Presence START
-  
-  const statusRef = ref(rtdb, "status/" + user.uid);
-
-  set(statusRef, {
-    state: "online",
-    lastChanged: Date.now()
-  });
-
-  onDisconnect(statusRef).set({
-    state: "offline",
-    lastChanged: Date.now()
-  });
-
-  
-  onValue(statusRef, async (snap) => {
-  const status = snap.val();
-
-  if(status.state === "offline"){
-    await updateDoc(doc(db,"users",user.uid),{
-      isOnline:false,
-      lastLogout: serverTimestamp(),   // ✅ logout time
-      lastSeen: serverTimestamp()      // ✅ last seen
-    });
-  } else {
-    await updateDoc(doc(db,"users",user.uid),{
-      isOnline:true,
-      lastSeen: serverTimestamp()      // ✅ active seen
-    });
-  }
-});
-
-  // 🔥 ADD THIS BELOW onValue block
-window.addEventListener("beforeunload", async () => {
-  if(auth.currentUser){
-    await updateDoc(doc(db,"users",auth.currentUser.uid),{
-      isOnline:false,
-      lastLogout: serverTimestamp(),
+    await updateDoc(doc(db, "users", window.currentUser.uid), {
       lastSeen: serverTimestamp()
     });
+
+    console.log("Last Seen Updated");
+
+  } catch (err) {
+    console.error("Last Seen Update Failed:", err);
   }
-});
 
-  // 🔥 LIVE DATA
-  let latestSnapshot = null;
-
-  setInterval(()=>{
-  if(latestSnapshot){
-
-    let total = latestSnapshot.size;
-    let online = 0;
-    let activeUsers = 0;
-let deactiveUsers = 0;
-    let pendingUsers = 0;
-    let html = "";
-    let mobileHtml = "";
-
-    latestSnapshot.forEach(docSnap=>{
-      let d = docSnap.data();
-      if(d.accountStatus=="pending"){
-    pendingUsers++;
-}
-else if(d.accountStatus=="deactivated"){
-    deactiveUsers++;
-}
-else{
-    activeUsers++;
-}
-      let isOnlineNow = false;
-
-      if(d.lastSeen){
-        let time;
-
-        if(d.lastSeen.toDate){
-          time = d.lastSeen.toDate().getTime();
-        } else if(d.lastSeen.seconds){
-          time = d.lastSeen.seconds * 1000;
-        } else {
-          time = new Date(d.lastSeen).getTime();
-        }
-
-        let diff = Date.now() - time;
-
-        if(diff <= 120000){
-          isOnlineNow = true;
-        }
-      }
-
-      if(isOnlineNow) online++;
-
-
-
-        mobileHtml += `
-<div class="mobile-user-card"
-     data-online="${isOnlineNow}"
-     data-account="${d.accountStatus || ''}"
-     onclick="showUserInfoFromId('${docSnap.id}')">
-
-    <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
-
-    <div class="mobile-user-info">
-
-        <div class="mobile-user-name">
-            ${d.name || "-"}
-        </div>
-
-        <div class="mobile-user-email">
-            ${d.email || "-"}
-        </div>
-
-        <div class="mobile-user-bottom">
-
-            <span class="mobile-status">
-                ${isOnlineNow ? "🟢 Online" : "🔴 Offline"}
-            </span>
-
-            <span class="mobile-role ${
-                d.superAdmin
-                ? "role-superadmin"
-                : (d.role === "admin"
-                    ? "role-admin"
-                    : "role-user")
-            }">
-                ${
-                    d.superAdmin
-                    ? "👑 Super Admin"
-                    : (d.role === "admin"
-                        ? "👑 Admin"
-                        : "👨‍💼 User")
-                }
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="mobile-arrow">
-        ›
-    </div>
-
-</div>
-`;
-
-      html += `
-
-  
-      <tr onclick="showUserInfoFromId('${docSnap.id}')">
-        <td>
-          <div class="user">
-            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
-            <span>${d.name || "-"}</span>
-          </div>
-        </td>
-
-        <td>${d.email || "-"}</td>
-        <td>${d.phone || "-"}</td>
-        <td>${d.address || "-"}</td>
-
-        <td class="${isOnlineNow ? 'online':'offline'}">
-  ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
-</td>
-
-  <td class="${
-d.accountStatus=="active"
-? "active-account"
-: d.accountStatus=="deactivated"
-? "deactive-account"
-: ""
-}">
-${
-d.accountStatus=="pending"
-? "🟡 Pending"
-: d.accountStatus=="active"
-? "✅ Active"
-: "❌ Deactivated"
-}
-</td>
-
-  <td>
-${
-d.accountStatus=="pending"
-?"🟡 Pending"
-:d.accountStatus=="active"
-?"🟢 Approved"
-:"🔴 Rejected"
-}
-</td>
-
-<td>
-<div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
-onclick="event.stopPropagation(); openRolePopup(
-'${docSnap.id}',
-'${d.name || "Unknown"}',
-'${d.image || ""}',
-'${d.role || "user"}',
-  ${d.superAdmin === true}
-)">
-${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨‍💼 User")}
-</div>
-</td>
-
-<td>
-  <button
-    class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
-   ${d.superAdmin === true} )">
-
-    ${ d.accountStatus=="pending" ?"Approve" :d.accountStatus=="active" ?"Deactivate" :"Activate" }
-
-  </button>
-</td>
-
-<td>${formatTime(d.lastLogin)}</td>
-<td>${formatTime(d.lastSeen)}</td>
-      </tr>
-      `;
-    });
-
-    document.getElementById("total").innerText = total;
-    document.getElementById("online").innerText = online;
-   document.getElementById("activeCount").innerText = activeUsers;
-document.getElementById("deactiveCount").innerText = deactiveUsers; 
-    document.getElementById("pendingCount").innerText = pendingUsers;
-    document.getElementById("userTable").innerHTML = html; // 🔥 MAIN FIX
-    document.getElementById("mobileUserCards").innerHTML = mobileHtml;
-
-    filterUsers(currentFilter);
-  }
-},60000);
-
-
-  document.getElementById("userTable").innerHTML = `
-<tr class="skeleton">
-<td colspan="11"><div class="skeleton-box"></div></td>
-</tr>
-<tr class="skeleton">
-<td colspan="11"><div class="skeleton-box"></div></td>
-</tr>
-<tr class="skeleton">
-<td colspan="11"><div class="skeleton-box"></div></td>
-</tr>
-<tr class="skeleton">
-<td colspan="11"><div class="skeleton-box"></div></td>
-</tr>
-<tr class="skeleton">
-<td colspan="11"><div class="skeleton-box"></div></td>
-</tr>
-`;
-  
-  onSnapshot(collection(db,"users"), (snapshot)=>{
-    latestSnapshot = snapshot;
-    currentUsersSnapshot = snapshot;
-
-    let total = snapshot.size;
-    let online = 0;
-    let activeUsers = 0;
-let deactiveUsers = 0;
-    let pendingUsers = 0;
-    let html = "";
-    let mobileHtml = "";
-
-    snapshot.forEach(docSnap=>{
-      let d = docSnap.data();
-      userCache[docSnap.id] = {
-  ...d,
-  uid: docSnap.id
 };
-      if(d.accountStatus=="pending"){
-    pendingUsers++;
-}
-else if(d.accountStatus=="deactivated"){
-    deactiveUsers++;
-}
-else{
-    activeUsers++;
-}
-      let isOnlineNow = false;
-
-if(d.lastSeen){
-  let time;
-
-  if(d.lastSeen.toDate){
-    time = d.lastSeen.toDate().getTime();
-  } else if(d.lastSeen.seconds){
-    time = d.lastSeen.seconds * 1000;
-  } else {
-    time = new Date(d.lastSeen).getTime();
-  }
-
-  let diff = Date.now() - time;
-
-  // ✅ 2 মিনিট = 120000 ms
-  if(diff <= 120000){
-    isOnlineNow = true;
-  }
-}
-
-      if(isOnlineNow) online++;
-
-      mobileHtml += `
-
-<div class="mobile-user-card"
-     data-online="${isOnlineNow}"
-     data-account="${d.accountStatus || ''}"
-     onclick="showUserInfoFromId('${docSnap.id}')">
-
-    <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
-
-    <div class="mobile-user-info">
-
-        <div class="mobile-user-name">
-            ${d.name || "-"}
-        </div>
-
-        <div class="mobile-user-email">
-            ${d.email || "-"}
-        </div>
-
-        <div class="mobile-user-bottom">
-
-            <span class="mobile-status">
-                ${isOnlineNow ? "🟢 Online" : "🔴 Offline"}
-            </span>
-
-            <span class="mobile-role ${
-                d.superAdmin
-                ? "role-superadmin"
-                : (d.role === "admin"
-                    ? "role-admin"
-                    : "role-user")
-            }">
-                ${
-                    d.superAdmin
-                    ? "👑 Super Admin"
-                    : (d.role === "admin"
-                        ? "👑 Admin"
-                        : "👨‍💼 User")
-                }
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="mobile-arrow">›</div>
-
-</div>
-`;
-
-      html += `
-
-
-
-  <tr   data-online="${isOnlineNow}"   data-account="${d.accountStatus || ''}"   onclick="showUserInfoFromId('${docSnap.id}')">
-      
-        <td>
-          <div class="user">
-            <img src="${d.image || 'https://i.imgur.com/HeIi0wU.png'}">
-            <span>${d.name || "-"}</span>
-          </div>
-        </td>
-
-        <td>${d.email || "-"}</td>
-        <td>${d.phone || "-"}</td>
-        <td>${d.address || "-"}</td>
-
-        <td class="${isOnlineNow ? 'online':'offline'}">
-  ${isOnlineNow ? "🟢 Online":"🔴 Offline"}
-</td>
-
-  <td class="${
-d.accountStatus=="active"
-? "active-account"
-: d.accountStatus=="deactivated"
-? "deactive-account"
-: ""
-}">
-${
-d.accountStatus=="pending"
-? "🟡 Pending"
-: d.accountStatus=="active"
-? "✅ Active"
-: "❌ Deactivated"
-}
-</td>
-
-  <td>
-${
-d.accountStatus=="pending"
-?"🟡 Pending"
-:d.accountStatus=="active"
-?"🟢 Approved"
-:"🔴 Rejected"
-}
-</td>
-
-
-<td>
-<div class="role-badge ${ d.superAdmin ? 'role-superadmin' : (d.role === 'admin' ? 'role-admin' : 'role-user') }"
-onclick="event.stopPropagation(); openRolePopup(
-'${docSnap.id}',
-'${d.name || "Unknown"}',
-'${d.image || ""}',
-'${d.role || "user"}',
-${d.superAdmin === true}
-)">
-${d.superAdmin ? "👑 Super Admin" : (d.role === "admin" ? "👑 Admin" : "👨‍💼 User")}
-</div>
-</td>
-
-  
-<td>
-  <button
-    class="action-btn ${d.accountStatus === 'active' ? 'deactivate-btn':'activate-btn'}"
-    onclick="event.stopPropagation(); toggleAccount( '${docSnap.id}', '${d.accountStatus || "active"}', '${d.name || "Unknown"}', '${d.image || ""}',
-  ${d.superAdmin === true}  )">
-
-    ${ d.accountStatus=="pending" ?"Approve" :d.accountStatus=="active" ?"Deactivate" :"Activate" }
-
-  </button>
-</td>
-
-<td>${formatTime(d.lastLogin)}</td>
-<td>${formatTime(d.lastSeen)}</td>
-
-
-      </tr>
-      `;
-    });
-
-    
-    document.getElementById("total").innerText = total;
-    document.getElementById("online").innerText = online;
-    document.getElementById("activeCount").innerText = activeUsers;
-document.getElementById("deactiveCount").innerText = deactiveUsers;
-    document.getElementById("pendingCount").innerText = pendingUsers;
-    document.getElementById("userTable").innerHTML = html;
-    document.getElementById("mobileUserCards").innerHTML = mobileHtml;
-
-    filterUsers(currentFilter);
-
-  });
-
-});
-
-  setInterval(()=>{
-
-const now=new Date();
-
-document.getElementById("liveTime").innerText=
-now.toLocaleTimeString();
-
-document.getElementById("todayDate").innerText=
-now.toLocaleDateString("en-GB");
-
-},1000);
 
 </script>
-
-  
 
 </body>
 </html>
