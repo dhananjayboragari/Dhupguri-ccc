@@ -1,187 +1,122 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meter Replacement Submission Page</title>
+<title>Home Page</title>
 
+  
 <style>
+*{box-sizing:border-box;}
+
 body{
   margin:0;
-  font-family:Arial;
+  
+
+margin-top:90px;
+  
+  font-family:Arial, sans-serif;
   min-height:100vh;
-  overflow-y:auto;
-  background:#0f2027;
-  color:white;
-  transition: background 0.5s, color 0.5s;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start; /* keeps but6tons starting from top */
+  padding:20px;
+  color:#fff;
+
+  
+  /* Background Image */
+  background: url("https://i.ibb.co/sdNSg0QZ/Amazing-Wallpapers-For-Phone.jpg") no-repeat center center fixed;
+  background-size:cover;
 }
 
-body.light-mode{
-  background:#f0f0f0;
-  color:#000;
-}
-
-#network{
+/* Minimal overlay for slight contrast */
+body::before{
+  content:"";
   position:fixed;
   top:0;
   left:0;
   width:100%;
   height:100%;
+  background:rgba(0,0,0,0.05);
   z-index:-1;
 }
 
-/* HEADER */
-.header{
-  width:100%;
-  padding:10px 0;
-  font-weight:bold;
-  background:rgba(0,0,0,0.7);
-  letter-spacing:1px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.4);
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:20;
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  padding-left:20px;
-  box-sizing:border-box;
+  .container{
+  display:none;
 }
-
-.header-text{
-  font-size:18px;
-  transition: all 0.5s;
-}
-
-body.dark-mode .header-text{
-  color:white;
-}
-
-body.light-mode .header-text{
-  background:linear-gradient(270deg,red,orange,yellow,green,cyan,blue,violet);
-  background-size:400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation:borderMove 12s linear infinite;
-}
-
-.dark-btn{
-  position:absolute;
-  top:50%;
-  right:20px;
-  transform:translateY(-50%);
-  background:rgba(255,255,255,0.2);
-  border:none;
-  color:white;
-  font-size:16px;
-  padding:4px 8px;
-  border-radius:6px;
-  cursor:pointer;
-  backdrop-filter:blur(5px);
-  z-index:25;
-}
-
-body.light-mode .dark-btn{
-  background:rgba(0,0,0,0.2);
-  color:black;
-}
-
-.top-img{
-  width:100%;
-  max-width:800px;
-  margin:60px auto 0;
-  padding:3px;
-  background:linear-gradient(45deg,red,orange,yellow,green,cyan,blue,violet);
-  box-sizing:border-box;
-  border-radius:16px;
-}
-
-.top-img img{
-  width:100%;
-  height:300px;
-  object-fit:cover;
-  display:block;
-  border-radius:14px;
-}
-
+  
 .container{
-  padding:20px;
-  max-width:340px;
+  display:flex;
+  flex-direction:column;
+  gap:17px; 
+  max-width:400px; 
+  width:100%;
   margin:auto;
+  margin-top:10px; /* pushed buttons lower on the page */
 }
 
 .card-box{
-  margin-bottom:22px;
+  position:relative;
+  transition: transform 0.2s linear, opacity 0.2s linear;
 }
 
 .card-border{
   padding:1.5px;
   border-radius:20px;
-  background:linear-gradient(270deg,red,orange,yellow,green,cyan,blue,violet);
-  background-size:400% 400%;
-  animation:borderMove 12s linear infinite;
+  background: linear-gradient(90deg, #FF7F50, #FF6347);
+  transition: transform 0.3s ease;
 }
 
-body.light-mode .card-border{
-  background:linear-gradient(270deg,#ff6a00,#ffb347,#00ffcc,#00bfff,#ff00ff,#ff0000);
-  background-size:400% 400%;
+.card-border:hover{
+  transform: scale(1.05);
 }
 
-@keyframes borderMove{
-  0%{background-position:0%}
-  100%{background-position:400%}
-}
-
+/* Button styling */
 .card-btn{
-  background:white;
+  background:#ffffff; /* pure white */
   border-radius:16px;
-  padding:18px;
-  text-align:center;
+  padding:0 8px;
+  width:100%;
+  height:120px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
   cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  box-shadow:0 6px 18px rgba(0,0,0,0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .card-btn:active{
-  transform: scale(0.90);
-  box-shadow:0 2px 6px rgba(0,0,0,0.5);
+  transform: scale(0.95);
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
 }
 
+/* Icon fully inside button */
 .card-btn img{
-  width:55px;
-  height:55px;
+  max-width:70%;
+  max-height:70%;
   object-fit:contain;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 
 .card-btn h3{
   margin:0;
-  font-size:15px;
+  font-size:16px;
+  color:#222;
+  text-align:center;
+  word-break:break-word;
 }
 
 .loader{
   width:0%;
   height:5px;
   border-radius:5px;
-  margin-top:10px;
+  margin-top:6px;
   background:linear-gradient(90deg,#00ffcc,#ff00ff,#00ffcc);
-  background-size:200% 100%;
-  box-shadow:0 0 5px #00ffcc,0 0 10px #ff00ff;
   animation:loaderFlash 1.2s linear infinite;
-  transition: width 0.1s linear, box-shadow 0.2s linear;
-  position:relative;
-  overflow:hidden;
-}
-
-.loader::after{
-  content:"";
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:radial-gradient(circle, rgba(255,255,255,0.2), transparent);
-  animation:smoke 1.5s linear infinite;
+  background-size:200%;
+  transition: width 0.1s linear;
 }
 
 @keyframes loaderFlash{
@@ -189,83 +124,892 @@ body.light-mode .card-border{
   100%{background-position:200%}
 }
 
-@keyframes smoke{
-  0%{transform:translateX(-100%)}
-  100%{transform:translateX(100%)}
-}
-
 a{
   text-decoration:none;
   color:black;
+  display:block;
 }
 
-@media(max-width:600px){
-  .top-img{
-    max-width:100%;
-    margin:50px 0 0;
-    border-radius:0;
+/* Responsive adjustments */
+@media (max-width:768px){
+  .card-btn{
+    height:110px;
+  }
+  .card-btn img{
+    max-width:60%;
+    max-height:60%;
+  }
+  .card-btn h3{
+    font-size:14px;
   }
 }
+
+@media (max-width:480px){
+  .container{
+    max-width:330px;
+    gap:15px;
+    
+  }
+  .card-btn{
+    height:110px;
+  }
+  .card-btn img{
+    max-width:65%;
+    max-height:65%;
+  }
+  .card-btn h3{
+    font-size:13px;
+  }
+
+  .topLeft{
+    flex:1;
+    min-width:0;
+  }
+
+  .topText{
+    flex:1;
+    min-width:0;
+    max-width:calc(100% - 110px);
+  }
+
+  #welcomeText{
+    display:block;
+    max-width:100px;   /* প্রয়োজন হলে 140px বা 130px করো */
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+}
+
+  
+
+
+  /* 🔥 LEFT RIGHT BIG */
+  .topCard{
+  width:95%;          /* full wide feel */
+  max-width:900px;    /* desktop limit */
+
+  padding:14px 26px;
+  border-radius:40px;
+
+  /* 🔥 ANIMATED GRADIENT */
+  background: linear-gradient(270deg,
+    #00c6ff,
+    #7b2ff7,
+    #ff4d88,
+    #ff7f50,
+    #00c6ff
+  );
+  background-size:400% 400%;
+  animation: gradientFlow 8s ease infinite;
+
+  /* GLOW */
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.3),
+    0 0 15px rgba(123,47,247,0.6),
+    0 0 25px rgba(255,77,136,0.5);
+
+  text-align:center;
+  transition:all 0.3s ease;
+}
+
+
+#profileBtn .icon{
+  font-size:18px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+}
+
+/* MODAL */
+#profileModal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  justify-content:center;
+  align-items:center;
+  z-index:100000;
+}
+  
+#profileBox{
+  display:flex;
+flex-direction:column;
+align-items:center;
+  width:320px;
+  padding:22px;
+  border-radius:22px;
+
+  background:rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px);
+
+  border:1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 0 25px rgba(0,255,204,0.3),
+    0 0 45px rgba(0,119,255,0.2);
+
+  color:white;
+  text-align:center;
+
+  animation: popupZoom 0.3s ease;
+}
+
+#profileBox input{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  
+  border-radius:10px;
+  border:none;
+}
+
+.saveBtn, .closeBtn{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+
+  border:none;
+  border-radius:25px;
+
+  font-size:14px;
+  font-weight:bold;
+
+  cursor:pointer;
+  transition:0.3s;
+}
+
+/* SAVE BUTTON */
+.saveBtn{
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+  color:white;
+
+  box-shadow:0 0 10px rgba(0,255,204,0.5);
+}
+
+.saveBtn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 18px rgba(0,255,204,0.9);
+}
+
+/* CLOSE BUTTON */
+.closeBtn{
+  background: linear-gradient(135deg,#ff4d4d,#ff0000);
+  color:white;
+
+  box-shadow:0 0 10px rgba(255,0,0,0.5);
+}
+
+.closeBtn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 18px rgba(255,0,0,0.9);
+}
+
+/* POPUP */
+#customPopup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  z-index:100001;
+  animation: fadeIn 0.3s ease;
+}
+
+.popupBox{
+  width:280px;
+  padding:22px;
+  border-radius:20px;
+  text-align:center;
+
+  background:rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px);
+  border:1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 0 20px rgba(0,255,204,0.3),
+    0 0 40px rgba(0,119,255,0.2);
+
+  color:#fff;
+
+  transform: scale(0.8);
+  animation: popupZoom 0.3s ease forwards;
+}
+
+.popupBox p{
+  font-size:15px;
+  margin-bottom:15px;
+}
+
+.popupBox button{
+  padding:8px 18px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+  color:white;
+  font-weight:bold;
+
+  box-shadow:0 0 10px rgba(0,255,204,0.5);
+  transition:0.2s;
+}
+
+.popupBox button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px rgba(0,255,204,0.8);
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes popupZoom{
+  from{transform:scale(0.7); opacity:0;}
+  to{transform:scale(1); opacity:1;}
+}
+  
+
+
+
+.icon{
+  font-size:18px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+  
+.icon-img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  display:none;
+}
+
+
+#previewImg{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+
+  display:none;
+
+  margin: 10px auto;   /* center করে */
+}
+
+
+
+  
+
+
+
+
+
+
+#profileBtn img,
+#profileBtnImg{
+  width:40px !important;
+  height:40px !important;
+  max-width:40px !important;
+  max-height:40px !important;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+  
+
+
+
+/* ===== Upload Box UI ===== */
+.uploadBox{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+
+  border-radius:15px;
+  text-align:center;
+  cursor:pointer;
+
+  font-size:14px;
+  font-weight:bold;
+  color:white;
+
+  background: linear-gradient(135deg,#00ffcc,#0077ff);
+
+  box-shadow:0 0 12px rgba(0,255,204,0.5);
+
+  transition:0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Hover effect */
+.uploadBox:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(0,255,204,0.9);
+}
+
+/* Click effect */
+.uploadBox:active{
+  transform:scale(0.95);
+}
+
+/* Shine animation */
+.uploadBox::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+  transition:0.5s;
+}
+
+.uploadBox:hover::before{
+  left:100%;
+}
+
+
+
+  #previewImg{
+  box-shadow:
+    0 0 10px rgba(0,255,204,0.6),
+    0 0 20px rgba(0,119,255,0.5);
+}
+
+
+#popupIcon{
+  font-size:30px;
+  margin-bottom:10px;
+}
+
+/* loading animation */
+.loadingAnim{
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform: rotate(0deg); }
+  100%{ transform: rotate(360deg); }
+}
+
+
+#customPopup{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:200000;
+}
+
+.popup-box{
+  background:#fff;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  width:80%;
+  max-width:320px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  animation: popupFade 0.3s ease;
+}
+
+.popup-box .icon{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  border:3px solid #ff6b6b;
+  color:#ff6b6b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin:0 auto 15px;
+}
+
+.popup-box h2{
+  margin:0;
+  font-size:20px;
+}
+
+.popup-box p{
+  color:gray;
+  margin:10px 0 20px;
+  font-size:14px;
+}
+
+.popup-box button{
+  padding:10px 25px;
+  border:none;
+  border-radius:8px;
+  background: linear-gradient(45deg,#3b82f6,#2563eb);
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+
+@keyframes popupFade{
+  from{
+    transform: scale(0.8);
+    opacity:0;
+  }
+  to{
+    transform: scale(1);
+    opacity:1;
+  }
+}
+
+
+  body{
+  padding-bottom: 180px;
+}
+
+
+  #loadingScreen{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+
+  background:linear-gradient(
+    135deg,
+    #0f2027,
+    #203a43,
+    #2c5364,
+    #1a2980,
+    #26d0ce
+  );
+  background-size:400% 400%;
+  animation:bgMove 8s ease infinite;
+
+  z-index:999999;
+}
+
+#loadingScreen h2{
+  color:#fff;   /* Light Red */
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:1px;
+  text-shadow:
+    0 0 10px rgba(255,100,100,.8),
+    0 0 25px rgba(255,80,80,.6);
+
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+@keyframes pulse{
+  0%,100%{
+    transform:scale(1);
+    opacity:1;
+  }
+  50%{
+    transform:scale(1.08);
+    opacity:.7;
+  }
+}
+
+  /* ===== TOP CARD ===== */
+
+.topCard{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+
+  width:95%;
+  max-width:900px;
+  height:100px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:12px 18px;
+
+  border-radius:20px;
+
+  background:linear-gradient(135deg,#0D47A1,#1976D2,#42A5F5);
+
+  box-shadow:     0 12px 30px rgba(0,0,0,.30),     0 0 20px rgba(66,165,245,.35);
+
+  border:1px solid rgba(255,255,255,.25);
+backdrop-filter:blur(10px);
+
+  z-index:9999;
+
+  overflow:hidden;
+}
+
+.topLeft{
+  display:flex;
+  align-items:center;
+}
+
+.topLogo{
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#fff;
+  padding:2px;
+}
+
+.topText{
+  margin-left:12px;
+  text-align:left;
+}
+
+.topText h2{
+  margin:0;
+  color:#fff;
+  font-size:20px;
+  font-weight:700;
+  text-align:left;
+}
+
+.topText p{
+  margin:3px 0 0;
+  color:#EAF4FF;
+  font-size:16px;
+  font-weight:600;
+  text-align:left;
+}
+
+   #userRole{
+  margin-top:2px;
+  font-size:16px;
+  font-weight:600;
+  color:#EAF4FF;
+    text-align:left;
+}
+  #profileBtn .icon{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+
+  width:62px;
+  height:62px;
+
+  border-radius:50%;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-size:28px;
+
+  background:#ffffff;
+  border:3px solid #fff;
+
+  box-shadow:
+      0 8px 20px rgba(0,0,0,.35),
+      0 0 15px rgba(66,165,245,.45);
+
+  animation:avatarPulse 2.5s ease-in-out infinite;
+}
+
+@media(max-width:480px){
+
+  .topCard{
+    height:90px;
+    padding:8px 12px;
+  }
+
+  .topLogo{
+    width:70px;
+    height:70px;
+  }
+
+  .topText h2{
+    font-size:15px;
+    text-align:left;
+  }
+
+  .topText p{
+    font-size:12px;
+    text-align:left;
+  }
+
+  #profileBtn{
+    width:85px;
+    height:85px;
+  }
+
+  #liveDateTime{
+  margin-top:3px;
+  font-size:12px;
+  color:#EAF4FF;
+  font-weight:500;
+    text-align:left;
+}
+   #userRole{
+  margin-top:2px;
+  font-size:12px;
+  font-weight:600;
+  color:#EAF4FF;
+  text-align:left;
+}
+
+  #profileBtnImg{
+  width:65px !important;
+  height:65px !important;
+}
+}
+  @media(max-width:480px){
+  #liveDateTime{
+    font-size:11px;
+  }
+}
+
+  @keyframes ringRotate{
+  100%{
+    transform:rotate(360deg);
+  }
+}
+
+
+  @keyframes avatarPulse{
+  0%,100%{
+    transform:translateX(-50%) scale(1);
+  }
+
+  50%{
+    transform:translateX(-50%) scale(1.08);
+  }
+}
+
+  #welcomeText{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+
+/* ===== FINAL PROFILE HEADER FIX ===== */
+
+.topCard{
+  overflow:visible !important;
+}
+
+#profileBtn{
+  position:absolute;
+  top:50%;
+  right:0px;
+  transform:translateY(-50%);
+
+  width:85px;
+  height:85px;
+
+  background:transparent;
+  border:none;
+  box-shadow:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+  z-index:20;
+}
+
+
+#profileBtn .icon,
+#profileBtnImg{
+
+  position:absolute;
+
+  top:17px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:60px !important;
+  height:60px !important;
+
+  border-radius:50%;
+  object-fit:cover;
+
+  border:2px solid white;
+
+}
+
+
+#profileName{
+
+  position:absolute;
+
+  top:62px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  padding:3px 8px;
+
+  font-size:11px;
+  font-weight:bold;
+
+  white-space:nowrap;
+
+  background:rgba(255,255,255,.2);
+
+  border-radius:15px;
+
+  color:white;
+}
+
+
+
+  
 </style>
 </head>
 
-<body class="dark-mode">
+<body>
 
-<canvas id="network"></canvas>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="header-text">METER REPLACEMENT</div>
-  <button class="dark-btn" onclick="toggleMode()">🌙</button>
+  <div id="loadingScreen">
+  <h2>Please wait...</h2>
 </div>
 
-<!-- TOP IMAGE -->
-<div class="top-img">
-<img id="mainImage"
-src="https://i.ibb.co/Hf9m31b1/Dhupguri.png"
-onerror="
-this.onerror=null;
-this.src='https://iili.io/qwEUc3g.png';
-this.onerror=function(){
-this.onerror=null;
-this.src='https://drive.google.com/uc?export=view&id=1XsVuqlZrX11ZwU5uoVThdwjj7a_gxT3Q';
-this.onerror=function(){
-this.onerror=null;
-let cached=localStorage.getItem('savedImage');
-if(cached){
-this.src=cached;
-}else{
-this.src='data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27300%27><rect width=%27100%25%27 height=%27100%25%27 fill=%27black%27></rect><text x=%2750%25%27 y=%2750%25%27 fill=%27white%27 font-size=%2720%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27>Servers not available, please refresh this page</text></svg>';
-}
-};
-};
-">
-</div>
 
-<!-- BUTTON CONTAINER -->
-<div class="container">
 
-  <!-- METER REPLACEMENT SUBMISSION -->
-  <div class="card-box">
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LFVQDjqmYPp3t3UnfAw_MWIDhTMXPA5MoslFTlDSof3oAA/viewform?usp=dialog"
-       onclick="startLoad(event,this)">
+  <!-- ===== TOP CARD ===== -->
+<div class="topCard">
 
-      <div class="card-border">
-        <div class="card-btn">
+  <div class="topLeft">
+    <img src="https://i.ibb.co/Hf9m31b1/Dhupguri.png" class="topLogo">
 
-          <img src="https://i.ibb.co/F46ZQhBF/3d-electric-meter-icon-suitable-for-technology-electricity-power-and-innovation-concepts-energize-yo.png">
-
-          <h3>METER REPLACEMENT SUBMISSION</h3>
-
-        </div>
-      </div>
-
-      <div class="loader"></div>
-    </a>
+    <div class="topText">
+      <h2>Welcome to Dhupguri ccc</h2>
+      <p id="welcomeText">Welcome</p>
+      <div id="userRole">User</div>
+      <div id="liveDateTime"></div>
+    </div>
   </div>
 
+  <button id="profileBtn">
 
-  <!-- SOLAR METER INSTALLATION -->
+    <div class="icon" id="profileIcon">👨‍💼</div>
+
+    <img id="profileBtnImg" class="icon-img" style="display:none;">
+  </button>
+
+</div>
+
+
+  
+
+<!-- PROFILE MODAL -->
+<div id="profileModal">
+  <div id="profileBox" onclick="event.stopPropagation()">
+
+    <img id="previewImg">
+    <h3>Profile</h3>
+    
+  <label for="profileImage" class="uploadBox">
+  <span id="uploadPhotoText">📸 Upload Profile Photo</span>
+  <input type="file" id="profileImage" accept="image/*" hidden>
+</label>
+
+
+
+    <input id="name" placeholder="Name">
+    <input id="phone" placeholder="Phone">
+    <input id="address" placeholder="Address">
+
+    <p id="email"></p>
+    <p id="uid"></p>
+
+    <button id="saveBtn" class="saveBtn" onclick="saveProfile()" style="display:none;">   Save </button>
+    <button class="closeBtn" onclick="closeProfile()">Close</button>
+  </div>
+</div>
+
+<!-- POPUP -->
+<div id="customPopup">
+  
+  <div class="popupBox" onclick="event.stopPropagation()">
+  <div id="popupIcon">⏳</div>
+  <p id="popupText"></p>
+<button onclick="popupOk()">OK</button>
+</div>
+</div>
+
+
+
+
+
+
+
+  
+<div class="container">
+
+<!-- Buttons 1 to 8 -->
+<div class="card-box">
+<a href="nsc related submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/40XBqT3/home-logo-design-template-18f0f2043869d72f86eb721a8c49c2a0-screen.jpg" alt="NSC SURVEY">
+<h3>NSC RELATED SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="maintenance related submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/cS5RxkYh/image-7bb722d0.png" alt="EVERY DAY DISCONNECTION">
+<h3>MAINTENANCE RELATED SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<!-- SOLAR METER INSTALLATION -->
   <div class="card-box">
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSec0PVN2LXLp6bRNE2PqXZd2Tdpkm_U9X1MWx_AKFeY8ZcqZg/viewform?usp=publish-editor"
        onclick="startLoad(event,this)">
@@ -285,49 +1029,137 @@ this.src='data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 wi
     </a>
   </div>
 
+
+<div class="card-box">
+<a href="duare sarkar related.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/kVZZ7bFs/1608928703-duare-sarkar.jpg" alt="METER REPLACEMENT">
+<h3>DUARE SARKAR RELATED</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="all estimate submission.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/Z69dW15f/pngtree-real-estimate-logo-vector-png-image-6667830.png" alt="NEW CONNECTION">
+<h3>ALL ESTIMATE SUBMISSION</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="meter replacement.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/HfXJz8mC/creative-elegant-minimalistic-logo-design-vector-technology-software-company-1287271-45842.jpg" alt="BILL COLLECTION">
+<h3>METER REPLACEMENT</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+  
+<div class="card-box">
+<a href="download.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/PvhX5Z3x/Screenshot-20260305-221032-Chat-GPT-removebg-preview-2.png" alt="COMPLAINT">
+<h3>DOWNLOAD</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+  
+<div class="card-box">
+<a href="send feedback.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/DPRJvfRh/570.png" alt="LINE MAINTENANCE">
+<h3>SEND FEEDBACK</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box">
+<a href="contact us.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/q3Zt54rR/images.jpg" alt="REPORT SUBMISSION">
+<h3>CONTACT US</h3>
+</div>
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
+<div class="card-box" id="userDashboard">
+<a href="Dashboard.html" onclick="startLoad(event,this)">
+<div class="card-border">
+<div class="card-btn">
+<img src="https://i.ibb.co/cXZqBdYL/admin1.png" alt="USER DASHBOARD">
+<h3>USER DASHBOARD</h3>
+</div>
+  </div>
+<div class="loader"></div>
+</a>
+</div>
+  
+</div>
+<div class="loader"></div>
+</a>
+</div>
+
 </div>
 
 
-<script>
-const img=document.getElementById("mainImage");
 
-img.onload=function(){
-  try{
-    localStorage.setItem("savedImage",img.src);
-  }catch(e){}
+
+  
+
+<script>
+
+
+window.popupOk = function(){
+  customPopup.style.display = "none";
+
+  if (typeof window.popupCallback === "function") {
+    window.popupCallback();
+    window.popupCallback = null;
+  }
 };
 
-function toggleMode(){
-  const body=document.body;
-  const btn=document.querySelector('.dark-btn');
 
-  if(body.classList.contains('dark-mode')){
-    body.classList.replace('dark-mode','light-mode');
-    btn.innerHTML="☀️";
-  }else{
-    body.classList.replace('light-mode','dark-mode');
-    btn.innerHTML="🌙";
-  }
+  
+
+  let redirectAfterClose = false;
+
+function closePopup(){
+  // কিছুই করবে না
+}
+  
+async function startLoad(e, el){
+  e.preventDefault();
+  if(window.updateLastSeen){   await window.updateLastSeen(); 
 }
 
-
-// ===== FORM LOADING SYSTEM =====
-async function startLoad(e, el){
-
-  e.preventDefault();
-
-  if (!window.currentUser) {
-    alert("Please login first.");
-    return;
-  }
-
-  try {
-    await window.updateLastSeen();
-  } catch (e) {
-    console.error(e);
-  }
-
+  // ১ সেকেন্ড অপেক্ষা
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  
   let loader = el.querySelector(".loader");
+
+  
   let width = 0;
 
   let iframe = document.createElement("iframe");
@@ -349,176 +1181,23 @@ async function startLoad(e, el){
     loader.style.width = "100%";
     window.location.href = el.href;
     iframe.remove();
-  };
-
-  iframe.onerror = function(){
-    clearInterval(run);
-    iframe.remove();
-    loader.style.width = "0%";
-    alert("Unable to open form. Please try again.");
-  };
-}
-
-
-// ===== NETWORK ANIMATION =====
-const canvas=document.getElementById("network");
-const ctx=canvas.getContext("2d");
-
-function resizeCanvas(){
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-}
-
-let particles=[];
-
-function createParticles(){
-  particles=[];
-
-  for(let i=0;i<50;i++){
-    particles.push({
-      x:Math.random()*canvas.width,
-      y:Math.random()*canvas.height,
-      vx:(Math.random()-0.5)*0.5,
-      vy:(Math.random()-0.5)*0.5
-    });
   }
 }
-
-function draw(){
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  const isLight=document.body.classList.contains("light-mode");
-
-  for(let i=0;i<particles.length;i++){
-
-    let p=particles[i];
-
-    p.x+=p.vx;
-    p.y+=p.vy;
-
-    if(p.x<0||p.x>canvas.width)p.vx*=-1;
-    if(p.y<0||p.y>canvas.height)p.vy*=-1;
-
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,2,0,Math.PI*2);
-
-    if(isLight){
-      let g=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-      g.addColorStop(0,"red");
-      g.addColorStop(0.5,"cyan");
-      g.addColorStop(1,"magenta");
-      ctx.fillStyle=g;
-    }else{
-      ctx.fillStyle="#fff";
-    }
-
-    ctx.fill();
-
-    for(let j=i+1;j<particles.length;j++){
-
-      let p2=particles[j];
-      let d=Math.hypot(p.x-p2.x,p.y-p2.y);
-
-      if(d<120){
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y);
-        ctx.lineTo(p2.x,p2.y);
-        ctx.strokeStyle=isLight
-          ?"rgba(0,0,0,0.2)"
-          :"rgba(255,255,255,0.15)";
-        ctx.stroke();
-      }
-    }
-  }
-
-  requestAnimationFrame(draw);
-}
-
-resizeCanvas();
-createParticles();
-draw();
-
-window.addEventListener("pageshow",function(){
-  resizeCanvas();
-  createParticles();
-});
-
-window.addEventListener("visibilitychange",function(){
-  if(!document.hidden){
-    resizeCanvas();
-    createParticles();
-  }
-});
-
-window.addEventListener("resize",resizeCanvas);
-
 </script>
 
 
-<!-- ===== LOGIN CHECK & AUTO LOGOUT ===== -->
-<script>
-
-// LOGIN CHECK
-if (!localStorage.getItem("loginSuccess")) {
-  window.location.href = "index.html";
-}
-
-// AUTO LOGOUT SYSTEM
-let inactivityTime = 180000;
-let timeout;
-
-function logoutUser(){
-
-  clearTimeout(timeout);
-
-  window.removeEventListener("mousemove", resetTimer);
-  window.removeEventListener("keypress", resetTimer);
-  window.removeEventListener("click", resetTimer);
-  window.removeEventListener("scroll", resetTimer);
-
-  localStorage.setItem("showLogoutPopup", "expired");
-  localStorage.removeItem("loginSuccess");
-
-  window.location.replace("home.html");
-}
-
-function resetTimer(){
-  clearTimeout(timeout);
-  timeout = setTimeout(logoutUser, inactivityTime);
-}
-
-// ACTIVITY DETECT
-window.addEventListener("mousemove", resetTimer);
-window.addEventListener("keypress", resetTimer);
-window.addEventListener("click", resetTimer);
-window.addEventListener("scroll", resetTimer);
-
-// PAGE LOAD
-document.addEventListener("DOMContentLoaded", function () {
-  resetTimer();
-});
-
-</script>
 
 
-<!-- ===== FIREBASE LAST SEEN UPDATE ===== -->
+
+
 <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  doc,
-  updateDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+  import { getDatabase, ref, set, onDisconnect, onValue } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
@@ -530,35 +1209,777 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const rtdb = getDatabase(app);
 const auth = getAuth(app);
-const db = getFirestore(app);
+  
 
-window.currentUser = null;
 
-onAuthStateChanged(auth, (user) => {
-  window.currentUser = user;
+let user = null;
+  
+
+// DEBUG
+console.log("JS Loaded ✅");
+
+onAuthStateChanged(auth, async (u) => {
+
+  if (!u) {   document.getElementById("loadingScreen").style.display = "none";   return; }
+ user = u;
+  
+  
+
+
+  // 🔥 PAGE OPEN (FIXED)
+setTimeout(() => {   window.updateLastSeen && window.updateLastSeen(); }, 200);
+  
+
+  const userDoc = await getDoc(doc(db, "users", u.uid));
+
+if (userDoc.exists()) {
+  const userData = userDoc.data();
+
+
+  
+
+  // Welcome Text এ Role দেখাবে
+
+  const role = (userData.role || "User").toLowerCase();
+
+const hour = new Date().getHours();
+let greeting = "";
+
+if (hour >= 5 && hour < 12) {
+  greeting = "🌅 Good Morning";
+} else if (hour >= 12 && hour < 17) {
+  greeting = "☀️ Good Afternoon";
+} else if (hour >= 17 && hour < 21) {
+  greeting = "🌇 Good Evening";
+} else {
+  greeting = "🌙 Good Night";
+}
+
+let name = "";
+
+if (role === "super admin") {
+  name = "Super Admin";
+} else if (role === "admin") {
+  name = "Admin";
+} else {
+  name = userData.name || "User";
+}
+
+
+  document.getElementById("welcomeText").innerText =
+greeting + " " + (userData.name || "Profile");
+
+  if (userData.role === "admin") {
+    document.getElementById("userDashboard").style.display = "block";
+  } else {
+    document.getElementById("userDashboard").style.display = "none";
+  }
+} else {
+  document.getElementById("userDashboard").style.display = "none";
+}
+  
+  window.updateLastSeen = async function () {
+  if (!user) return;
+
+  // Realtime Database
+  await set(ref(rtdb, "status/" + user.uid), {
+    state: "online",
+    lastSeen: Date.now()
+  });
+
+  // Firestore
+  const userRef = doc(db, "users", user.uid);
+const userSnap = await getDoc(userRef);
+
+if (userSnap.exists()) {
+  await updateDoc(userRef, {
+    lastSeen: serverTimestamp(),
+    isOnline: true
+  });
+}
+}
+  
+  setInterval(() => {
+  window.updateLastSeen && window.updateLastSeen();
+}, 10000); // ✅ 10 sec
+
+
+
+  ["click","keypress","keydown"].forEach(event=>{
+    document.querySelectorAll("a").forEach(link=>{
+  link.addEventListener("click", () => {
+    window.updateLastSeen && window.updateLastSeen();
+  });
+});
+  window.addEventListener(event, window.updateLastSeen, { passive:true });
+});
+
+// 🔥 REALTIME OFFLINE TRACK (IMPORTANT)
+const statusRef = ref(rtdb, "status/" + user.uid);
+
+  const connectedRef = ref(rtdb, ".info/connected");
+
+  onValue(connectedRef, (snap) => {
+
+  if (snap.val() === true) {
+
+    // 🟢 online
+    set(statusRef, {
+      state: "online",
+      lastSeen: Date.now()
+    });
+
+    // 🔴 disconnect হলে auto offline
+    onDisconnect(statusRef).set({
+  state: "offline",
+  lastSeen: Date.now()
+});
+
+  }
+
+});
+  
+
+  // 🔥 BACK / CLOSE DETECT (BEST PLACE)
+async function setOfflineNow(){
+  if(!user) return;
+
+  await set(statusRef, {
+    state: "offline",
+    lastSeen: Date.now()
+  });
+
+  await updateDoc(doc(db, "users", user.uid), {
+    lastSeen: serverTimestamp(),
+    isOnline: false
+  });
+}
+
+  // ✅ এর নিচে বসাতে হবে
+window.addEventListener("beforeunload", () => {
+  setOfflineNow();
+});
+  
+// 🔥 Tab close / back / refresh
+window.addEventListener("pagehide", setOfflineNow);
+
+// 🔥 App minimize / switch
+  document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){
+    setOfflineNow(); // 🔴 minimize / app switch
+  } else {
+    window.updateLastSeen && window.updateLastSeen(); // 🟢 back করলে আবার online
+  }
 });
 
 
-// LAST SEEN UPDATE FUNCTION
-window.updateLastSeen = async function () {
+  
+resetTimer();
+  const isLoggedIn = localStorage.getItem("loginSuccess");
 
-  if (!window.currentUser) return;
+  // 🔴 BLOCK (login ছাড়া ঢুকলে)
+  if (!u || !isLoggedIn) {
+    document.getElementById("loadingScreen").style.display = "none";
+  // 🔥 যদি logout popup show করতে হয়
+  if(localStorage.getItem("showLogoutPopup") === "expired"){
+    document.getElementById("loadingScreen").style.display = "none";
+
+  localStorage.removeItem("showLogoutPopup");
+
+  showPopup(
+    "Session expired! Login again",
+    "error",
+    function(){
+
+      window.location.href = "index.html";
+
+    }
+  );
+
+  return;
+}
+
+  // 🔥 normal redirect
+  localStorage.removeItem("loginSuccess");
+  window.location.href = "index.html";
+  return;
+}
+
+  // ✅ USER OK
+  user = u;
 
   try {
 
-    await updateDoc(doc(db, "users", window.currentUser.uid), {
-      lastSeen: serverTimestamp()
-    });
+    const snap = await getDoc(doc(db, "users", user.uid));
 
-    console.log("Last Seen Updated");
+    if (snap.exists()) {
+
+      const data = snap.data();
+
+  // Pending account block
+
+      if (data.accountStatus === "pending") {
+
+  document.getElementById("loadingScreen").style.display = "none";
+  document.body.style.visibility = "visible";
+
+  showPopup(
+`⏳ Your account is pending for Admin approval.
+
+📞 If you need urgent approval, please contact the Administrator.
+
+Please wait until the Admin approves your account.`,
+"error",
+async function(){
+
+    await signOut(auth);
+    localStorage.removeItem("loginSuccess");
+    window.location.href = "index.html";
+
+});
+
+  return;
+}
+
+      
+      // ✅ Role SHOW
+
+      const role = (data.role || "User").toLowerCase();
+
+if (role === "super admin") {
+  document.getElementById("userRole").innerText = "User :- 👑 Super Admin";
+} else if (role === "admin") {
+  document.getElementById("userRole").innerText = "User :- 👑 Admin";
+} else {
+  document.getElementById("userRole").innerText = "User :- 👨‍💼 User";
+}
+
+      // ✅ IMAGE SHOW
+      if (data.image && data.image !== "") {
+        const img = document.getElementById("profileBtnImg");
+        img.src = data.image;
+        img.style.display = "block";
+        document.getElementById("profileIcon").style.display = "none";
+      } else {
+        document.getElementById("profileBtnImg").style.display = "none";
+        document.getElementById("profileIcon").style.display = "flex";
+      }
+
+      // ✅ PROFILE CHECK
+      let missingFields = [];
+
+      if (!data.name) missingFields.push("Name");
+      if (!data.phone) missingFields.push("Phone");
+      if (!data.address) missingFields.push("Address");
+      if (!data.image) missingFields.push("Profile Photo");
+
+      if (missingFields.length > 0) {
+        setTimeout(() => openProfile(true, missingFields), 500);
+      }
+      else{
+    document.body.style.visibility = "visible";
+}
+
+    } else {
+      // নতুন user হলে
+      setTimeout(() => openProfile(true), 500);
+    }
+
+
+    document.body.style.visibility = "visible";
+   document.querySelector(".container").style.display = "flex";
+document.getElementById("loadingScreen").style.display = "none";
 
   } catch (err) {
-    console.error("Last Seen Update Failed:", err);
+    console.log("Error:", err);
   }
 
+});
+  
+
+// ✅ BUTTON CLICK FIX
+document.getElementById("profileBtn").addEventListener("click", () => {
+  if(!user){
+    alert("Login required ❌");
+    return;
+  }
+  openProfile();
+});
+
+window.openProfile = async function(force=false, missingFields=[]){
+
+  if (!user){
+    alert("User not logged in ❌");
+    return;
+  }
+
+  document.getElementById("profileModal").style.display = "flex";
+  document.body.style.visibility = "visible";
+  document.body.style.overflow = "hidden";
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    document.getElementById("name").value = data.name || "";
+    document.getElementById("phone").value = data.phone || "";
+    document.getElementById("address").value = data.address || "";
+
+    // ✅ FIX: image load এখানে দিতে হবে
+    const uploadPhotoText = document.getElementById("uploadPhotoText");
+
+if (data.image && data.image.trim() !== "") {
+  const img = document.getElementById("previewImg");
+  img.src = data.image;
+  img.style.display = "block";
+
+  uploadPhotoText.innerText = "📸 Edit Profile Photo";
+} else {
+  document.getElementById("previewImg").style.display = "none";
+  uploadPhotoText.innerText = "📸 Upload Profile Photo";
+}
+  }
+
+  document.getElementById("email").innerText = "Email: " + user.email;
+  document.getElementById("uid").innerText = "UID: " + user.uid;
+
+  if(force){
+  let msg = "⚠️ Please complete your profile:\n\n";
+
+  missingFields.forEach(field => {
+    msg += "• " + field + "\n";
+  });
+
+
+  showPopup(msg);
+}
+  checkProfileComplete();
+  document.querySelector(".closeBtn").style.display =
+document.getElementById("name").value.trim() &&
+document.getElementById("phone").value.trim() &&
+document.getElementById("address").value.trim() &&
+document.getElementById("previewImg").style.display === "block"
+? "block" : "none";
 };
 
+window.saveProfile = async function(){
+  
+
+  const nameVal = document.getElementById("name").value;
+  const phoneVal = document.getElementById("phone").value;
+  const addressVal = document.getElementById("address").value;
+
+  if(
+  !nameVal.trim() ||
+  !phoneVal.trim() ||
+  !addressVal.trim()
+){
+  showPopup("⚠️ সব তথ্য পূরণ করুন।","error");
+  return;
+}
+
+  // 🔥 OLD IMAGE LOAD
+const snap = await getDoc(doc(db, "users", user.uid));
+let oldImage = "";
+
+if (snap.exists()) {
+  oldImage = snap.data().image || "";
+}
+let imageUrl = oldImage; // 🔥 old image default
+
+  const file = document.getElementById("profileImage").files[0];
+
+  if(!oldImage && !file){
+  showPopup("⚠️ Profile Photo Upload করুন।","error");
+  return;
+}
+
+  if(file){
+  showPopup("⏳ Please wait...", "loading");
+  const newImage = await uploadToImgBB(file);
+
+  if(newImage){
+    imageUrl = newImage; // শুধু success হলে change হবে
+  }
+}
+
+if (imageUrl) {
+  document.getElementById("profileBtnImg").src = imageUrl;
+  const img = document.getElementById("profileBtnImg");
+img.src = imageUrl;
+img.style.display = "block";
+  document.getElementById("profileIcon").style.display = "none";
+} else {
+  document.getElementById("profileBtnImg").style.display = "none";
+  document.getElementById("profileIcon").style.display = "flex";
+}
+  
+  const docRef = doc(db, "users", user.uid);
+const docSnap = await getDoc(docRef);
+
+let updateData = {
+  name: nameVal,
+  phone: phoneVal,
+  address: addressVal,
+  image: imageUrl
+};
+
+
+
+  if (!docSnap.exists()) {
+  // নতুন user
+  updateData.email = user.email;
+  updateData.uid = user.uid;
+  updateData.accountStatus = "pending";
+
+  await setDoc(docRef, updateData);
+
+} else {
+
+  const data = docSnap.data();
+
+  // email না থাকলে add হবে
+  if (!("email" in data)) {
+    updateData.email = user.email;
+  }
+
+  // uid না থাকলে add হবে
+  if (!("uid" in data)) {
+    updateData.uid = user.uid;
+  }
+
+    if (!("accountStatus" in data)) {
+  updateData.accountStatus = "pending";
+}
+    
+  await updateDoc(docRef, updateData);
+}
+
+
+  showPopup("Profile Saved!", "success", async function(){
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (snap.exists()) {
+
+        const data = snap.data();
+
+        if (data.accountStatus === "pending") {
+
+            await signOut(auth);
+            localStorage.removeItem("loginSuccess");
+
+            showPopup(
+`🎉 Profile Updated Successfully!
+
+⏳ Your profile has been sent for Admin verification.
+
+🔒 Your account will remain temporarily unavailable until it is approved by the Admin.
+
+  📞 For urgent approval, please contact the Administrator.
+
+✅ Please login again after your account has been approved.
+
+Thank you for your patience.`,
+"error",
+function () {
+    window.location.href = "index.html";
+}
+);
+
+            return;
+        }
+    }
+
+    document.body.style.visibility = "visible";
+    closeProfile();
+
+});
+};
+
+
+
+  function checkProfileComplete(){
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+
+  const hasImage =
+      document.getElementById("previewImg").style.display === "block";
+
+  const complete = name && phone && address && hasImage;
+
+  document.getElementById("saveBtn").style.display =
+      complete ? "block" : "none";
+
+  document.querySelector(".closeBtn").style.display =
+      complete ? "block" : "none";
+}
+  
+
+  window.closeProfile = async function(){
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+
+  if(snap.exists()){
+
+    const data = snap.data();
+
+    if(
+      !data.name ||
+      !data.phone ||
+      !data.address ||
+      !data.image
+    ){
+      showPopup("⚠️ Please complete all profile details first.","error");
+      return;
+    }
+
+  }
+
+  document.getElementById("profileModal").style.display = "none";
+  document.body.style.overflow = "auto";
+};
+
+window.showPopup = function(msg, type = "success", callback = null) {
+  popupText.innerText = msg;
+
+  const box = document.querySelector(".popupBox");
+  const btn = box.querySelector("button");
+  const icon = document.getElementById("popupIcon");
+
+  icon.classList.remove("loadingAnim");
+
+  if (type === "loading") {
+    btn.style.display = "none";
+    icon.innerText = "⏳";
+    icon.classList.add("loadingAnim");
+  } 
+  else if (type === "error") {
+    btn.style.display = "inline-block";
+    icon.innerText = "❌";
+  } 
+  else {
+    btn.style.display = "inline-block";
+    icon.innerText = "✅";
+  }
+
+  box.dataset.callback = callback ? "true" : "";
+  window.popupCallback = callback;
+
+  document.getElementById("customPopup").style.display = "flex";
+};
+  
+window.closeSessionPopup = function(){
+  document.getElementById("customPopup").style.display = "none";
+  window.location.href = "index.html";
+};
+
+const apiKey = "a5d421a5cbe17ebcfd2e0b90915c2501";
+
+async function uploadToImgBB(file){
+  return new Promise((resolve) => {
+
+    const reader = new FileReader();
+
+    reader.onload = async function(){
+      const base64 = reader.result.split(',')[1];
+
+      const formData = new FormData();
+      formData.append("image", base64);
+
+      try {
+        const res = await fetch("https://api.imgbb.com/1/upload?key=" + apiKey, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+        console.log("ImgBB response:", data);
+
+        if(data.success){
+          resolve(data.data.url);
+        } else {
+          showPopup("Upload failed ❌","error");
+          resolve("");
+        }
+
+      } catch (err) {
+        console.log(err);
+        showPopup("Network error ❌","error");
+        resolve("");
+      }
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+
+document.getElementById("profileImage").addEventListener("change", function(e){
+  const file = e.target.files[0];
+
+  if(file){
+    const reader = new FileReader();
+
+    reader.onload = function(){
+      const img = document.getElementById("previewImg");
+      img.src = reader.result;
+      img.style.display = "block";
+      
+      checkProfileComplete();
+    }
+
+
+
+    reader.readAsDataURL(file);
+  }
+});
+
+
+  document.getElementById("name").addEventListener("input",checkProfileComplete);
+
+document.getElementById("phone").addEventListener("input",checkProfileComplete);
+
+document.getElementById("address").addEventListener("input",checkProfileComplete);
+
+document.getElementById("profileImage").addEventListener("change",checkProfileComplete);
+
+  
+// ===== AUTO LOGOUT (5 MIN IDLE) =====
+
+let idleTimer;
+
+  window.resetTimer = function() {
+
+  if(!user) return; // 🔥 ADD THIS LINE
+
+  clearTimeout(idleTimer);
+
+  idleTimer = setTimeout(() => {
+
+    localStorage.setItem("logout_event", Date.now());
+
+    document.getElementById("loadingScreen").style.display = "none";
+    showPopup(
+      "Session expired! Login again",
+      "error",
+      async function () {
+
+        if(!user) return; // 🔥 ADD THIS ALSO
+
+        await setDoc(doc(db,"users",user.uid),{
+          isOnline:false,
+          lastLogout: serverTimestamp(),
+          lastSeen: serverTimestamp()
+        },{merge:true});
+
+        signOut(auth).then(() => {
+          localStorage.removeItem("loginSuccess");
+          window.location.href = "index.html";
+        });
+
+      }
+    );
+
+  }, 3 * 60 * 1000);
+}
+
+window.addEventListener("mousemove", resetTimer);
+window.addEventListener("keypress", resetTimer);
+window.addEventListener("click", resetTimer);
+window.addEventListener("scroll", resetTimer);
+// ====================================  
+</script>
+
+
+  <script>
+const cards = document.querySelectorAll(".card-box");
+
+window.addEventListener("scroll", () => {
+
+  let windowHeight = window.innerHeight;
+
+  cards.forEach(card => {
+    let rect = card.getBoundingClientRect();
+
+    // 🔥 Effect start point (tumi jeta adjust korte chao)
+    let startPoint = windowHeight * 0.60;
+
+    // 🔥 Top side normal (no effect)
+    if(rect.top < startPoint){
+      card.style.transform = "scale(1)";
+      card.style.opacity = "1";
+      return;
+    }
+
+    // 🔥 Bottom side effect
+    let distance = rect.top - startPoint;
+
+    let scale = 1 - (distance / 400);
+    if(scale < 0) scale = 0;
+
+    let opacity = 1 - (distance / 350);
+    if(opacity < 0) opacity = 0;
+
+    card.style.transform = `scale(${scale})`;
+    card.style.opacity = opacity;
+  });
+
+});
+
+
+
+    function formatTime(ts){
+  if(!ts) return "-";
+
+  let date;
+
+  if(ts.seconds){
+    date = new Date(ts.seconds * 1000);
+  }else{
+    date = new Date(ts);
+  }
+
+  return date.toLocaleString("en-IN", {
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+} 
+    
+</script>
+
+  <script>
+function updateDateTime(){
+
+  const now = new Date();
+
+  const date = now.toLocaleDateString("en-IN",{
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
+
+  const time = now.toLocaleTimeString("en-IN",{
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
+  });
+
+  document.getElementById("liveDateTime").innerHTML =
+    "📅 " + date + " | 🕒 " + time;
+}
+
+updateDateTime();
+setInterval(updateDateTime,1000);
 </script>
 
 </body>
