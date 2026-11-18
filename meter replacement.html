@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,6 +47,7 @@ body.light-mode{
   align-items:center;
   justify-content:flex-start;
   padding-left:20px;
+  box-sizing:border-box;
 }
 
 .header-text{
@@ -88,8 +90,8 @@ body.light-mode .dark-btn{
 
 .top-img{
   width:100%;
-  max-width:800px;   /* 🔥 desktop size control */
-  margin:60px auto 0; /* center + top gap */
+  max-width:800px;
+  margin:60px auto 0;
   padding:3px;
   background:linear-gradient(45deg,red,orange,yellow,green,cyan,blue,violet);
   box-sizing:border-box;
@@ -149,6 +151,8 @@ body.light-mode .card-border{
 
 .card-btn img{
   width:55px;
+  height:55px;
+  object-fit:contain;
   margin-bottom:10px;
 }
 
@@ -190,19 +194,18 @@ body.light-mode .card-border{
   100%{transform:translateX(100%)}
 }
 
-a{text-decoration:none; color:black;}
-
-
+a{
+  text-decoration:none;
+  color:black;
+}
 
 @media(max-width:600px){
   .top-img{
-    max-width:100%;   /* 🔥 mobile full width */
+    max-width:100%;
     margin:50px 0 0;
-    border-radius:0;  /* optional */
+    border-radius:0;
   }
 }
-
-  
 </style>
 </head>
 
@@ -210,11 +213,13 @@ a{text-decoration:none; color:black;}
 
 <canvas id="network"></canvas>
 
+<!-- HEADER -->
 <div class="header">
-  <div class="header-text"> METER REPLACEMENT</div>
+  <div class="header-text">METER REPLACEMENT</div>
   <button class="dark-btn" onclick="toggleMode()">🌙</button>
 </div>
 
+<!-- TOP IMAGE -->
 <div class="top-img">
 <img id="mainImage"
 src="https://i.ibb.co/Hf9m31b1/Dhupguri.png"
@@ -237,34 +242,65 @@ this.src='data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 wi
 ">
 </div>
 
+<!-- BUTTON CONTAINER -->
 <div class="container">
 
-<div class="card-box">
-<a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LFVQDjqmYPp3t3UnfAw_MWIDhTMXPA5MoslFTlDSof3oAA/viewform?usp=dialog" onclick="startLoad(event,this)">
-<div class="card-border"><div class="card-btn">
+  <!-- METER REPLACEMENT SUBMISSION -->
+  <div class="card-box">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LFVQDjqmYPp3t3UnfAw_MWIDhTMXPA5MoslFTlDSof3oAA/viewform?usp=dialog"
+       onclick="startLoad(event,this)">
 
-<!-- ✅ ONLY IMAGE CHANGED -->
-<img src="https://i.ibb.co/F46ZQhBF/3d-electric-meter-icon-suitable-for-technology-electricity-power-and-innovation-concepts-energize-yo.png">
+      <div class="card-border">
+        <div class="card-btn">
 
-<h3>METER REPLACEMENT SUBMISSION </h3>
-</div></div>
-<div class="loader"></div>
-</a>
+          <img src="https://i.ibb.co/F46ZQhBF/3d-electric-meter-icon-suitable-for-technology-electricity-power-and-innovation-concepts-energize-yo.png">
+
+          <h3>METER REPLACEMENT SUBMISSION</h3>
+
+        </div>
+      </div>
+
+      <div class="loader"></div>
+    </a>
+  </div>
+
+
+  <!-- SOLAR METER INSTALLATION -->
+  <div class="card-box">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSec0PVN2LXLp6bRNE2PqXZd2Tdpkm_U9X1MWx_AKFeY8ZcqZg/viewform?usp=publish-editor"
+       onclick="startLoad(event,this)">
+
+      <div class="card-border">
+        <div class="card-btn">
+
+          <img src="https://img.icons8.com/fluency/96/solar-panel.png"
+               alt="Solar Meter Installation">
+
+          <h3>SOLAR METER INSTALLATION</h3>
+
+        </div>
+      </div>
+
+      <div class="loader"></div>
+    </a>
+  </div>
+
 </div>
 
-</div>
 
 <script>
 const img=document.getElementById("mainImage");
+
 img.onload=function(){
-try{
-localStorage.setItem("savedImage",img.src);
-}catch(e){}
+  try{
+    localStorage.setItem("savedImage",img.src);
+  }catch(e){}
 };
 
 function toggleMode(){
   const body=document.body;
   const btn=document.querySelector('.dark-btn');
+
   if(body.classList.contains('dark-mode')){
     body.classList.replace('dark-mode','light-mode');
     btn.innerHTML="☀️";
@@ -275,24 +311,22 @@ function toggleMode(){
 }
 
 
+// ===== FORM LOADING SYSTEM =====
+async function startLoad(e, el){
 
+  e.preventDefault();
 
-  async function startLoad(e, el){
-    e.preventDefault();
+  if (!window.currentUser) {
+    alert("Please login first.");
+    return;
+  }
 
-    if (!window.currentUser) {
-        alert("Please login first.");
-        return;
-    }
+  try {
+    await window.updateLastSeen();
+  } catch (e) {
+    console.error(e);
+  }
 
-    try {
-        await window.updateLastSeen();
-    } catch (e) {
-        console.error(e);
-    }
-
-  
-  
   let loader = el.querySelector(".loader");
   let width = 0;
 
@@ -315,9 +349,18 @@ function toggleMode(){
     loader.style.width = "100%";
     window.location.href = el.href;
     iframe.remove();
-  }
+  };
+
+  iframe.onerror = function(){
+    clearInterval(run);
+    iframe.remove();
+    loader.style.width = "0%";
+    alert("Unable to open form. Please try again.");
+  };
 }
 
+
+// ===== NETWORK ANIMATION =====
 const canvas=document.getElementById("network");
 const ctx=canvas.getContext("2d");
 
@@ -330,6 +373,7 @@ let particles=[];
 
 function createParticles(){
   particles=[];
+
   for(let i=0;i<50;i++){
     particles.push({
       x:Math.random()*canvas.width,
@@ -341,10 +385,13 @@ function createParticles(){
 }
 
 function draw(){
+
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
   const isLight=document.body.classList.contains("light-mode");
 
   for(let i=0;i<particles.length;i++){
+
     let p=particles[i];
 
     p.x+=p.vx;
@@ -369,6 +416,7 @@ function draw(){
     ctx.fill();
 
     for(let j=i+1;j<particles.length;j++){
+
       let p2=particles[j];
       let d=Math.hypot(p.x-p2.x,p.y-p2.y);
 
@@ -376,7 +424,9 @@ function draw(){
         ctx.beginPath();
         ctx.moveTo(p.x,p.y);
         ctx.lineTo(p2.x,p2.y);
-        ctx.strokeStyle=isLight?"rgba(0,0,0,0.2)":"rgba(255,255,255,0.15)";
+        ctx.strokeStyle=isLight
+          ?"rgba(0,0,0,0.2)"
+          :"rgba(255,255,255,0.15)";
         ctx.stroke();
       }
     }
@@ -400,22 +450,23 @@ window.addEventListener("visibilitychange",function(){
     createParticles();
   }
 });
+
+window.addEventListener("resize",resizeCanvas);
+
 </script>
 
 
-
-
+<!-- ===== LOGIN CHECK & AUTO LOGOUT ===== -->
 <script>
 
-// ===== LOGIN CHECK =====
+// LOGIN CHECK
 if (!localStorage.getItem("loginSuccess")) {
   window.location.href = "index.html";
 }
 
-// ===== AUTO LOGOUT SYSTEM =====
-let inactivityTime = 180000; // 3 min
+// AUTO LOGOUT SYSTEM
+let inactivityTime = 180000;
 let timeout;
-  
 
 function logoutUser(){
 
@@ -426,14 +477,10 @@ function logoutUser(){
   window.removeEventListener("click", resetTimer);
   window.removeEventListener("scroll", resetTimer);
 
-  // 🔥 popup flag
   localStorage.setItem("showLogoutPopup", "expired");
-
-  // 🔥 logout
   localStorage.removeItem("loginSuccess");
 
-  // 🔥 redirect
-window.location.replace("home.html");
+  window.location.replace("home.html");
 }
 
 function resetTimer(){
@@ -441,32 +488,37 @@ function resetTimer(){
   timeout = setTimeout(logoutUser, inactivityTime);
 }
 
-// activity detect
+// ACTIVITY DETECT
 window.addEventListener("mousemove", resetTimer);
 window.addEventListener("keypress", resetTimer);
 window.addEventListener("click", resetTimer);
 window.addEventListener("scroll", resetTimer);
 
-// page load
+// PAGE LOAD
 document.addEventListener("DOMContentLoaded", function () {
   resetTimer();
 });
+
 </script>
 
 
+<!-- ===== FIREBASE LAST SEEN UPDATE ===== -->
+<script type="module">
 
-
-  
-  <!-- Last Seen Update full script -->
-  <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 import {
   getFirestore,
   doc,
   updateDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZd10BUgRR9IEQ2kENQ_bXZiThegHRY-I",
@@ -483,15 +535,13 @@ const db = getFirestore(app);
 
 window.currentUser = null;
 
-
-    onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
   window.currentUser = user;
 });
 
-  // ===============================
-// Last Seen Update Function
 
-    window.updateLastSeen = async function () {
+// LAST SEEN UPDATE FUNCTION
+window.updateLastSeen = async function () {
 
   if (!window.currentUser) return;
 
@@ -501,17 +551,15 @@ window.currentUser = null;
       lastSeen: serverTimestamp()
     });
 
-    console.log("✅ Last Seen Updated");
+    console.log("Last Seen Updated");
 
   } catch (err) {
-    console.error("❌ Last Seen Update Failed:", err);
+    console.error("Last Seen Update Failed:", err);
   }
 
 };
 
-
 </script>
-  
-  
+
 </body>
 </html>
